@@ -23,8 +23,10 @@ def search_taxon(input_dir, study_name, taxon_of_interest):
         with open(os.path.join(input_dir, target_file[0]), "r") as file:
             logging.info("Counts of {} in {} :".format(taxon_of_interest, target_file[0]))
             header_printed = False
-            # Keep track of unique taxa identified - initialize set
+            """ # Uncomment below if you want to print the unique taxa found in total in the MGYS provided. 
+            # Keep track of unique taxa identified - initialize set 
             unique_taxa = set()
+            """
             for line in file:
                 columns = line.strip().split("\t")
                 if not header_printed:
