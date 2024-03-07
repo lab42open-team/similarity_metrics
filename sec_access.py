@@ -1,3 +1,10 @@
+#!/usr/bin/python3.5
+
+# script name: sec_access.py
+# developed by: Nefeli Venetsianou
+# description: retrieve and map MGYS with the corresponding secondary accession
+# framework: CCMRI
+
 import os, re
 import sys
 
@@ -44,13 +51,13 @@ if input_wd:
                 input_data = input_file.read()
      
                 # Find all files in the directory that match the pattern 'secondaryAccession_taxonomy_abundances.v.[d].[d].tsv'  
-                matching_files = [file_name for file_name in os.listdir(folder_path) if re.match(r'\w+_taxonomy_abundances(?:_SSU|LSU)?_v\d+\.\d+\.tsv', file_name)
-                                  and not re.match(r'(.+)_phylum_taxonomy_abundances(?:_SSU|LSU)?_v\d+\.\d+\.tsv', file_name)]            
+                matching_files = [file_name for file_name in os.listdir(folder_path) if re.match(r'\w+_taxonomy_abundances(?:_SSU|_LSU)?_v\d+\.\d+\.tsv', file_name)
+                                  and not re.match(r'(.+)_phylum_taxonomy_abundances(?:_SSU|_LSU)?_v\d+\.\d+\.tsv', file_name)]            
                 # Check if there are matching files
                 if matching_files:  
                     # Extract the matched pattern before "_taxonomy_abundances" from each matching file name
-                    matched_patterns = [re.search(r'(.+)_taxonomy_abundances(?:_SSU|LSU)?_v\d+\.\d+\.tsv', file_name).group(1) for file_name in matching_files
-                                        if not re.match(r'(.+)_phylum_taxonomy_abundances(?:_SSU|LSU)?_v\d+\.\d+\.tsv', file_name)]
+                    matched_patterns = [re.search(r'(.+)_taxonomy_abundances(?:_SSU|_LSU)?_v\d+\.\d+\.tsv', file_name).group(1) for file_name in matching_files
+                                        if not re.match(r'(.+)_phylum_taxonomy_abundances(?:_SSU|_LSU)?_v\d+\.\d+\.tsv', file_name)]
                     # Uncomment the commands below if you want to extract the version of MGnify pipeline used 
                     # version_pipeline = [re.search(r'(v\d+\.\d+)', file_name).group(0) for file_name in matching_files]
                     # processed_data = folder_name + "\t" + "\t".join(matched_patterns) + "\t" + "\t".join(version_pipeline)
