@@ -117,8 +117,8 @@ if input_wd:
             with open(input_file_path, "r") as input_file:
                 input_data = input_file.read()     
                 # Find all files in the directory that match the pattern 'secondaryAccession_taxonomy_abundances(?:_SSU|LSU)?.v.[d].[d].tsv'  
-                matching_files = [file_name for file_name in os.listdir(folder_path) if re.match(r'\w+_taxonomy_abundances(?:_SSU|LSU)?_v\d+\.\d+\.tsv', file_name)
-                                  and not re.match(r'(.+)_phylum_taxonomy_abundances(?:_SSU|LSU)?_v\d+\.\d+\.tsv', file_name)]
+                matching_files = [file_name for file_name in os.listdir(folder_path) if re.match(r'\w+_taxonomy_abundances(?:_SSU|_LSU)?_v\d+\.\d+\.tsv', file_name)
+                                  and not re.match(r'(.+)_phylum_taxonomy_abundances(?:_SSU|_LSU)?_v\d+\.\d+\.tsv', file_name)]
                 # Count number of total matching files
                 num_matching_files += len(matching_files)           
                 # Check if there are matching files
@@ -126,7 +126,7 @@ if input_wd:
                     # Process each matching file
                     for file_name in matching_files:
                         file_path = os.path.join(folder_path, file_name)
-                        pattern_name = re.search(r'(.+)_taxonomy_abundances(?:_SSU|LSU)?_v\d+\.\d+\.tsv', file_name).group()
+                        pattern_name = re.search(r'(.+)_taxonomy_abundances(?:_SSU|_LSU)?_v\d+\.\d+\.tsv', file_name).group()
                         
                         # Set output working dirextory
                         output_wd = output_directory
