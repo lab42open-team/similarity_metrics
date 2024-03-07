@@ -27,7 +27,7 @@ def search_taxon(input_dir, study_name, taxon_of_interest):
 if __name__ == "__main__":
     # Set default parameters
     # input_dir = "/ccmri/profile_matching/test_dataset/MGYS_taxa_counts_output" - test 
-    input_dir = "/ccmri/profile_matching/taxa_counts_output"
+    input_dir = "/ccmri/data_similarity_metrics/taxa_counts_output"
     study_name = ""
     taxon_of_interest = ""
     

@@ -3,7 +3,7 @@ import sys
 
 # Set global variables to control script execution upon development (initialize parameters to default)
 input_directory = "/ccmri/data/mgnify/frozen_february_2024/2024_1_17/harvested_mgnify_studies"
-output_directory = "/ccmri/profile_matching"
+output_directory = "/ccmri/similarity_metrics"
 
 # Extract argument values imported from sys.argv
 arguments_dict = {}
