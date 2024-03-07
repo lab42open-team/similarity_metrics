@@ -1,29 +1,45 @@
-### In this script, a user can set as input parameters, the working directory of choice, the MGYS and the taxon of interest 
-### the number of counts of the specific taxon per sample will be returned 
-# input_dir="your_input__direcroty"
-# study_name="MGYS00000xxxx"
-# taxon_of_interest="taxon"
+#!/usr/bin/python3.5
+
+# script name: per_taxon_calculation.py
+# developed by: Nefeli Venetsianou
+# description: retrieve counts of specific taxon of interest per sample from MGYS 
+# input parameters: 
+    # input_dir="your_input_directory"
+    # study_name="MGYS000xxxxxx"
+    # taxon_of_interest="taxon"
+# framework: CCMRI
 
 import os, sys, time
+import logging
+logging.basicConfig(level=logging.INFO)
 
 def search_taxon(input_dir, study_name, taxon_of_interest):
     # Search for files in parent directory containing the study name provided in the file name
     target_file = [file for file in os.listdir(input_dir) if study_name in file]
     if not target_file:
-        print("No files found for the study name provided.")
+        logging.error("No files found for the study name provided.")
     else:
         # Iterate for file containing study name
         with open(os.path.join(input_dir, target_file[0]), "r") as file:
-            print("Counts of {}".format(taxon_of_interest), "in {}".format(target_file[0]), ":")
+            logging.info("Counts of {} in {} :".format(taxon_of_interest, target_file[0]))
             header_printed = False
+            # Keep track of unique taxa identified - initialize set
+            unique_taxa = set()
             for line in file:
                 columns = line.strip().split("\t")
                 if not header_printed:
-                    print("\t".join(columns))
+                    logging.info("\t".join(columns))
                     header_printed = True
                 if taxon_of_interest in columns[0]:
-                    print("\t".join(columns[1:]))  
-
+                    taxon_counts = "\t".join(columns[1:])
+                    logging.info("{}\t{}".format(columns[0], taxon_counts))
+                    """ # Uncomment below if you want to print the unique taxa found in total in the MGYS provided. 
+                    # Extract taxon from the first column
+                    taxa = columns[0].split(";")[0]
+                    unique_taxa.add(taxa)
+            # Print unique taxa found
+            logging.info("Unique taxa fount: {}".format(",".join(unique_taxa)))  
+            """
 if __name__ == "__main__":
     # Set default parameters
     # input_dir = "/ccmri/profile_matching/test_dataset/MGYS_taxa_counts_output" - test 
@@ -51,4 +67,4 @@ if __name__ == "__main__":
     if study_name and taxon_of_interest:
         search_taxon(input_dir, study_name, taxon_of_interest)
     else:
-        print("Please provide both study name and taxon of interest")
+        logging.warning("Please provide both study name and taxon of interest")
