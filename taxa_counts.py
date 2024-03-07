@@ -4,8 +4,8 @@ import psutil
 
 # Set global variables to control script execution upon development (initialize parameters to default)
 #input_directory = "/ccmri/data/mgnify/frozen_february_2024/2024_1_17/harvested_mgnify_studies"
-input_directory = "/ccmri/profile_matching/profile_matching/test_dataset/MGYS" #- test 
-output_directory = "/ccmri/profile_matching/profile_matching/test_dataset/MGYS_taxa_counts_output" #- test
+input_directory = "/ccmri/data_similarity_metrics/test_dataset/test_MGYS" #- test 
+output_directory = "/ccmri/data_similarity_metrics/test_dataset/MGYS_taxa_counts_output" #- test
 #output_directory = "/ccmri/profile_matching/profile_matching/taxa_counts_output"
 ignore_prefix = False # if you want to ignore calculate counts for not fully specified taxa, set command line parameter to "= true || yes || 1"
 debug = False
@@ -73,7 +73,7 @@ def count_taxa_occurrences(file_path):
                         prev_taxon = taxon  
                         # Increment the count for the taxon and column index in the nested dictionary
                         taxon_counts[taxon] = taxon_counts.get(taxon, {})
-                        taxon_counts[taxon][col_index] = taxon_counts[taxon].get(sample_name, 0.0) + float(column)
+                        taxon_counts[taxon][sample_name] = taxon_counts[taxon].get(sample_name, 0.0) + float(column)
             else:
                 print("Ignoring line: {}.".format(line_number), "in {}".format(file_path), "Not enough columns.")
             # Increase line number 
