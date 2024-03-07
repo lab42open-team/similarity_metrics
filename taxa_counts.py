@@ -1,14 +1,22 @@
-# Taxonomic hierarchy: k > p > c > o > f  > g > s
+#!/usr/bin/python3.5
+
+# script name: taxa_counts.py
+# developed by: Nefeli Venetsianou
+# description: get taxa counts per sample in study (Taxonomic hierarchy: k > p > c > o > f  > g > s)
+# framework: CCMRI
+
 import os, re, sys, time
 import psutil 
+import logging
+logging.basicConfig(level=logging.INFO)
+
 
 # Set global variables to control script execution upon development (initialize parameters to default)
-#input_directory = "/ccmri/data/mgnify/frozen_february_2024/2024_1_17/harvested_mgnify_studies"
-input_directory = "/ccmri/data_similarity_metrics/test_dataset/test_MGYS" #- test 
-output_directory = "/ccmri/data_similarity_metrics/test_dataset/MGYS_taxa_counts_output" #- test
-#output_directory = "/ccmri/profile_matching/profile_matching/taxa_counts_output"
+input_directory = "/ccmri/data/mgnify/frozen_february_2024/2024_1_17/harvested_mgnify_studies"
+#input_directory = "/ccmri/data_similarity_metrics/test_dataset/test_MGYS" #- test 
+#output_directory = "/ccmri/data_similarity_metrics/test_dataset/MGYS_taxa_counts_output" #- test
+output_directory = "/ccmri/data_similarity_metrics/taxa_counts_output"
 ignore_prefix = False # if you want to ignore calculate counts for not fully specified taxa, set command line parameter to "= true || yes || 1"
-debug = False
 
 # Extract argument values imported from sys.argv
 arguments_dict = {}
@@ -26,8 +34,9 @@ if "--output_dir" in arguments_dict:
 if "--ignore_prefix" in arguments_dict:
     ignore_prefix = arguments_dict.get("--ignore_prefix").lower() in ("true", "yes", "1")
 
-# Define function to parse taxa and count occurrences - TODO correct code, counts are zero ! 
 def count_taxa_occurrences(file_path):
+    # Logging debug
+    logging.debug("Parsing file: {}".format(file_path))
     # Store counts for each taxon into a dictionary - initialize dic
     taxon_counts = {}
     header = None
@@ -75,7 +84,7 @@ def count_taxa_occurrences(file_path):
                         taxon_counts[taxon] = taxon_counts.get(taxon, {})
                         taxon_counts[taxon][sample_name] = taxon_counts[taxon].get(sample_name, 0.0) + float(column)
             else:
-                print("Ignoring line: {}.".format(line_number), "in {}".format(file_path), "Not enough columns.")
+                logging.warning("Ignoring line: {} in {}. Not enough columns.".format(line_number, file_path))
             # Increase line number 
             line_number += 1
     # Return dictionary with taxon counts
@@ -118,7 +127,7 @@ if input_wd:
                     for file_name in matching_files:
                         file_path = os.path.join(folder_path, file_name)
                         pattern_name = re.search(r'(.+)_taxonomy_abundances(?:_SSU|LSU)?_v\d+\.\d+\.tsv', file_name).group()
-
+                        
                         # Set output working dirextory
                         output_wd = output_directory
                         if output_wd:
@@ -128,7 +137,7 @@ if input_wd:
                             output_file_path = os.path.join(output_wd, output_file_name)
                             # Check if output already exists
                             if os.path.exists(output_file_path):
-                                print("Output file already exists for: ", file_name, "- Skip processing.")
+                                logging.warning("Output file already exists for: {} - Skip processing.".format(file_name))
                                 continue
                             # Process file since output not exist
                             taxon_counts, header, sample_names = count_taxa_occurrences(file_path)
@@ -140,19 +149,19 @@ if input_wd:
                                         count = count_dict.get(sample_name, 0)
                                         output_file.write("\t{}".format(count))
                                     output_file.write("\n")
-                            print("Processed data written to ", output_file_path)
+                            logging.info("Processed data written to {}".format(output_file_path))
                         else:
-                            print("No output directory selected.")            
+                            logging.warning("No output directory selected.")            
                 else:
-                    print("No matching files found in input directory.", input_file_path)
+                    logging.warning("No matching files found in input directory: {}".format(input_file_path))
         else:
-            print("Input file not found in: ", folder_path)
+            logging.warning("Input file not found in: ".format(folder_path))
                                            
 # End time of execution
 end_time =time.time()
 # Calculate exact execution time
 execution_time = end_time - start_time
-print("Total matching files parsed:", num_matching_files)
-print("Execution time:", execution_time, "seconds")
+logging.info("Total matching files parsed: {}".format(num_matching_files))
+logging.info("Execution time: {} seconds.".format(execution_time))
 # Get current CPU usage for 5 seconds
 print("CPU usage = ", psutil.cpu_percent(interval = 5))
