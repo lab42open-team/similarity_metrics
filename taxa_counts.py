@@ -6,7 +6,7 @@
 # framework: CCMRI
 
 import os, re, sys, time
-import psutil 
+#import psutil 
 import logging
 logging.basicConfig(level=logging.INFO)
 
@@ -162,6 +162,6 @@ end_time =time.time()
 # Calculate exact execution time
 execution_time = end_time - start_time
 logging.info("Total matching files parsed: {}".format(num_matching_files))
-logging.info("Execution time: {} seconds.".format(execution_time))
+logging.info("Execution time: {} seconds.".format(execution_time)) # or divide by 3600 to get time in hour
 # Get current CPU usage for 5 seconds
-print("CPU usage = ", psutil.cpu_percent(interval = 5))
+#print("CPU usage = ", psutil.cpu_percent(interval = 5))
