@@ -8,22 +8,17 @@
 import os, sys
 import numpy as np
 # from sklearn.metrics import jaccard_score - works in python > 3
-
-
-def jaccard_similarity(set1, set2):
-    # Define intersection of two sets
-    intersection = len(set1.intersection(set2))
-    # Define union of two sets
-    union = len(set1.union(set2))
-    if union == 0:
-        return 0
-    return intersection/union
-
+from scipy.spatial import distance
+from scipy.stats import kendalltau
+from scipy.stats import pearsonr
+from scipy.stats import spearmanr
 
 # Set input directory 
 #input_dir = "/ccmri/profile_matching/test_dataset/MGYS_taxa_counts_output" # test
 # Read target file 
-input_file = "/ccmri/profile_matching/test_dataset/MGYS_taxa_counts_output/MGYS00000308_ERP001739_taxonomy_abundances_v1.0.tsv_output.tsv" #[file for file in os.listdir(input_dir)]
+#input_file = "/ccmri/data_similarity_metrics/test_dataset/MGYS_taxa_counts_output/MGYS00000305_ERP001568_taxonomy_abundances_v1.0.tsv_output.tsv" #[file for file in os.listdir(input_dir)]
+input_file = "/ccmri/data_similarity_metrics/test_dataset/MGYS_taxa_counts_output/MGYS00006566_SRP345292_taxonomy_abundances_LSU_v5.0.tsv_output.tsv" #[file for file in os.listdir(input_dir)]
+
 # Dictionary to store counts for each sample
 sample_counts = {}
 with open(input_file, "r") as file:
@@ -40,15 +35,36 @@ with open(input_file, "r") as file:
         counts = list(map(float, columns[1:]))
         for i, sample_id in enumerate(sample_ids):
             sample_counts[sample_id][taxon] = counts[i]
-            
+        #print(header, taxon, counts)
+
 # Iterate over indices of Sample IDs
 for i in range(len(sample_ids)):
     # Iterate over indices of sample IDs starting from i+1 to avoid comparing a sample to itself (duplicates)
     for j in range(i + 1, len(sample_ids)):
         # Define sets of ith and jth sample
-        set1 = set(sample_counts[sample_ids[i]].keys())
-        set2 = set(sample_counts[sample_ids[j]].keys())
-        # Calculate jaccard similarity 
-        similarity = jaccard_similarity(set1, set2)
-        print("Jaccard Similarity for {} between samples {}, {} is {}".format(taxon, sample_ids[i], sample_ids[j], similarity))
-            
+        set1 = np.array(list(sample_counts[sample_ids[i]].values()))
+        set2 = np.array(list(sample_counts[sample_ids[j]].values()))
+        # Try different similarity metrics
+        bray_curtis_dissimilarity = distance.braycurtis(set1, set2)
+        #jaccard_distance = distance.jaccard(set1, set2) # no sense to calculate this one, doesn't take into account the frequence [counts]
+        cosine_similarity = distance.cosine(set1, set2)
+        #canbera_distance = distance.canberra(set1, set2) # no sense to calculate this one, doesn't take into account the frequence [counts]
+        jehsen_shannon_divergence = distance.jensenshannon(set1, set2)        
+        dice_similarity = distance.dice(set1, set2)
+        tb_coefficient, p_value_tb = kendalltau(set1, set2)
+        pearson_coefficient, p_value_pearson = pearsonr(set1,set2)
+        rho_coefficient, p_value_spearman = spearmanr(set1, set2)
+        # Print statements
+        print("Bray-Curtis Dissimilarity between {}, {} = {}".format(sample_ids[i], sample_ids[j], bray_curtis_dissimilarity))
+        #print("Jaccard Similarity Score between {}, {} = {}.".format(sample_ids[i], sample_ids[j], jaccard_distance))
+        print("Cosine Similarity Score between {}, {} = {}".format(sample_ids[i], sample_ids[j], cosine_similarity))
+        #print("Canberra Distance between {}, {} = {}".format(sample_ids[i], sample_ids[j], canbera_distance))
+        print("Jensen-Shannon Distance between {}, {} = {}".format(sample_ids[i], sample_ids[j], jehsen_shannon_divergence))
+        print("Dice Similarity between {}, {} = {}".format(sample_ids[i], sample_ids[j], dice_similarity))
+        print("Kendall's tau-b correlation coefficient between {}, {} = {} and p-value = {}".format(sample_ids[i], sample_ids[j], tb_coefficient, p_value_tb))
+        print("Pearson correlation coefficient between {}, {} = {} and p-value = {}".format(sample_ids[i], sample_ids[j], pearson_coefficient, p_value_pearson))
+        print("Spearman correlation coefficient between {}, {} = {} and p-value = {}".format(sample_ids[i], sample_ids[j], rho_coefficient, p_value_spearman))
+
+#print(set1, set2)
+
+# TODO add unifraq + SNB score
