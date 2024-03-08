@@ -6,7 +6,7 @@
 # framework: CCMRI
 
 import os, re, sys, time
-#import psutil 
+#import psutil # Uncomment this line if you want to retrieve total CPU usage 
 import logging
 logging.basicConfig(level=logging.INFO)
 
@@ -151,12 +151,14 @@ if input_wd:
                             with open(output_file_path, "w") as output_file:
                                 # Write header
                                 output_file.write(header + "\n")
-                                # Write each taxon and its counts per sample to the output file 
+                                # Write each taxon and its counts per sample to the output file (per row)
                                 for taxon, count_dict in taxon_counts.items():
                                     output_file.write(taxon)
+                                    # Iterate over each sample
                                     for sample_name in sample_names:
                                         count = count_dict.get(sample_name, 0)
                                         output_file.write("\t{}".format(count))
+                                    # Add newline - end of current row 
                                     output_file.write("\n")
                             logging.info("Processed data written to {}".format(output_file_path))
                         else:
@@ -171,6 +173,6 @@ end_time =time.time()
 # Calculate exact execution time
 execution_time = end_time - start_time
 logging.info("Total matching files parsed: {}".format(num_matching_files))
-logging.info("Execution time: {} seconds.".format(execution_time)) # or divide by 3600 to get time in hour
-# Get current CPU usage for 5 seconds
-#print("CPU usage = ", psutil.cpu_percent(interval = 5))
+logging.info("Execution time: {} seconds.".format(execution_time)) # or divide by 3600 to get time in hour (if needed)
+# Get current CPU usage for 5 seconds - interval time can be adjusted 
+#print("CPU usage = ", psutil.cpu_percent(interval = 5)) # Uncomment this line if you want to retrieve total CPU usage
