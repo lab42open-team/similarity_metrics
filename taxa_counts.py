@@ -34,6 +34,7 @@ if "--output_dir" in arguments_dict:
 if "--ignore_prefix" in arguments_dict:
     ignore_prefix = arguments_dict.get("--ignore_prefix").lower() in ("true", "yes", "1")
 
+# Define function with single argument file_path
 def count_taxa_occurrences(file_path):
     # Logging debug
     logging.debug("Parsing file: {}".format(file_path))
@@ -43,22 +44,23 @@ def count_taxa_occurrences(file_path):
     sample_names = []
     # Open file
     with open(file_path, "r") as file:
+        # Retrieve first line as header - remove whitespaces - split columns using tab delimiter  
         header = next(file).strip()
         sample_names = header.split("\t")[1:]
         # Set line number 
         line_number = 2
-        # Initialize previous prefix and previous taxon
+        # Initialize previous prefix and previous taxon variables
         prev_prefix = None
         prev_taxon = None
         # Iterate for each line in file
         for line in file:
             # Separate columns by tab 
             columns = line.strip().split("\t")
-            # Check existence of adequate coulumns 
+            # Check existence of adequate coulumns -containing both taxa info and sample counts
             if len(columns) >= 2:
                 # Iterate for each column  
                 for col_index, column in enumerate(columns[1:]):
-                    # Retrieve sample names 
+                    # Retrieve sample names corresponding to current column index
                     sample_name = sample_names[col_index]
                     # Extraxt taxa from first column, separated by ;
                     taxa = columns[0].split(";")
@@ -78,16 +80,17 @@ def count_taxa_occurrences(file_path):
                                 # Append previous taxon + prefix + "__unknown"
                                 if prev_taxon:
                                     taxon = prev_taxon + ";" +  prefix  + "__unknown"  
-                        # Update previous taxon 
+                        # Update previous taxon with the current taxon for the next iteration
                         prev_taxon = taxon  
-                        # Increment the count for the taxon and column index in the nested dictionary
+                        # Increment the count for the taxon and sample name in the dictionary
                         taxon_counts[taxon] = taxon_counts.get(taxon, {})
                         taxon_counts[taxon][sample_name] = taxon_counts[taxon].get(sample_name, 0.0) + float(column)
             else:
+                # Raise warning if not enough columns in line & ignore line
                 logging.warning("Ignoring line: {} in {}. Not enough columns.".format(line_number, file_path))
             # Increase line number 
             line_number += 1
-    # Return dictionary with taxon counts
+    # Return dictionary with taxon counts, header and sample names 
     return taxon_counts, header, sample_names
 
 # Set input working directory
@@ -111,9 +114,11 @@ if input_wd:
     for folder_name in target_folders:
         # Construct the full path to the current folder
         folder_path = os.path.join(input_wd, folder_name)
-		# Process in read file, only if complete file exists 
+		# Process in read file, only if completed file exists 
         input_file_path = os.path.join(folder_path, "COMPLETED")
+        # Check if the file specified exists
         if os.path.exists(input_file_path):
+            # Open file
             with open(input_file_path, "r") as input_file:
                 input_data = input_file.read()     
                 # Find all files in the directory that match the pattern 'secondaryAccession_taxonomy_abundances(?:_SSU|LSU)?.v.[d].[d].tsv'  
@@ -130,6 +135,7 @@ if input_wd:
                         
                         # Set output working dirextory
                         output_wd = output_directory
+                        # Check output_wd is not empty
                         if output_wd:
                             # Construct output file name 
                             output_file_name = folder_name + "_" + file_name.split(pattern_name)[0] + pattern_name + "_output.tsv"
@@ -141,8 +147,11 @@ if input_wd:
                                 continue
                             # Process file since output not exist
                             taxon_counts, header, sample_names = count_taxa_occurrences(file_path)
+                            # Open output file - write mode
                             with open(output_file_path, "w") as output_file:
+                                # Write header
                                 output_file.write(header + "\n")
+                                # Write each taxon and its counts per sample to the output file 
                                 for taxon, count_dict in taxon_counts.items():
                                     output_file.write(taxon)
                                     for sample_name in sample_names:
