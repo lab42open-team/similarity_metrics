@@ -67,4 +67,4 @@ for i in range(len(sample_ids)):
 
 #print(set1, set2)
 
-# TODO add unifraq + SNB score
+# TODO check [unifraq - suitable for sequence data] + add SNB score
