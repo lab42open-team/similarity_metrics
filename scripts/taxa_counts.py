@@ -13,9 +13,9 @@ logging.basicConfig(level=logging.INFO)
 
 # Set global variables to control script execution upon development (initialize parameters to default)
 input_directory = "/ccmri/data/mgnify/frozen_february_2024/2024_1_17/harvested_mgnify_studies"
-#input_directory = "/ccmri/data_similarity_metrics/test_dataset/test_MGYS" #- test 
-#output_directory = "/ccmri/data_similarity_metrics/test_dataset/MGYS_taxa_counts_output" #- test
-output_directory = "/ccmri/data_similarity_metrics/taxa_counts_output"
+#input_directory = "/ccmri/similarity_metrics/data/test_dataset/test_MGYS" #- test 
+#output_directory = "/ccmri/similarity_metrics/data/test_dataset/MGYS_taxa_counts_output" #- test
+output_directory = "/ccmri/similarity_metrics/data/taxa_counts_output"
 ignore_prefix = False # if you want to ignore calculate counts for not fully specified taxa, set command line parameter to "= true || yes || 1"
 
 # Extract argument values imported from sys.argv
