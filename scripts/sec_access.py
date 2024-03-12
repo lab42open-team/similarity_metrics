@@ -10,7 +10,7 @@ import sys
 
 # Set global variables to control script execution upon development (initialize parameters to default)
 input_directory = "/ccmri/data/mgnify/frozen_february_2024/2024_1_17/harvested_mgnify_studies"
-output_directory = "/ccmri/similarity_metrics"
+output_directory = "/ccmri/similarity_metrics/data"
 
 # Extract argument values imported from sys.argv
 arguments_dict = {}
@@ -62,7 +62,7 @@ if input_wd:
                     # version_pipeline = [re.search(r'(v\d+\.\d+)', file_name).group(0) for file_name in matching_files]
                     # processed_data = folder_name + "\t" + "\t".join(matched_patterns) + "\t" + "\t".join(version_pipeline)
 
-                    processed_data = folder_name + "\t" + "\t".join(matched_patterns)
+                    processed_data = folder_name + "\t" + "\t".join(matched_patterns) # if you uncomment commands above, please comment this line. 
                     print("Matching files found in", folder_path)                    
 				
 					# Append the processed data to the accumulator string
