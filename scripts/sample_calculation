@@ -1,0 +1,89 @@
+### Use this script to calculate samples per MGYS
+
+# Iterate over all files contained in parent directory (all versions included)
+#! bin/bash
+
+# Set input directory
+directory="/ccmri/similarity_metrics/data/taxa_counts_output"
+
+# Iterate over each file in directory 
+for file in "$directory"/*.tsv; do  
+    filename=$(basename "$file" .tsv); 
+    column_count=$(head -n 1 "$file" | awk -F'\t' '{print NF}'); 
+    echo -e "$filename\t$((column_count -1))" >> "/ccmri/similarity_metrics/data/sample_counts.tsv"; 
+done
+
+# Iterate over each file of specific version in parent directory (please adjust version to the one of interest)
+#!/bin/bash
+
+# Set the input directory
+directory="/ccmri/similarity_metrics/data/taxa_counts_output"
+
+# Set the output file
+output_file="/ccmri/similarity_metrics/data/SampleCounts/v1_sample_counts.tsv" # adjust v No
+
+# Iterate over each file in the directory
+for file in "$directory"/*.tsv; do
+    # Extract filename without extension
+    filename=$(basename "$file" .tsv)
+    # Check if the filename contains "v5"
+    if [[ "$filename" == *"v1"* ]]; then # adjust v No
+        # Count the number of columns (samples) in the file, excluding the first column
+        column_count=$(head -n 1 "$file" | awk -F'\t' '{print NF-1}')
+        # Write the filename and the number of samples to the output file
+        echo -e "$filename\t$column_count" >> "$output_file"
+    fi
+done
+
+### Use the following commands to count total samples in each version
+#! bin/bash
+# Set input directory
+directory="/ccmri/similarity_metrics/data/SampleCounts"
+# Set temporary file
+temp_file="/ccmri/similarity_metrics/data/temp.tsv"
+# Iterate over each file contained in parent directory
+for file in "$directory"/*.tsv; do
+    # Extract version from filename 
+    version=$(basename "$file" _sample_counts.tsv | cut -dv -f2)
+    # Initialize total sample count
+    total_sample_count=0
+    # Iterate over each line in the input file
+    while IFS=$'\t' read -r filename count; do
+        # Extract count from line and add it to the total sample count 
+        total_sample_count=$((total_sample_count + count))
+    done < "$file"
+    echo -e "$version\t$total_sample_count" >> "$temp_file"
+done
+# Create header for .tsv file
+echo -e "Version\tSamples" > /ccmri/similarity_metrics/data/sample_counts.tsv
+# Append version and sample counts
+cat "$temp_file" >> /ccmri/similarity_metrics/data/sample_counts.tsv
+# Remove temporary file  
+rm "$temp_file"
+
+
+### Use the following commands to count total studies in each version 
+# Count number of studies per version and write it in output (total)
+#! bin/bash
+# Set input directory
+directory="/ccmri/similarity_metrics/data/SampleCounts"
+# Set output directory
+temp_file="/ccmri/similarity_metrics/data/temp.tsv"
+# Iterate over each file contained in parent directory
+for file in "$directory"/*.tsv; do
+    # Extract version from filename 
+    version=$(basename "$file" .tsv)
+    # Remove everything after first underscore
+    version=${version%%_*}
+    # Count number of lines in each file
+    line_count=$(wc -l < "$file")
+    # Write version and line count to output
+    echo -e "$version\t$line_count" >> "$temp_file"
+done 
+# Create header for .tsv file 
+echo -e "Version\tCount" > /ccmri/similarity_metrics/data/version_counts.tsv
+# Append counts from temporary to result file
+cat "$temp_file" >> /ccmri/similarity_metrics/data/version_counts.tsv
+# Remove temporary file 
+rm "$temp_file"
+
