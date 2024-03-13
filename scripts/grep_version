@@ -20,12 +20,12 @@ for i in {1..5}; do
     count=$(cat /ccmri/similarity_metrics/data/study_version.tsv | grep "v$i" | wc -l) 
 
     # Write directly to final output - if you select this option, ignore commands below and add "done" here
-    echo -e "v$i\t$count" >> /ccmri/similarity_metrics/data/version_count.tsv
+    echo -e "v$i\t$count" > /ccmri/similarity_metrics/data/version_count.tsv
 done
 
 ### OPTIONAL
     # Or write version and count to temporary output file, if you want to add header 
-    echo -e "v$i\t$count" >> /ccmri/similarity_metrics/data/temp.tsv
+    echo -e "v$i\t$count" > /ccmri/similarity_metrics/data/temp.tsv
 done
 
 # Create header for .tsv file 
