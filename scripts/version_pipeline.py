@@ -3,6 +3,9 @@
 # script name: version_pipeline.py
 # developed by: Nefeli Venetsianou
 # description: retrieve MGYS and corresponding version pipeline
+# input parameters from cmd:
+    # --input_dir="your_input_directory"
+    # --output_dir="your_output_directory"
 # framework: CCMRI
 
 import os, re

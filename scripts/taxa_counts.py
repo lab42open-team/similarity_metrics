@@ -3,10 +3,10 @@
 # script name: taxa_counts.py
 # developed by: Nefeli Venetsianou
 # description: get taxa counts per sample in study (Taxonomic hierarchy: k > p > c > o > f  > g > s)
-# input parameters in cmd:
-    # input_dir="your_input_directory"
-    # output_dir="your_output_directory"
-    # ignore_prefix="true" or "yes" or "1" - set this true if you want to ignore not fully specified taxa  
+# input parameters from cmd:
+    # --input_dir="your_input_directory"
+    # --output_dir="your_output_directory"
+    # --ignore_prefix="true" or "yes" or "1" - set this true if you want to ignore not fully specified taxa  
 # framework: CCMRI
 
 import os, re, sys, time

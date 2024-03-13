@@ -4,9 +4,9 @@
 # developed by: Nefeli Venetsianou
 # description: retrieve counts of specific taxon of interest per sample from MGYS 
 # input parameters: 
-    # input_dir="your_input_directory"
-    # study_name="MGYS000xxxxxx"
-    # taxon_of_interest="taxon"
+    # --input_dir="your_input_directory"
+    # --study_name="MGYS000xxxxxx"
+    # --taxon_of_interest="taxon"
 # framework: CCMRI
 
 import os, sys, time

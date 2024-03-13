@@ -3,6 +3,9 @@
 # script name: sec_access.py
 # developed by: Nefeli Venetsianou
 # description: retrieve and map MGYS with the corresponding secondary accession
+# input parameters from cmd:
+    # --input_dir="your_input_directory"
+    # --output_dir="your_output_directory"
 # framework: CCMRI
 
 import os, re
