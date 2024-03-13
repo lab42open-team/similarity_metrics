@@ -3,6 +3,10 @@
 # script name: taxa_counts.py
 # developed by: Nefeli Venetsianou
 # description: get taxa counts per sample in study (Taxonomic hierarchy: k > p > c > o > f  > g > s)
+# input parameters in cmd:
+    # input_dir="your_input_directory"
+    # output_dir="your_output_directory"
+    # ignore_prefix="true" or "yes" or "1" - set this true if you want to ignore not fully specified taxa  
 # framework: CCMRI
 
 import os, re, sys, time
@@ -16,7 +20,7 @@ input_directory = "/ccmri/data/mgnify/frozen_february_2024/2024_1_17/harvested_m
 #input_directory = "/ccmri/similarity_metrics/data/test_dataset/test_MGYS" #- test 
 #output_directory = "/ccmri/similarity_metrics/data/test_dataset/MGYS_taxa_counts_output" #- test
 output_directory = "/ccmri/similarity_metrics/data/taxa_counts_output"
-ignore_prefix = False # if you want to ignore calculate counts for not fully specified taxa, set command line parameter to "= true || yes || 1"
+ignore_prefix = False 
 
 # Extract argument values imported from sys.argv
 arguments_dict = {}
