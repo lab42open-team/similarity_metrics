@@ -1,11 +1,9 @@
 ### Use this script to calculate samples per MGYS
 
-# Iterate over all files contained in parent directory (all versions included)
+# Iterate over all files contained in parent directory (ALL versions included)
 #! bin/bash
-
 # Set input directory
 directory="/ccmri/similarity_metrics/data/taxa_counts_output"
-
 # Iterate over each file in directory 
 for file in "$directory"/*.tsv; do  
     filename=$(basename "$file" .tsv); 
@@ -15,13 +13,10 @@ done
 
 # Iterate over each file of specific version in parent directory (please adjust version to the one of interest)
 #!/bin/bash
-
 # Set the input directory
 directory="/ccmri/similarity_metrics/data/taxa_counts_output"
-
 # Set the output file
 output_file="/ccmri/similarity_metrics/data/SampleCounts/v1_sample_counts.tsv" # adjust v No
-
 # Iterate over each file in the directory
 for file in "$directory"/*.tsv; do
     # Extract filename without extension
