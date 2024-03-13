@@ -24,7 +24,7 @@ for i in {1..5}; do
 done
 
 ### OPTIONAL
-    # Or write version and count to temporary output file, if you want to add header ### OPTIONAL
+    # Or write version and count to temporary output file, if you want to add header 
     echo -e "v$i\t$count" >> /ccmri/similarity_metrics/data/temp.tsv
 done
 
