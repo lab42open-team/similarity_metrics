@@ -1,5 +1,16 @@
-### Use this script to calculate samples per MGYS
+# Head file of choice
+head myfile.tsv
 
+# Find pattern in files and count occurrences 
+find . -type f -name "*SSU*" | wc -l # * are for "anything" before and after SSU
+
+# Examples of use
+find . -type f -name "*v5*" | wc -l
+find . -type f -name "*ERP*" | wc -l
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### Use this script to calculate samples per MGYS
 # Iterate over all files contained in parent directory (ALL versions included)
 #! bin/bash
 # Set input directory
@@ -30,6 +41,8 @@ for file in "$directory"/*.tsv; do
     fi
 done
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 ### Use the following commands to count total samples in each version
 #! bin/bash
 # Set input directory
@@ -56,9 +69,9 @@ cat "$temp_file" >> /ccmri/similarity_metrics/data/sample_counts.tsv
 # Remove temporary file  
 rm "$temp_file"
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-### Use the following commands to count total studies in each version 
-# Count number of studies per version and write it in output (total)
+### Use the following commands to count total files per version (taxonomy abundances files) 
 #! bin/bash
 # Set input directory
 directory="/ccmri/similarity_metrics/data/SampleCounts"
@@ -82,8 +95,9 @@ cat "$temp_file" >> /ccmri/similarity_metrics/data/version_counts.tsv
 # Remove temporary file 
 rm "$temp_file"
 
-### Use the following comands to calculate total number of studies in version
-# Count number of studies per version and write it in output (total)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### Use the following comands to calculate total number of studies per version
 #! bin/bash
 # Set output directory
 temp_file="/ccmri/similarity_metrics/data/temp.tsv"
