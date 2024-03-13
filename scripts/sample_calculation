@@ -82,3 +82,20 @@ cat "$temp_file" >> /ccmri/similarity_metrics/data/version_counts.tsv
 # Remove temporary file 
 rm "$temp_file"
 
+### Use the following comands to calculate total number of studies in version
+# Count number of studies per version and write it in output (total)
+#! bin/bash
+# Set output directory
+temp_file="/ccmri/similarity_metrics/data/temp.tsv"
+# Loop though versions 1 to 5
+for i in {1..5}; do
+    # Grep version and count lines 
+    count=$(cat /ccmri/similarity_metrics/data/study_version.tsv | grep "v$i" | wc -l) 
+    echo -e "v$i\t$count" >> "$temp_file"
+done
+# Create header for .tsv file 
+echo -e "Version\tStudies" > /ccmri/similarity_metrics/data/studies_counts.tsv
+# Append counts from temporary to result file
+cat "$temp_file" >> /ccmri/similarity_metrics/data/studies_counts.tsv
+# Remove temporary file 
+rm "$temp_file"
