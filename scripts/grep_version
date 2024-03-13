@@ -12,7 +12,7 @@ cat /ccmri/similarity_metrics/data/study_version.tsv | grep v1 | wc -l > 1.tsv
 
 ### Run all commands below to get a single output with all version and corresponding number of studies found 
 # Count number of studies per version and write it in output (total)
-#! bin/bach
+#! bin/bash
 
 # Loop though versions 1 to 5
 for i in {1..5}; do
