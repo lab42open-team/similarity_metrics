@@ -17,7 +17,7 @@ from scipy.stats import spearmanr
 #input_dir = "/ccmri/profile_matching/test_dataset/MGYS_taxa_counts_output" # test
 # Read target file 
 #input_file = "/ccmri/data_similarity_metrics/test_dataset/MGYS_taxa_counts_output/MGYS00000305_ERP001568_taxonomy_abundances_v1.0.tsv_output.tsv" #[file for file in os.listdir(input_dir)]
-input_file = "/ccmri/data_similarity_metrics/test_dataset/MGYS_taxa_counts_output/MGYS00006566_SRP345292_taxonomy_abundances_LSU_v5.0.tsv_output.tsv" #[file for file in os.listdir(input_dir)]
+input_file = "/ccmri/data_similarity_metrics/test_dataset/MGYS00006566_SRP345292_taxonomy_abundances_LSU_v5.0.tsv_output.tsv" #[file for file in os.listdir(input_dir)]
 
 # Dictionary to store counts for each sample
 sample_counts = {}
