@@ -1,73 +1,56 @@
 import os, sys 
 
 def merge_data(input_dir):
-    sample_names = []
-    taxa_counts = {}
     all_taxa = set()
+    all_sample_names =set()
+    taxa_counts = {}
     
     # Iterate through all files in parent directory
     for file in os.listdir(input_dir):
         if file.endswith(".tsv"):
             target_file = os.path.join(input_dir, file)
             with open(target_file, "r") as file:
-                print("processing file: ", target_file)
-                # Extract sample named from header
-                header = next(file).strip().split("\t")[1:]
-                #print("Header", header)
-                sample_names.extend(header)
-                #print("Sample names", sample_names)
-                
-                # Initialize taxa counts dictionary 
-                for sample_name in sample_names:
-                    taxa_counts[sample_name] = {}
-                    
+                # Skip header
+                header = next(file).strip()
+                # Extract sample names from header
+                sample_names = header.split("\t")[1:]
+                # Keep unique sample names 
+                all_sample_names.update(sample_names)
+                                    
                 # Process each line in the file 
                 for line in file:
                     columns = line.strip().split("\t")
-                    #print(columns)
+                    # Define taxa
                     taxa = columns[0]
-                    #print(taxa)
+                    # Define counts
                     counts = columns[1:]
                     # Update set of all taxa
                     all_taxa.add(taxa)
                     
-                    # Update taxa counts dictionary 
-                    for i, sample_name in enumerate(sample_names):
-                        count = counts[i] if i < len(counts) else "0"
-                        try:
-                            count = float(count)
-                        except ValueError:
-                            count = 0
-                        taxa_counts[sample_name][taxa] = count
-                print(sample_name, taxa, columns)        
-    # Fill missing taxa counts with zeros
-    for sample_name in sample_names: 
-        for taxa in all_taxa:
-            if taxa not in taxa_counts[sample_name]:
-                taxa_counts[sample_name][taxa] = 0
-                    
-    return sample_names, taxa_counts
+                    # Update taxa counts dictionary - zip function to pair the elements of the two iterables to produce tuple 
+                    for sample, count in zip(sample_names, counts):
+                        # Get counts per taxon in dictionary with tuple key - if pair exists > return count, else return 0 
+                        taxa_counts[(taxa, sample)] = taxa_counts.get((taxa, sample), 0) + float(count)
+                                            
+    return all_sample_names, all_taxa, taxa_counts
 
-# TODO: print is correct, but output not. Needs correction 
-def write_output(sample_names, taxa_counts, output_file):
-    sample_names, taxa_counts = merge_data
+
+def write_output(all_sample_names, all_taxa, taxa_counts, output_file):
     with open(output_file, "w") as file:
-        # Write header
-        file.write("Taxa\t" + "\t".join(sample_names) + "\n")
-        # Write taxa counts for each sample
-        for taxa, count_dict in taxa_counts.items():
-            file.write(taxa + "\t")
-            for sample_name in sample_names: 
-                count = count_dict.get(sample_name, 0)
-                file.write("\t{}".format(count))
-            file.write("\n")
-        
+        file.write("\t" + "\t".join(sorted(all_sample_names)) + "\n")
+        for taxa in sorted(all_taxa):
+            file.write(taxa)
+            for sample in sorted(all_sample_names):
+                file.write("\t")
+                # Write counts per taxon and sample, complete with 0 if taxon not exist
+                file.write(str(taxa_counts.get((taxa, sample), 0)))
+            file.write("\n")        
             
 def main():
     input_dir = "/ccmri/similarity_metrics/data/test_dataset"
     output_file = "/ccmri/similarity_metrics/data/test_dataset/output.tsv"
-    sample_names_test, taxa_counts_test = merge_data(input_dir)
-    write_output(sample_names_test, taxa_counts_test, output_file)
+    test_sample_names, test_taxa, test_taxa_counts = merge_data(input_dir)
+    write_output(test_sample_names, test_taxa, test_taxa_counts, output_file)
 
 if __name__ == "__main__":
     main()       
