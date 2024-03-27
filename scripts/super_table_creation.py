@@ -1,3 +1,4 @@
+#!/usr/bin/python3.5
 import os, sys 
 
 def merge_data(input_dir):
@@ -46,11 +47,18 @@ def write_output(all_sample_names, all_taxa, taxa_counts, output_file):
                 file.write(str(taxa_counts.get((taxa, sample), 0)))
             file.write("\n")        
             
-def main():
-    input_dir = "/ccmri/similarity_metrics/data/test_dataset"
-    output_file = "/ccmri/similarity_metrics/data/test_dataset/output.tsv"
-    test_sample_names, test_taxa, test_taxa_counts = merge_data(input_dir)
-    write_output(test_sample_names, test_taxa, test_taxa_counts, output_file)
+def main():    
+    input_dir = "/ccmri/similarity_metrics/data/version_5.0/v5_SSU"
+    output_file = "/ccmri/similarity_metrics/data/version_5.0/v5.0_SSU_super_table.tsv"
+    version_sample_names, version_taxa, version_taxa_counts = merge_data(input_dir)
+    write_output(version_sample_names, version_taxa, version_taxa_counts, output_file)
 
 if __name__ == "__main__":
     main()       
+    
+    
+### TODO 
+# 1. Add input parameters 
+# 2. Add script description 
+# 3. Add execution time 
+# 4. Add debug parameters     
