@@ -9,18 +9,49 @@ find . -type f -name "*v5*" | wc -l
 find . -type f -name "*ERP*" | wc -l
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+""" 
+OLD VERSION - DO NOT USE 
 ### Use this script to calculate samples per MGYS
 # Iterate over all files contained in parent directory (ALL versions included)
-#! bin/bash
+#!/bin/bash
 # Set input directory
 directory="/ccmri/similarity_metrics/data/taxa_counts_output"
-# Iterate over each file in directory 
-for file in "$directory"/*.tsv; do  
-    filename=$(basename "$file" .tsv); 
-    column_count=$(head -n 1 "$file" | awk -F'\t' '{print NF}'); 
-    echo -e "$filename\t$((column_count -1))" >> "/ccmri/similarity_metrics/data/sample_counts.tsv"; 
+output_file="/ccmri/similarity_metrics/data/sample_counts.tsv"
+echo -e "Study\tSamples" > "$output_file"
+
+# Iterate over each subdirectory
+for subdir in "$directory"/*; do
+    # Check if current item exists in directory
+    if [ -d "$subdir" ]; then
+        # Iterate over each subsubdir of subdir in case it exists (eg. subdirs v4.0, 4.1, 5.0 > SSU-LSU subfolders)
+        for subsubdir in "$subdir"/*/; do
+            if [ -d "$subsubdir" ]; then
+                # Iterate over each file in directory 
+                for file in "$subsubdir"/*.tsv; do  
+                    if [ -f "$file" ]; then 
+                        # Check if file is empty
+                        if [ ! -s "$file" ]; then 
+                            echo "Warning: $file is empty. Skipping..."
+                            continue
+                        fi
+                        # Retrieve column count of file 
+                        column_count=$(head -n 1 "$file" | awk -F'\t' '{print NF}');
+                        # Check if column count is valid
+                        if [ "$column_count" -lt 1 ]; then 
+                            echo "Warning: $file does not have the expected format. skipping..."
+                            continue
+                        fi
+                        # Extract filename without extension
+                        filename=$(basename "$file" .tsv); 
+                        # Write filename & count to output file
+                        echo -e "$filename\t$((column_count -1))" >> "$output_file" 
+                    fi
+                done
+            fi
+        done
+    fi
 done
+"""
 
 # Iterate over each file of specific version in parent directory (please adjust version to the one of interest)
 #!/bin/bash
@@ -40,6 +71,43 @@ for file in "$directory"/*.tsv; do
         echo -e "$filename\t$column_count" >> "$output_file"
     fi
 done
+
+### TOTAL SAMPLE COUNTS
+#!/bin/bash
+
+# Set input directory containing the TSV files
+directory="/ccmri/similarity_metrics/data/SampleCounts/"
+
+# Output file
+output_file="/ccmri/similarity_metrics/data/SampleCounts/Total_sample_counts.tsv"
+
+# Initialize an associative array to store the total counts for each list
+declare -A total_counts
+
+# Loop through each TSV file in the directory
+for file in "$directory"/*.txt; do
+    # Get the name of the list from the file name
+    list_name=$(basename "$file" .txt)
+    
+    # Initialize total count for the current list
+    total_count=0
+    
+    # Read the count from each line in the TSV file and sum them up
+    while IFS=$'\t' read -r _ count; do
+        ((total_count += count))
+    done < "$file"
+    
+    # Store the total count for the current list
+    total_counts["$list_name"]=$total_count
+done
+
+# Write total counts for each list to the output file
+echo -e "List\tTotal Count" > "$output_file"
+for list_name in "${!total_counts[@]}"; do
+    echo -e "$list_name\t${total_counts[$list_name]}" >> "$output_file"
+done
+
+echo "Total counts for each list written to $output_file"
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -98,18 +166,33 @@ rm "$temp_file"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Use the following comands to calculate total number of studies per version
-#! bin/bash
+#!/bin/bash
+# Set input directory 
+directory="/ccmri/similarity_metrics/data/taxa_counts_output"
 # Set output directory
-temp_file="/ccmri/similarity_metrics/data/temp.tsv"
-# Loop though versions 1 to 5
-for i in {1..5}; do
-    # Grep version and count lines 
-    count=$(cat /ccmri/similarity_metrics/data/study_version.tsv | grep "v$i" | wc -l) 
-    echo -e "v$i\t$count" >> "$temp_file"
+output_file="/ccmri/similarity_metrics/data/studies_per_version_counts.tsv"
+echo -e "Version\tStudies" >> "$output_file"
+# Iterate over each subdirectory
+for subdir in "$directory"/*; do
+    # Check if current item exists in directory
+    if [ -d "$subdir" ]; then
+        # Get version from subdir name 
+        version=$(basename "$subdir")
+        # Count number of files included
+        file_count=$(find "$subdir" -maxdepth 1 -type f | wc -l)
+        # Write version & file count to output
+        echo -e "$version\t$file_count" >> "$output_file"
+
+        # Iterate over each subsubdir of subdir 
+        for subsubdir in "$subdir"/*/; do 
+            # Check if current subitem exists
+            if [ -d "$subsubdir" ]; then 
+                # Get subversion from subsubdir name 
+                subversion=$(basename "$subsubdir")
+                subfile_count=$(find "$subsubdir" -maxdepth 1 -type f | wc -l)
+                # Write version & file count to output
+                echo -e "$version/$subversion\t$subfile_count" >> "$output_file"
+            fi
+        done
+    fi
 done
-# Create header for .tsv file 
-echo -e "Version\tStudies" > /ccmri/similarity_metrics/data/studies_counts.tsv
-# Append counts from temporary to result file
-cat "$temp_file" >> /ccmri/similarity_metrics/data/studies_counts.tsv
-# Remove temporary file 
-rm "$temp_file"
