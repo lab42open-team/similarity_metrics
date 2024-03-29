@@ -8,7 +8,7 @@
 # input parameters: For now, no input parameters are allowed. 
 # framework: CCMRI
 
-import os, sys 
+import os
 import time
 import logging
 logging.basicConfig(level=logging.INFO)
