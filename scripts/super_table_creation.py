@@ -8,7 +8,7 @@
 # input parameters: For now, no input parameters are allowed. 
 # framework: CCMRI
 
-import os
+import os, sys
 import time
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -47,14 +47,15 @@ def merge_data(input_dir):
                     counts = columns[1:]
                     # Update set of all taxa
                     all_taxa.add(taxa)
-                    
                     # Update taxa counts dictionary - zip function to pair the elements of the two iterables to produce tuple 
                     for sample, count in zip(sample_names, counts):
                         # Get counts per taxon in dictionary with tuple key - if pair exists > return count, else return 0 
                         taxa_counts[(taxa, sample)] = taxa_counts.get((taxa, sample), 0) + float(count)
+        print("Size of dictionary until {} is {}".format(file, sys.getsizeof(taxa_counts)))    
     end_time = time.time()
     execution_time = end_time - start_time
-    logging.info("Execution time: {} seconds".format(execution_time))
+    print("Number of unique taxa: {}".format(len(all_taxa)))
+    logging.info("Execution time for merging data: {} seconds".format(execution_time))
                                             
     return all_sample_names, all_taxa, taxa_counts
 
@@ -73,18 +74,18 @@ def write_output(all_sample_names, all_taxa, taxa_counts, output_dir):
             file.write("\n")        
             
 def main():    
-    #input_dir = "/ccmri/similarity_metrics/data/version_5.0/v5_LSU" # input - LSU version 5.0 
-    #output_dir = "/ccmri/similarity_metrics/data/version_5.0/v5.0_LSU_super_table.tsv" # output - LSU version 5.0
-    input_dir = "/ccmri/similarity_metrics/data/version_5.0/v5_SSU" # input - SSU version 5.0
-    output_dir = "/ccmri/similarity_metrics/data/version_5.0/v5.0_SSU_super_table.tsv" # output - SSU version 5.0
-    #test # input_dir = "/ccmri/similarity_metrics/data/test_dataset"
-    #test # output_dir = "/ccmri/similarity_metrics/data/test_dataset"
+    #input_dir = "/ccmri/similarity_metrics/data/taxa_counts_output/v5.0/LSU_v5.0" # input - LSU version 5.0 
+    #output_dir = "/ccmri/similarity_metrics/data/SuperTable/v5.0_LSU_super_table.tsv" # output - LSU version 5.0
+    #input_dir = "/ccmri/similarity_metrics/data/taxa_counts_output/v5.0/SSU_v5.0" # input - SSU version 5.0
+    #output_dir = "/ccmri/similarity_metrics/data/SuperTable.0/v5.0_SSU_super_table.tsv" # output - SSU version 5.0
+    input_dir = "/ccmri/similarity_metrics/data/taxa_counts_output/v3.0" #test 
+    output_dir = "/ccmri/similarity_metrics/data/SuperTable/test_v3.0_super_table.tsv" #test 
     start_time = time.time()
     version_sample_names, version_taxa, version_taxa_counts = merge_data(input_dir)
     write_output(version_sample_names, version_taxa, version_taxa_counts, output_dir)
     end_time = time.time()
     execution_time = end_time - start_time
-    logging.info("Total execution time: {} seconds".format(execution_time))
+    logging.info("Total execution time: {} seconds".format(execution_time)) # total time to execute the whole script
 
 if __name__ == "__main__":
     main()         
