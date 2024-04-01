@@ -65,7 +65,7 @@ def merge_data(input_folder):
 def write_output(all_sample_names, all_taxa, taxa_counts, input_folder, output_dir):
     # Retrieve input folder name 
     input_folder_name = os.path.basename(input_folder) 
-    # construct output file name and path
+    # Construct output file name and path
     output_file_name = input_folder_name + "_super_table.tsv"
     output_file = os.path.join(output_dir, output_file_name) 
     with open(output_file, "w") as file:
