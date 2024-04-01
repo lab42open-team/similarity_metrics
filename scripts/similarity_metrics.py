@@ -61,8 +61,8 @@ def write_output(jaccard_scores, output_file):
             file.write("{}\t{}\t{}\n".format(item[0], item[1], item[2]))
             
 def main():
-    input_file = "/ccmri/similarity_metrics/data/test_dataset/output.tsv"
-    output_file = "/ccmri/similarity_metrics/data/test_dataset/jaccard_output.tsv"
+    input_file = "/ccmri/similarity_metrics/data/SuperTable/v5.0_LSU_super_table.tsv"
+    output_file = "/ccmri/similarity_metrics/data/Metrics/v5.0_LSU_jaccard_output.tsv"
     test_jaccard_smlrt = jaccard_score(input_file)
     write_output(test_jaccard_smlrt, output_file)
     
