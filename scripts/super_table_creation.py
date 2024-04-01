@@ -5,7 +5,9 @@
 # description: create super table, containing all counts per taxon and sample, for each version and/or LSU/SSU type 
     # Data from all related tsv files (created with: taxa_counts.py script) are merged into one single tsv file (super table). 
     # In case a taxon doesn't exist in a sample, count is considered zero (0).
-# input parameters: For now, no input parameters are allowed. 
+# input parameters: 
+    # --input_folder="input_folder_name" (please pick one of the input folders prefered, 
+    # eg. "v1.0", "v2.0", "v3.0", "v4.0_LSU", "v4.0_SSU", "v4.1_SSU", "v4.1_LSU", "v5.0_LSU", "v5.0_SSU" )
 # framework: CCMRI
 
 import os, sys
@@ -13,7 +15,7 @@ import time
 import logging
 logging.basicConfig(level=logging.INFO)
 
-def merge_data(input_dir):
+def merge_data(input_folder):
     all_taxa = set()
     all_sample_names =set()
     taxa_counts = {}
@@ -22,13 +24,13 @@ def merge_data(input_dir):
     start_time = time.time()
     
     # Iterate through all files in parent directory
-    for file in os.listdir(input_dir):
+    for file in os.listdir(input_folder):
         # Logging debug
         logging.debug("Input directory not defined")
         if file.endswith(".tsv"):
             # Logging debug
             logging.debug(".tsv files not found")
-            target_file = os.path.join(input_dir, file)
+            target_file = os.path.join(input_folder, file)
             logging.debug("Processing file: {}".format(target_file))
             with open(target_file, "r") as file:
                 # Skip header
@@ -60,10 +62,13 @@ def merge_data(input_dir):
     return all_sample_names, all_taxa, taxa_counts
 
 
-def write_output(all_sample_names, all_taxa, taxa_counts, output_dir):
-    # Construct output file name
-    #output_file_name = os.path.join(output_dir, "output.tsv") 
-    with open(output_dir, "w") as file:
+def write_output(all_sample_names, all_taxa, taxa_counts, input_folder, output_dir):
+    # Retrieve input folder name 
+    input_folder_name = os.path.basename(input_folder) 
+    # construct output file name and path
+    output_file_name = input_folder_name + "_super_table.tsv"
+    output_file = os.path.join(output_dir, output_file_name) 
+    with open(output_file, "w") as file:
         file.write("\t" + "\t".join(sorted(all_sample_names)) + "\n")
         for taxa in sorted(all_taxa):
             file.write(taxa)
@@ -74,18 +79,43 @@ def write_output(all_sample_names, all_taxa, taxa_counts, output_dir):
             file.write("\n")        
             
 def main():    
-    #input_dir = "/ccmri/similarity_metrics/data/taxa_counts_output/v5.0/LSU_v5.0" # input - LSU version 5.0 
-    #output_dir = "/ccmri/similarity_metrics/data/SuperTable/v5.0_LSU_super_table.tsv" # output - LSU version 5.0
-    #input_dir = "/ccmri/similarity_metrics/data/taxa_counts_output/v5.0/SSU_v5.0" # input - SSU version 5.0
-    #output_dir = "/ccmri/similarity_metrics/data/SuperTable.0/v5.0_SSU_super_table.tsv" # output - SSU version 5.0
-    input_dir = "/ccmri/similarity_metrics/data/taxa_counts_output/v3.0" #test 
-    output_dir = "/ccmri/similarity_metrics/data/SuperTable/test_v3.0_super_table.tsv" #test 
-    start_time = time.time()
-    version_sample_names, version_taxa, version_taxa_counts = merge_data(input_dir)
-    write_output(version_sample_names, version_taxa, version_taxa_counts, output_dir)
-    end_time = time.time()
-    execution_time = end_time - start_time
-    logging.info("Total execution time: {} seconds".format(execution_time)) # total time to execute the whole script
+    # Extract argument values imported from sys.argv
+    arguments_dict = {}
+    for arg in sys.argv[1:]:
+        if '=' in arg:
+            sep = arg.find('=')
+            key, value = arg[:sep], arg[sep + 1:]
+            arguments_dict[key] = value
+    # Set default input - output directories
+    input_dir = "/ccmri/similarity_metrics/data/taxa_counts_output/"
+    output_dir = "/ccmri/similarity_metrics/data/SuperTable/"
+           
+    # Update parameters based on the values passed by the command line 
+    input_folder = arguments_dict.get("--input_folder")
+    if not input_folder:
+        input_folder = input("Please provide input folder name, eg. v5.0_LSU: ")
+    if input_folder:
+        input_folder = os.path.join(input_dir, input_folder)
+    else:
+        logging.warning("No input file provided.")
+        sys.exit(1)            
+    
+    # Record total start time 
+    tot_start_time = time.time()    
+    
+    # Perform merge data
+    version_sample_names, version_taxa, version_taxa_counts = merge_data(input_folder)
+        
+    # Write output file
+    write_output(version_sample_names, version_taxa, version_taxa_counts, input_folder, output_dir)    
+    logging.info("Output written successfully to: {}".format(output_dir))
+   
+    # Record total end time  
+    tot_end_time = time.time()
+    
+    # Calculate total execution time
+    tot_execution_time = tot_end_time - tot_start_time
+    logging.info("Total execution time is {} seconds".format(tot_execution_time))
 
 if __name__ == "__main__":
     main()         
