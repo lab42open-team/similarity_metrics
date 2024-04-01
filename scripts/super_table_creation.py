@@ -14,6 +14,7 @@ import os, sys
 import time
 import logging
 logging.basicConfig(level=logging.INFO)
+#import psutil # Uncomment this line if you want to retrieve total CPU usage 
 
 def merge_data(input_folder):
     all_taxa = set()
@@ -116,6 +117,9 @@ def main():
     # Calculate total execution time
     tot_execution_time = tot_end_time - tot_start_time
     logging.info("Total execution time is {} seconds".format(tot_execution_time))
+    
+    # Get current CPU usage for 5 seconds - interval time can be adjusted 
+    #logging.info("CPU usage = ", psutil.cpu_percent(interval = 5)) # Uncomment this line if you want to retrieve total CPU usage
 
 if __name__ == "__main__":
     main()         
