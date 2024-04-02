@@ -54,7 +54,7 @@ def merge_data(input_folder):
                     for sample, count in zip(sample_names, counts):
                         # Get counts per taxon in dictionary with tuple key - if pair exists > return count, else return 0 
                         taxa_counts[(taxa, sample)] = taxa_counts.get((taxa, sample), 0) + float(count)
-        print("Size of dictionary until {} is {}".format(file, sys.getsizeof(taxa_counts)))    
+        #print("Size of dictionary until {} is {}".format(file, sys.getsizeof(taxa_counts)))    
     end_time = time.time()
     execution_time = end_time - start_time
     print("Number of unique taxa: {}".format(len(all_taxa)))
