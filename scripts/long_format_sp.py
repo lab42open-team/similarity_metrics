@@ -1,3 +1,4 @@
+# trial 
 #!/usr/bin/python3.5
 
 # script name: super_table_creation.py
@@ -52,12 +53,15 @@ def merge_data(input_folder):
                     all_taxa.add(taxa)
                     # Update taxa counts dictionary - zip function to pair the elements of the two iterables to produce tuple 
                     for sample, count in zip(sample_names, counts):
-                        # Get counts per taxon in dictionary with tuple key - if pair exists > return count, else return 0 
-                        taxa_counts[(taxa, sample)] = taxa_counts.get((taxa, sample), 0) + float(count)
+                        if (taxa, sample) not in taxa_counts:
+                            # Initialize count
+                            taxa_counts[(taxa, sample)] = 0
+                        # Get counts per taxon in dictionary with tuple key  
+                        taxa_counts[(taxa, sample)] += float(count)
         #print("Size of dictionary until {} is {}".format(file, sys.getsizeof(taxa_counts)))    
     end_time = time.time()
     execution_time = end_time - start_time
-    print("Number of unique taxa: {}".format(len(all_taxa)))
+    print("Total number of unique taxa: {}".format(len(all_taxa)))
     logging.info("Execution time for merging data: {} seconds".format(execution_time))
                                             
     return all_sample_names, all_taxa, taxa_counts
@@ -67,17 +71,16 @@ def write_output(all_sample_names, all_taxa, taxa_counts, input_folder, output_d
     # Retrieve input folder name 
     input_folder_name = os.path.basename(input_folder) 
     # Construct output file name and path
-    output_file_name = input_folder_name + "_super_table.tsv"
+    output_file_name = "lf_" + input_folder_name + "_super_table.tsv"
     output_file = os.path.join(output_dir, output_file_name) 
+    sorted_sample_names = sorted(all_sample_names)
+    sorted_taxa = sorted(all_taxa)
     with open(output_file, "w") as file:
-        file.write("\t" + "\t".join(sorted(all_sample_names)) + "\n")
-        for taxa in sorted(all_taxa):
-            file.write(taxa)
-            for sample in sorted(all_sample_names):
-                file.write("\t")
-                # Write counts per taxon and sample, complete with 0 if taxon not exist
-                file.write(str(taxa_counts.get((taxa, sample), 0)))
-            file.write("\n")        
+        file.write("Taxa\tSample\tCount\n")
+        for sample in sorted_sample_names:
+            for taxa in sorted_taxa:
+                count = taxa_counts.get((taxa, sample), 0)
+                file.write("{}\t{}\t{}\n".format(taxa, sample, count))        
             
 def main():    
     # Extract argument values imported from sys.argv
@@ -88,9 +91,10 @@ def main():
             key, value = arg[:sep], arg[sep + 1:]
             arguments_dict[key] = value
     # Set default input - output directories
-    input_dir = "/ccmri/similarity_metrics/data/taxa_counts_output/"
-    output_dir = "/ccmri/similarity_metrics/data/SuperTable/"
-           
+    input_folder = "/ccmri/similarity_metrics/data/test_dataset/test_folder"
+    #input_dir = "/ccmri/similarity_metrics/data/taxa_counts_output"
+    output_dir = "/ccmri/similarity_metrics/data/SuperTable/long_format"
+    """      
     # Update parameters based on the values passed by the command line 
     input_folder = arguments_dict.get("--input_folder")
     if not input_folder:
@@ -100,7 +104,7 @@ def main():
     else:
         logging.warning("No input file provided.")
         sys.exit(1)            
-    
+    """
     # Record total start time 
     tot_start_time = time.time()    
     

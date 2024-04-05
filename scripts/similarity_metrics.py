@@ -86,9 +86,10 @@ def main():
             key, value = arg[:sep], arg[sep + 1:]
             arguments_dict[key] = value
     # Set default input - output directories
-    input_dir = "/ccmri/similarity_metrics/data/SuperTable/"
+    input_file = "/ccmri/similarity_metrics/data/SuperTable/wide_format/wf_test_folder_super_table.tsv" 
+    #input_dir = "/ccmri/similarity_metrics/data/SuperTable/"
     output_dir = "/ccmri/similarity_metrics/data/Metrics/"
-           
+    """       
     # Update parameters based on the values passed by the command line 
     input_file = arguments_dict.get("--input_file")
     if not input_file:
@@ -98,7 +99,7 @@ def main():
     else:
         logging.warning("No input file provided.")
         sys.exit(1)
-        
+    """    
     # Record total start time 
     tot_start_time = time.time()
     
