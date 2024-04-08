@@ -25,7 +25,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 #import psutil # Uncomment this line if you want to retrieve total CPU usage 
 
-def jaccard_score(input_file):
+def jaccard_score_wide(input_file): # Calculates Jaccard Dissimilarity between samples for wide format super table 
     # Dictionary to store counts for each sample
     sample_counts = {}
     # Record start time 
@@ -57,7 +57,7 @@ def jaccard_score(input_file):
             set2 = np.array(list(sample_counts[sample_ids[j]].values()))
             jaccard_distance = distance.jaccard(set1, set2) 
             jaccard_scores.append((sample_ids[i], sample_ids[j], jaccard_distance))
-            #print("Jaccard Similarity Score between {}, {} = {}.".format(sample_ids[i], sample_ids[j], jaccard_distance))
+            #print("Jaccard Dissimilarity Score between {}, {} = {}.".format(sample_ids[i], sample_ids[j], jaccard_distance))
     # Record end time 
     end_time = time.time()
     # Calculate execution time 
@@ -104,7 +104,7 @@ def main():
     tot_start_time = time.time()
     
     # Perform jaccard similarity calculation
-    jaccard_smlrt = jaccard_score(input_file)
+    jaccard_smlrt = jaccard_score_wide(input_file)
     
     # Write output file
     write_output(jaccard_smlrt, input_file, output_dir)
