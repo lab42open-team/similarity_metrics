@@ -23,3 +23,4 @@ with open(pickle_file, "rb") as f:
 print(data.keys())    
 for key, value in data.items():
     print("Length of {} : {}".format(key, len(value)))
+    
