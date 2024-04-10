@@ -73,7 +73,7 @@ def write_output(jaccard_scores, input_file, output_dir):
     output_file_name = version + "_jaccard_output.tsv"
     output_file = os.path.join(output_dir, output_file_name)        
     with open(output_file, "w") as file:
-        file.write("Sample i\tSample j\tJaccard Score\n")
+        file.write("Sample i\tSample j\tJaccard Dissimilarity Score\n")
         for item in jaccard_scores:
             file.write("{}\t{}\t{}\n".format(item[0], item[1], item[2]))
             
@@ -103,11 +103,11 @@ def main():
     # Record total start time 
     tot_start_time = time.time()
     
-    # Perform jaccard similarity calculation
-    jaccard_smlrt = jaccard_score_wide(input_file)
+    # Perform jaccard dissimilarity calculation
+    jaccard_dissimality = jaccard_score_wide(input_file)
     
     # Write output file
-    write_output(jaccard_smlrt, input_file, output_dir)
+    write_output(jaccard_dissimality, input_file, output_dir)
     logging.info("Output written successfully to: {}".format(output_dir))    
     
     # Record total end time  
@@ -115,7 +115,7 @@ def main():
     
     # Calculate total execution time
     tot_execution_time = tot_end_time - tot_start_time
-    logging.info("Total execution time is {} seconds".format(tot_execution_time))
+    logging.info("Total execution time = {} seconds".format(tot_execution_time))
     
     # Get current CPU usage for 5 seconds - interval time can be adjusted 
     #logging.info("CPU usage = ", psutil.cpu_percent(interval = 5)) # Uncomment this line if you want to retrieve total CPU usage

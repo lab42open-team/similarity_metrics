@@ -77,8 +77,8 @@ def write_output(all_sample_names, all_taxa, taxa_counts, input_folder, output_d
                 file.write("\t")
                 # Write counts per taxon and sample, complete with 0 if taxon not exist
                 file.write(str(taxa_counts.get((taxa, sample), 0)))
-            file.write("\n")        
-            
+            file.write("\n") 
+
 def main():    
     # Extract argument values imported from sys.argv
     arguments_dict = {}
