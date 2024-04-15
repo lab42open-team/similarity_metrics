@@ -1,14 +1,16 @@
-# trial 
 #!/usr/bin/python3.5
 
 # script name: super_table_creation.py
 # developed by: Nefeli Venetsianou
 # description: create super table, containing all counts per taxon and sample, for each version and/or LSU/SSU type 
     # Data from all related tsv files (created with: taxa_counts.py script) are merged into one single tsv file (super table). 
-    # In case a taxon doesn't exist in a sample, count is considered zero (0).
+    # Three columns are created in the final format: Taxa | Sample |Count
+    # In case count for a taxon in a sample equals 0, it is ignored (not written in the final output file).
+    # User can choose to save output either in .tsv format (write_output function) or in .parquet format (write_parquet_output function).
 # input parameters: 
     # --input_folder="input_folder_name" (please pick one of the input folders prefered, 
     # eg. "v1.0", "v2.0", "v3.0", "v4.0_LSU", "v4.0_SSU", "v4.1_SSU", "v4.1_LSU", "v5.0_LSU", "v5.0_SSU" )
+    # For now these lines are commented, please uncomment them if you wich to use parameters via cmd. 
 # framework: CCMRI
 
 import os, sys
@@ -18,8 +20,6 @@ logging.basicConfig(level=logging.INFO)
 #import psutil # Uncomment this line if you want to retrieve total CPU usage 
 import pyarrow as pa
 import pyarrow.parquet as pq
-import h5py
-import pickle
 import pandas as pd
 import numpy as np
 
@@ -86,7 +86,9 @@ def write_output(all_sample_names, all_taxa, taxa_counts, input_folder, output_d
         for sample in sorted_sample_names:
             for taxa in sorted_taxa:
                 count = taxa_counts.get((taxa, sample), 0)
-                file.write("{}\t{}\t{}\n".format(taxa, sample, count))        
+                # Only write non zero counts 
+                if count != 0:
+                    file.write("{}\t{}\t{}\n".format(taxa, sample, count))        
 
 def write_parquet_output(all_sample_names, all_taxa, taxa_counts, input_folder, output_dir):
     # Retrieve input folder name 
@@ -99,53 +101,18 @@ def write_parquet_output(all_sample_names, all_taxa, taxa_counts, input_folder, 
     for taxa in sorted(all_taxa):
         for sample in sorted(all_sample_names):
             count = taxa_counts.get((taxa, sample), 0)
-            data["Taxa"].append(taxa)
-            data["Sample"].append(sample)
-            data["Count"].append(count)
-            
+            # Only append non-zero counts 
+            if count != 0:
+                data["Taxa"].append(taxa)
+                data["Sample"].append(sample)
+                data["Count"].append(count)            
     # Convert dictionary to pandas dataframe
     df = pd.DataFrame(data)
     # Convert Dataframe to PyArrow Table
     table = pa.Table.from_pandas(df)
     # Write PyArrow Table to Parquet file
     pq.write_table(table, output_file)
-    logging.info("Parquet output written seccessfully to {}.".format(output_file))
- 
-def write_hdf5_output(all_sample_names, all_taxa, taxa_counts, input_folder, output_dir):
-    # Retrieve input folder name 
-    input_folder_name = os.path.basename(input_folder) 
-    # Construct output file name and path
-    output_file_name = "lf_" + input_folder_name + "_super_table.h5"
-    output_file = os.path.join(output_dir,output_file_name)  
-    
-    # Create HDF5 file
-    with h5py.File(output_file, "w") as f:
-        # Create datasets for taxa, samples, counts
-        f.create_dataset("Taxa", data=np.array(list(all_taxa), dtype="S"))
-        f.create_dataset("Sample", data=np.array(list(all_sample_names), dtype="S"))
-        # Convert counts to numpy array
-        counts_array = np.zeros((len(all_taxa), len(all_sample_names)))
-        for i, taxa in enumerate(sorted(all_taxa)):
-            for j, sample in enumerate(sorted(all_sample_names)):
-                counts_array[i, j]= taxa_counts.get((taxa, sample), 0) 
-        # Create dataset for counts          
-        f.create_dataset("Counts", data=counts_array)
-    logging.info("HDF5 output written successfully to {}.".format(output_file))    
-
-def write_pickle_output(all_sample_names, all_taxa, taxa_counts, input_folder, output_dir):
-    # Retrieve input folder name 
-    input_folder_name = os.path.basename(input_folder) 
-    # Construct output file name and path
-    output_file_name = "lf_" + input_folder_name + "_super_table.pkl"
-    output_file = os.path.join(output_dir,output_file_name)  
-    
-    # Create dictionary to store data
-    data = {"all_sample_names": all_sample_names, "all_taxa": all_taxa, "taxa_counts": taxa_counts}
-    # Write data to pickle file
-    with open(output_file, "wb") as f:
-        pickle.dump(data, f)
-    logging.info("Pickle output written successfully to {}.".format(output_file)) 
-    
+    logging.info("Parquet output written seccessfully to {}.".format(output_file))    
             
 def main():    
     # Extract argument values imported from sys.argv
@@ -158,7 +125,7 @@ def main():
     # Set default input - output directories
     input_folder = "/ccmri/similarity_metrics/data/taxa_counts_output/v1.0"
     #input_dir = "/ccmri/similarity_metrics/data/taxa_counts_output"
-    output_dir = "/ccmri/similarity_metrics/data/SuperTable/long_format"
+    output_dir = "/ccmri/similarity_metrics/data/test_dataset/v1.0_testing/lf_sp_non-zeros_only"
     """      
     # Update parameters based on the values passed by the command line 
     input_folder = arguments_dict.get("--input_folder")
@@ -177,7 +144,7 @@ def main():
     version_sample_names, version_taxa, version_taxa_counts = merge_data(input_folder)
         
     # Write output file
-    write_pickle_output(version_sample_names, version_taxa, version_taxa_counts, input_folder, output_dir)    
+    write_output(version_sample_names, version_taxa, version_taxa_counts, input_folder, output_dir)    
     logging.info("Output written successfully to: {}".format(output_dir))
    
     # Record total end time  
