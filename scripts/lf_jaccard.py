@@ -1,3 +1,5 @@
+#!/usr/bin/python3.5
+
 import os
 import pandas as pd
 import numpy as np
@@ -7,13 +9,22 @@ import time
 import logging
 logging.basicConfig(level=logging.INFO)
 
+def preprocess_data(input_file):
+    # Read input file 
+    df = pd.read_csv(input_file, delimiter="\t")
+    # Pivot table to get samples as columns and taxa as rows
+    df_pivot = df.pivot(index="Taxa", columns="Sample", values="Count")
+    # Fill NaN calues with 0
+    df_pivot = df_pivot.fillna(0)
+    # Convert count to binary (0 - do not exist or 1 - exist)
+    df_pivot = (df_pivot > 0).astype(int)
+    return(df_pivot)
+
 def jaccard_score_long(input_file):
     # Record start time
     start_time = time.time()
-    # Define long format table and convert to DataFrame
-    df = pd.read_csv(input_file, delimiter="\t")
-    # Pivot DF to make Sample Ids as columns and Taxa as rows
-    df_pivot = df.pivot(index="Taxa", columns="Sample", values="Count")
+    # Preprocess data
+    df_pivot = preprocess_data(input_file)
     # Extract sample IDs from columns
     sample_ids = df_pivot.columns.tolist()
     # Initialize jaccard scores list to store results
@@ -38,7 +49,7 @@ def write_output(jaccard_scores, input_file, output_dir):
     input_file_name = os.path.basename(input_file)
     version = input_file_name.split("_super_table.tsv")[0]
     # Construct output file name and path
-    output_file_name = version + "_jaccard_output.tsv"
+    output_file_name = "jaccard_" + version + "_output.tsv"
     output_file = os.path.join(output_dir, output_file_name)        
     with open(output_file, "w") as file:
         file.write("Sample i\tSample j\tJaccard Dissimilarity Score\n")
@@ -47,9 +58,9 @@ def write_output(jaccard_scores, input_file, output_dir):
 
 def main():
     # Set input file
-    input_file = "/ccmri/similarity_metrics/data/SuperTable/long_format/lf_test_folder_super_table.tsv"
+    input_file = "/ccmri/similarity_metrics/data/test_dataset/test_folder/output/lf_input_super_table.tsv"
     # Set output directory 
-    output_dir = "/ccmri/similarity_metrics/data/Metrics/"
+    output_dir = "/ccmri/similarity_metrics/data/test_dataset/test_folder/output"
     # Record total start time
     tot_start_time = time.time()
     # Perform jaccard dissimilarity calculation

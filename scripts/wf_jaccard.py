@@ -16,6 +16,7 @@
 
 import os, sys
 import numpy as np
+import pandas as pd
 from scipy.spatial import distance
 from scipy.stats import kendalltau
 from scipy.stats import pearsonr
@@ -30,39 +31,24 @@ def jaccard_score_wide(input_file): # Calculates Jaccard Dissimilarity between s
     sample_counts = {}
     # Record start time 
     start_time = time.time()
-    
-    with open(input_file, "r") as file:
-        # Read header & sample IDs
-        header = file.readline().strip().split("\t")
-        sample_ids = header[1:]
-        # Initialize sample counts dictionary
-        for sample_id in sample_ids:
-            sample_counts[sample_id] = {}
-        # Read counts for each taxon 
-        for line in file:
-            columns = line.strip().split("\t")
-            taxon = columns[0]
-            counts = list(map(float, columns[1:]))
-            for i, sample_id in enumerate(sample_ids):
-                sample_counts[sample_id][taxon] = counts[i]
-            #print(header, taxon, counts)
-        # Initialize jaccard_score 
-        jaccard_scores = []    
-    # Iterate over indices of Sample IDs
+    df = pd.read_csv(input_file, delimiter="\t", index_col=0)
+    df = (df > 0).astype(int)
+    sample_ids = df.columns.tolist()
+    # Initialize jaccard scores list to story results
+    jaccard_scores = []
     for i in range(len(sample_ids)):
-    # Iterate over indices of sample IDs starting from i+1 to avoid comparing a sample to itself (duplicates)
-        for j in range(i + 1, len(sample_ids)):
-            # Define sets of ith and jth sample
-            set1 = np.array(list(sample_counts[sample_ids[i]].values()))
-            set2 = np.array(list(sample_counts[sample_ids[j]].values()))
-            jaccard_distance = distance.jaccard(set1, set2) 
-            jaccard_scores.append((sample_ids[i], sample_ids[j], jaccard_distance))
-            #print("Jaccard Dissimilarity Score between {}, {} = {}.".format(sample_ids[i], sample_ids[j], jaccard_distance))
-    # Record end time 
+        for j in range(i+1, len(sample_ids)):
+            # Define sets and get counts
+            set1 = df.iloc[:, i].values
+            set2 = df.iloc[:, j].values
+            jaccard_distance = distance.jaccard(set1, set2)
+            # Append results to list 
+            jaccard_scores.append((sample_ids[i], sample_ids[j], jaccard_distance))   
     end_time = time.time()
     # Calculate execution time 
     execution_def_time = end_time - start_time
     logging.info("Execution def time = {} seconds".format(execution_def_time))
+    print(sample_ids)
     return jaccard_scores
                 
 def write_output(jaccard_scores, input_file, output_dir):
@@ -70,7 +56,7 @@ def write_output(jaccard_scores, input_file, output_dir):
     input_file_name = os.path.basename(input_file)
     version = input_file_name.split("_super_table.tsv")[0]
     # Construct output file name and path
-    output_file_name = version + "_jaccard_output.tsv"
+    output_file_name = "jaccard_" + version + "_output.tsv"
     output_file = os.path.join(output_dir, output_file_name)        
     with open(output_file, "w") as file:
         file.write("Sample i\tSample j\tJaccard Dissimilarity Score\n")
@@ -86,9 +72,9 @@ def main():
             key, value = arg[:sep], arg[sep + 1:]
             arguments_dict[key] = value
     # Set default input - output directories
-    input_file = "/ccmri/similarity_metrics/data/SuperTable/wide_format/wf_test_folder_super_table.tsv" 
+    input_file = "/ccmri/similarity_metrics/data/test_dataset/test_folder/output/wf_input_super_table.tsv" 
     #input_dir = "/ccmri/similarity_metrics/data/SuperTable/"
-    output_dir = "/ccmri/similarity_metrics/data/Metrics/"
+    output_dir = "/ccmri/similarity_metrics/data/test_dataset/test_folder/output"
     """       
     # Update parameters based on the values passed by the command line 
     input_file = arguments_dict.get("--input_file")
@@ -127,6 +113,42 @@ if __name__ == "__main__":
         
         
 """
+ with open(input_file, "r") as file:
+        # Read header & sample IDs
+        header = file.readline().strip().split("\t")
+        sample_ids = header
+        print(sample_ids)
+        # Initialize sample counts dictionary
+        for sample_id in sample_ids:
+            sample_counts[sample_id] = {}
+        # Read counts for each taxon 
+        for line in file:
+            columns = line.strip().split("\t")
+            taxon = columns[0]
+            counts = list(map(float, columns[1:]))
+            for i, sample_id in enumerate(sample_ids):
+                sample_counts[sample_id][taxon] = counts[i]
+            #print(header, taxon, counts)
+        # Initialize jaccard_score 
+        jaccard_scores = []    
+    # Iterate over indices of Sample IDs
+    for i in range(len(sample_ids)):
+    # Iterate over indices of sample IDs starting from i+1 to avoid comparing a sample to itself (duplicates)
+        for j in range(i + 1, len(sample_ids)):
+            # combine all taxa present in both samples
+            all_taxa = set(sample_counts[sample_ids[i]].keys()) | set(sample_counts[sample_ids[j]].keys())
+            # Define sets of ith and jth sample
+            set1 = np.array([sample_counts[sample_ids[i]].get(taxon, 0) for taxon in all_taxa])
+            set2 = np.array([sample_counts[sample_ids[j]].get(taxon, 0) for taxon in all_taxa])
+            jaccard_distance = distance.jaccard(set1, set2) 
+            jaccard_scores.append((sample_ids[i], sample_ids[j], jaccard_distance))
+            #print("Jaccard Dissimilarity Score between {}, {} = {}.".format(sample_ids[i], sample_ids[j], jaccard_distance))
+    # Record end time 
+
+
+
+
+
         # Try different similarity metrics
         bray_curtis_dissimilarity = distance.braycurtis(set1, set2)
         #jaccard_distance = distance.jaccard(set1, set2) # no sense to calculate this one, doesn't take into account the frequence [counts]
