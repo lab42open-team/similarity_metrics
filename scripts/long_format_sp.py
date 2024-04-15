@@ -4,13 +4,13 @@
 # developed by: Nefeli Venetsianou
 # description: create super table, containing all counts per taxon and sample, for each version and/or LSU/SSU type 
     # Data from all related tsv files (created with: taxa_counts.py script) are merged into one single tsv file (super table). 
-    # Three columns are created in the final format: Taxa | Sample |Count
     # In case count for a taxon in a sample equals 0, it is ignored (not written in the final output file).
     # User can choose to save output either in .tsv format (write_output function) or in .parquet format (write_parquet_output function).
+    # Final format is long (3 columns): Taxa | Sample |Count
 # input parameters: 
     # --input_folder="input_folder_name" (please pick one of the input folders prefered, 
     # eg. "v1.0", "v2.0", "v3.0", "v4.0_LSU", "v4.0_SSU", "v4.1_SSU", "v4.1_LSU", "v5.0_LSU", "v5.0_SSU" )
-    # For now these lines are commented, please uncomment them if you wich to use parameters via cmd. 
+    # For now these lines are disabled (commented). Please uncomment them if you wish to use parameters via cmd. 
 # framework: CCMRI
 
 import os, sys

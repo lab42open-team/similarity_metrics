@@ -1,5 +1,10 @@
 #!/usr/bin/python3.5
 
+# script name: lf_jaccard.py
+# developed by: Nefeli Venetsianou
+# description: Calculate jaccard dissimilarity score by using long format super table (lf - sp) (lf -sp produced by long_format_sp.py)
+# framework: CCMRI
+
 import os
 import pandas as pd
 import numpy as np

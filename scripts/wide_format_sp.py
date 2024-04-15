@@ -1,13 +1,15 @@
 #!/usr/bin/python3.5
 
-# script name: super_table_creation.py
+# script name: wide_format_sp.py.py
 # developed by: Nefeli Venetsianou
 # description: create super table, containing all counts per taxon and sample, for each version and/or LSU/SSU type 
     # Data from all related tsv files (created with: taxa_counts.py script) are merged into one single tsv file (super table). 
     # In case a taxon doesn't exist in a sample, count is considered zero (0).
+    # Final format is wide (2 columns) : (Taxon|Sample)[count]
 # input parameters: 
     # --input_folder="input_folder_name" (please pick one of the input folders prefered, 
     # eg. "v1.0", "v2.0", "v3.0", "v4.0_LSU", "v4.0_SSU", "v4.1_SSU", "v4.1_LSU", "v5.0_LSU", "v5.0_SSU" )
+    # For now, these lines are disabled (commented). Please uncomment them if you wish to use parameters via cmd.
 # framework: CCMRI
 
 import os, sys

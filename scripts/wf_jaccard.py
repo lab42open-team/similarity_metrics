@@ -1,6 +1,11 @@
 #!/usr/bin/python3.5
 
-### This is a script to calculate similarity metrics between studies and samples in a study. 
+# script name: lf_jaccard.py
+# developed by: Nefeli Venetsianou
+# description: Calculate jaccard dissimilarity score by using wide format super table (wf - sp) (wf -sp produced by wide_format_sp.py)
+# framework: CCMRI
+
+### This is a script to calculate similarity metrics between studies and samples in a study. TESTING 
 # All vs All:
 # 1. Sample vs Sample within a study 
 # 2. Samples vs Samples in different studies of the same version (eg. v1.0, v2.0, etc)
