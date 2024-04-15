@@ -7,7 +7,7 @@
 
 import os
 import pandas as pd
-import numpy as np
+#import numpy as np
 #from sklearn.metrics import jaccard_score 
 from scipy.spatial import distance
 import time

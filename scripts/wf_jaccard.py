@@ -20,12 +20,12 @@
 # framework: CCMRI
 
 import os, sys
-import numpy as np
+#import numpy as np
 import pandas as pd
 from scipy.spatial import distance
-from scipy.stats import kendalltau
-from scipy.stats import pearsonr
-from scipy.stats import spearmanr
+#from scipy.stats import kendalltau
+#from scipy.stats import pearsonr
+#from scipy.stats import spearmanr
 import time
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -53,7 +53,7 @@ def jaccard_score_wide(input_file): # Calculates Jaccard Dissimilarity between s
     # Calculate execution time 
     execution_def_time = end_time - start_time
     logging.info("Execution def time = {} seconds".format(execution_def_time))
-    print(sample_ids)
+    #print(sample_ids)
     return jaccard_scores
                 
 def write_output(jaccard_scores, input_file, output_dir):
@@ -152,7 +152,8 @@ if __name__ == "__main__":
 
 
 
-
+### Need different format to make it work, for now the above has a binary format (presence - absence). 
+# For the rest metrics I need a different format that takes into account the counts per taxon - sample. 
 
         # Try different similarity metrics
         bray_curtis_dissimilarity = distance.braycurtis(set1, set2)
