@@ -21,7 +21,8 @@ logging.basicConfig(level=logging.INFO)
 import pyarrow as pa
 import pyarrow.parquet as pq
 import pandas as pd
-import numpy as np
+#import numpy as np
+#import zipfile # Uncomment this line if you want to create .zip file 
 
 def merge_data(input_folder):
     all_taxa = set()
@@ -88,7 +89,14 @@ def write_output(all_sample_names, all_taxa, taxa_counts, input_folder, output_d
                 count = taxa_counts.get((taxa, sample), 0)
                 # Only write non zero counts 
                 if count != 0:
-                    file.write("{}\t{}\t{}\n".format(taxa, sample, count))        
+                    file.write("{}\t{}\t{}\n".format(taxa, sample, count))
+    ### Please uncomment below if you want to create .zip file
+    # Create zip file containing tsv 
+    #with zipfile.ZipFile(os.path.join(output_dir, output_file_name + ".zip"), "w") as zipf:
+        #zipf.write(output_file, arcname=output_file_name)
+    # Remove initial tsv file
+    #os.remove(output_file)
+              
 
 def write_parquet_output(all_sample_names, all_taxa, taxa_counts, input_folder, output_dir):
     # Retrieve input folder name 
@@ -144,7 +152,7 @@ def main():
     version_sample_names, version_taxa, version_taxa_counts = merge_data(input_folder)
         
     # Write output file
-    write_parquet_output(version_sample_names, version_taxa, version_taxa_counts, input_folder, output_dir)    
+    write_output(version_sample_names, version_taxa, version_taxa_counts, input_folder, output_dir)    
     logging.info("Output written successfully to: {}".format(output_dir))
    
     # Record total end time  
