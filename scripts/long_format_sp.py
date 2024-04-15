@@ -123,9 +123,9 @@ def main():
             key, value = arg[:sep], arg[sep + 1:]
             arguments_dict[key] = value
     # Set default input - output directories
-    input_folder = "/ccmri/similarity_metrics/data/taxa_counts_output/v1.0"
+    input_folder = "/ccmri/similarity_metrics/data/test_dataset/test_folder/input"
     #input_dir = "/ccmri/similarity_metrics/data/taxa_counts_output"
-    output_dir = "/ccmri/similarity_metrics/data/test_dataset/v1.0_testing/lf_sp_non-zeros_only"
+    output_dir = "/ccmri/similarity_metrics/data/test_dataset/test_folder/output"
     """      
     # Update parameters based on the values passed by the command line 
     input_folder = arguments_dict.get("--input_folder")
@@ -144,7 +144,7 @@ def main():
     version_sample_names, version_taxa, version_taxa_counts = merge_data(input_folder)
         
     # Write output file
-    write_output(version_sample_names, version_taxa, version_taxa_counts, input_folder, output_dir)    
+    write_parquet_output(version_sample_names, version_taxa, version_taxa_counts, input_folder, output_dir)    
     logging.info("Output written successfully to: {}".format(output_dir))
    
     # Record total end time  
