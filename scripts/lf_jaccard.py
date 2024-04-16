@@ -16,6 +16,7 @@ logging.basicConfig(level=logging.INFO)
 
 def preprocess_data(input_file):
     # Read input file 
+    #df = pd.read_parquet(input_file) # please uncomment if you want to import parquet
     df = pd.read_csv(input_file, delimiter="\t")
     # Pivot table to get samples as columns and taxa as rows
     df_pivot = df.pivot(index="Taxa", columns="Sample", values="Count")
@@ -62,8 +63,8 @@ def write_output(jaccard_scores, input_file, output_dir):
             file.write("{}\t{}\t{}\n".format(item[0], item[1], item[2]))
 
 def main():
-    # Set input file
-    input_file = "/ccmri/similarity_metrics/data/test_dataset/test_folder/output/lf_input_super_table.tsv"
+    # Set input file (either .tsv or .parquet)
+    input_file = "/ccmri/similarity_metrics/data/test_dataset/test_folder/output/lf_input_super_table.tsv" 
     # Set output directory 
     output_dir = "/ccmri/similarity_metrics/data/test_dataset/test_folder/output"
     # Record total start time
