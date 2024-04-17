@@ -1,92 +1,92 @@
 #!/usr/bin/python3.5
 
-import os 
+import os
+import pandas as pd
+import re
 import time
 import logging
 logging.basicConfig(level=logging.INFO)
 
-# TODO not working properly yet - needs correction + Normalization will have to be implemented in the "raw" data and then implement aggregation. 
+def process_data(input_file):
+   # Read tsv file into a DataFrame
+    df = pd.read_csv(input_file, delimiter="\t", index_col=0, engine="python")
+    # Initialize DataFrame to store relative aundances
+    relative_abundance_df = pd.DataFrame(index=df.index)
 
-def normalize_counts(input_folder, output_dir):
-    start_time = time.time()
-    # List files in provided folder
-    for filename in os.listdir(input_folder):
-        # Iterate over those file with the corresponding file format
-        if filename.endswith(".tsv"):
-            target_file = os.path.join(input_folder, filename)
-            logging.info("Processing file: {}".format(target_file))
-            # Initialize dictionary to store counts per sample / taxon 
-            sample_counts = {}
-            with open(target_file, "r") as file:
-                # Skip header   
-                header = next(file).strip()
-                # Extract sample names from header
-                sample_names = header.split("\t")[1:]
-                # Initialize sample counts for each sample 
-                total_counts_per_sample = {sample: 0 for sample in sample_names}
-                
-                # Process each line in the file 
-                for line in file:
-                    columns = line.strip().split("\t")
-                    # Define taxa
-                    taxa = columns[0]
-                    # Define counts 
-                    counts = list(map(float, columns[1:]))
-                    for i, sample in enumerate(sample_names):
-                        total_counts_per_sample[sample] += counts[i]
-                        # Initialize sample_counts for taxon if not exists
-                        if taxa not in sample_counts:
-                            sample_counts[taxa] = {}
-                        """try:
-                            relative_abundance = counts[i] / total_counts_per_sample[sample]
-                        except ZeroDivisionError:
-                            logging.error("Zero total count for sample {} : {}".format(sample, total_counts_per_sample[sample]))
-                            raise
-                        sample_counts[taxa][sample] = relative_abundance"""
-                            
-                        
-                # Reset file pointer
-                file.seek(0)
-                next(file)
-                for line in file: 
-                    columns = line.strip().split("\t")
-                    taxa = columns[0]
-                    #  Iterate over each sample to calculate relative abundance
-                    for i, sample in enumerate(sample_names):
-                        # Initialize sample counts for taxon if not exists
-                        if taxa not in sample_counts:
-                            sample_counts[taxa] = {}
-                        # Initialize list for the current sample if not exists
-                        if sample not in sample_counts[taxa]:
-                            sample_counts[taxa][sample] = []                            
-                        # Calculate relative abundance per taxon & sample
-                        relative_abundances = counts[i] / total_counts_per_sample[sample]
-                        # Store relative abundance for the specific taxon
-                        sample_counts[taxa][sample] = relative_abundances     
-                        
-            write_output(sample_counts, header, filename, output_dir)  
-            logging.info("Output written successfully to: {}".format(output_dir))            
-    end_time = time.time()
-    execution_time = end_time - start_time
-    logging.info("Def execution time = {} seconds.".format(execution_time))
-    return sample_counts , header                     
-
-def write_output(sample_counts, header, filename, output_dir):
-    # Construct output file name 
-    output_filename = "ra" + filename
-    output_file_path = os.path.join(output_dir, output_filename)
-    with open(output_file_path, "w") as output_file:
-        # Write header 
-        output_file.write(header + "\n")
-        # Write normalized counts for each taxon
-        for taxa, counts in sample_counts.items():
-            output_file.write("{}\t{}\n".format(taxa, "\t".join(map(str, counts.values()))))
-            
-def main():
-    input_folder = "/ccmri/similarity_metrics/data/test_dataset/test_folder/input"
-    output_dir = "/ccmri/similarity_metrics/data/test_dataset/test_folder/output/ra_test"
-    # Perform normalize data
-    normalize_counts(input_folder, output_dir)  
+    # Iterate over columns (samples) in dataframe 
+    for sample in df.columns:
+        # Calculate total counts per sample
+        total_counts = df[sample].sum()
+        # Calculate relative abundance for each taxa in the sample
+        relative_abundance = df[sample] / total_counts
+        # Store relative abundance for each taxa in sample counts dictionary
+        relative_abundance_df[sample] = relative_abundance 
     
+    return relative_abundance_df
+
+def write_output(output_dir, study_name, input_file, data_frame):
+    # Extract file name from input file 
+    file_name = os.path.basename(input_file)
+    # Construct output file path with study name + file name
+    output_file = os.path.join(output_dir, study_name + "_" + file_name)
+    # Save DataFrame with relative abundances to a new tsv file
+    data_frame.to_csv(output_file, sep="\t")
+    logging.info("Output saved to: {}".format(output_file))
+
+def normalization(input_file, output_dir):
+    # Process data 
+    relative_abundance_df = process_data(input_file)
+    # Extract the study name from the parent directory of the input file 
+    study_name = os.path.basename(os.path.dirname(input_file))
+    # Write output
+    write_output(output_dir, study_name, input_file, relative_abundance_df)
+    
+def process_folders(parent_dir, output_dir):
+    # List directories in the parent folder 
+    all_folders = [folder for folder in os.listdir(parent_dir) if os.path.isdir(os.path.join(parent_dir, folder))]
+    # Filter folders containing "MGYS" in their names
+    target_folders = [folder for folder in all_folders if "MGYS" in folder]
+    # Counter of matching files
+    num_matching_files = 0
+    # Process each target folder 
+    for folder_name in target_folders:
+        # Construct the full path to the current folder
+        folder_path = os.path.join(parent_dir, folder_name)
+		# Process in read file, only if completed file exists 
+        input_file_path = os.path.join(folder_path, "COMPLETED")
+        # Check if the file specified exists
+        if os.path.exists(input_file_path):
+            # Open file
+            with open(input_file_path, "r") as input_file:     
+                # Find all files in the directory that match the pattern 'secondaryAccession_taxonomy_abundances(?:_SSU|LSU)?.v.[d].[d].tsv'  
+                matching_files = [file_name for file_name in os.listdir(folder_path) if re.match(r'\w+_taxonomy_abundances(?:_SSU|_LSU)?_v\d+\.\d+\.tsv', file_name)
+                                  and not re.match(r'(.+)_phylum_taxonomy_abundances(?:_SSU|_LSU)?_v\d+\.\d+\.tsv', file_name)]
+                # Count number of total matching files
+                num_matching_files += len(matching_files)           
+                # Check if there are matching files
+                if matching_files:
+                    # Process each matching file
+                    for file_name in matching_files:
+                        input_file = os.path.join(folder_path, file_name)
+                        logging.info("Processing file: {}".format(input_file))
+                        normalization(input_file, output_dir)           
+                else:
+                    logging.warning("No matching files found in {}.".format(folder_name))             
+
+def main():
+    input_dir = "/ccmri/data/mgnify/frozen_february_2024/2024_1_17/harvested_mgnify_studies"
+    output_dir = "/ccmri/similarity_metrics/data/normalized_raw_data" 
+
+    # Record start time
+    start_time = time.time()
+    # Process normalization for directory 
+    process_folders(input_dir, output_dir)
+    # Record end time
+    end_time = time.time()
+    # Calculate execution time 
+    execution_time = end_time - start_time
+    logging.info("Execution time is {} seconds.".format(execution_time))
+    
+
 if __name__ == "__main__":
-    main()        
+    main() 
