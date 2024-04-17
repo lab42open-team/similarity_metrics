@@ -71,7 +71,8 @@ def process_folders(parent_dir, output_dir):
                         logging.info("Processing file: {}".format(input_file))
                         normalization(input_file, output_dir)           
                 else:
-                    logging.warning("No matching files found in {}.".format(folder_name))             
+                    logging.warning("No matching files found in {}.".format(folder_name))
+    logging.info("Number of matching files: {}".format(num_matching_files))             
 
 def main():
     input_dir = "/ccmri/data/mgnify/frozen_february_2024/2024_1_17/harvested_mgnify_studies"
