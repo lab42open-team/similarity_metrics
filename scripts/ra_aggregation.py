@@ -10,43 +10,27 @@
     # --output_dir="your_output_directory"
     # --ignore_prefix="true" or "yes" or "1" - set this true if you want to ignore not fully specified taxa  
 # framework: CCMRI
+# last update: 22/04/2024
 
-import os, re, sys, time
+import os, sys, time
 #import psutil # Uncomment this line if you want to retrieve total CPU usage 
 import logging
 logging.basicConfig(level=logging.INFO)
 
-
 # Set global variables to control script execution upon development (initialize parameters to default)
-input_directory = "/ccmri/similarity_metrics/data/normalized_raw_data"
+input_directory = "/ccmri/similarity_metrics/data/normalized_raw_data" 
+#input_directory = "/ccmri/similarity_metrics/data/test_dataset/raw_data/test_ra" # only for testing
 output_directory = "/ccmri/similarity_metrics/data/aggregated_data/ra_taxa_counts_output"
+#output_directory = "/ccmri/similarity_metrics/data/test_dataset/raw_data/aggregated_ra" # only for testing
 ignore_prefix = False 
 
-# Extract argument values imported from sys.argv
-arguments_dict = {}
-for arg in sys.argv[1:]:
-    if '=' in arg:
-        sep = arg.find('=')
-        key, value = arg[:sep], arg[sep + 1:]
-        arguments_dict[key] = value
-        
-# Update parameters based on the values passed by the command line (if any)
-if "--input_dir" in arguments_dict:
-    input_directory = arguments_dict["--input_dir"]
-if "--output_dir" in arguments_dict:
-    output_directory = arguments_dict["--output_dir"]
-if "--ignore_prefix" in arguments_dict:
-    ignore_prefix = arguments_dict.get("--ignore_prefix").lower() in ("true", "yes", "1")
-
-# Define function with single argument file_path
-def count_taxa_occurrences(file_path):
+def count_taxa_occurrences(file_path, ignore_prefix):
     # Logging debug
     logging.debug("Parsing file: {}".format(file_path))
     # Store counts for each taxon into a dictionary - initialize dic
     taxon_counts = {}
     header = None
     sample_names = []
-    start_time = time.time()
     # Open file
     with open(file_path, "r") as file:
         # Retrieve first line as header - remove whitespaces - split columns using tab delimiter  
@@ -98,56 +82,66 @@ def count_taxa_occurrences(file_path):
     # Return dictionary with taxon counts, header and sample names 
     return taxon_counts, header, sample_names
 
+def write_output(output_file_path, header, taxon_counts, sample_names):
+    with open(output_file_path, "w") as output_file:
+        # Write header
+        output_file.write(header + "\n")
+        # Write each taxon and its counts per sample to the output (per row)
+        for taxon, count_dict in taxon_counts.items():
+            output_file.write(taxon)
+            # Iterate over each sample
+            for sample_name in sample_names:
+                count = count_dict.get(sample_name, 0)
+                output_file.write("\t{}".format(count))
+            # Add new line =- end of current row
+            output_file.write("\n")
 
-# Control existence of input working directory
-if os.path.isdir(input_directory):
-    # List all files 
-    target_files = [file for file in os.listdir(input_directory) if os.path.join(input_directory, file)]
-    # Filter files ending with .tsv 
-    tsv_files = [file for file in target_files if file.endswith(".tsv")]
-    # Start time of execution
+def main(input_directory, output_directory, ignore_prefix):
+    # Record start time
     start_time = time.time()
-    for file_name in tsv_files:
-        # Construct full path to the current file 
-        file_path = os.path.join(input_directory, file_name)
-        # set output working directory
-        output_wd = output_directory
-        # Check if output directory exists
-        if output_wd:
-            # Construct output file name 
-            output_file_name = file_name[:-4] + "output.tsv"
-            # Construct output file dynamically based on the input file
-            output_file_path = os.path.join(output_wd, output_file_name)   
-            # Check if output file already exists
+    # Check input directory existence
+    if not os.path.isdir(input_directory):
+        logging.error("Input directory not found {}.".format(input_directory))
+        return
+    # Iterate over each file of input directory 
+    for file_name in os.listdir(input_directory):
+        if file_name.endswith(".tsv"):
+            file_path = os.path.join(input_directory, file_name)
+            logging.info("Processing file: {}".format(file_name))
+            output_file_name = file_name[:-4] + "_output.tsv"
+            output_file_path = os.path.join(output_directory, output_file_name)
+            # Check if output file already exits
             if os.path.exists(output_file_path):
                 logging.warning("Output file already exists for {}. - Skip processing.".format(file_name))
                 continue
-            # Process file 
-            taxon_counts, header, sample_names = count_taxa_occurrences(file_path)
-            # Open output 
-            with open(output_file_path, "w") as output_file:
-                # Write header
-                output_file.write(header + "\n")
-                # Write each taxon and its counts per sample to the output (per row)
-                for taxon, count_dict in taxon_counts.items():
-                    output_file.write(taxon)
-                    # Iterate over each sample
-                    for sample_name in sample_names:
-                        count = count_dict.get(sample_name, 0)
-                        output_file.write("\t{}".format(count))
-                    # Add new line =- end of current row
-                    output_file.write("\n")
-            logging.info("Process data written to: {}".format(output_file_path))
-        else:
-            logging.warning("No output directory selected.")
-else:
-    logging.error("Input directory not found: {}".format(input_directory))
+            try:
+                # Apply count_taxa_occurences & write_output functions
+                taxon_counts, header, sample_names = count_taxa_occurrences(file_path, ignore_prefix)
+                write_output(output_file_path, header, taxon_counts, sample_names)
+                logging.info("Processed data written to: {}".format(output_file_path))
+            except Exception as e:
+                logging.error("Error processing file {}: {}".format(file_name, str(e)))
+                
+    # Record end time
+    end_time =time.time()
+    # Calculate total execution time
+    execution_time = end_time - start_time
+    logging.info("Total execution time is {} seconds.".format(execution_time))
     
-# End time of execution 
-end_time = time.time()
-# Calculate execution time 
-execution_time = end_time - start_time
-logging.info("Execution time is {} seconds.".format(execution_time))            
-                    
-                        
-
+if __name__ == "__main__":
+    # Extract argument values imported from sys.argv
+    arguments_dict = {}
+    for arg in sys.argv[1:]:
+        if '=' in arg:
+            sep = arg.find('=')
+            key, value = arg[:sep], arg[sep + 1:]
+            arguments_dict[key] = value 
+    # Update parameters based on the values passed by the command line (if any)
+    if "--input_dir" in arguments_dict:
+        input_directory = arguments_dict["--input_dir"]
+    if "--output_dir" in arguments_dict:
+        output_directory = arguments_dict["--output_dir"]
+    if "--ignore_prefix" in arguments_dict:
+        ignore_prefix = arguments_dict.get("--ignore_prefix").lower() in ("true", "yes", "1")
+    
+    main(input_directory, output_directory, ignore_prefix)
