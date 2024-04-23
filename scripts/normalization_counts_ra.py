@@ -10,6 +10,8 @@ logging.basicConfig(level=logging.INFO)
 def process_data(input_file):
    # Read tsv file into a DataFrame
     df = pd.read_csv(input_file, delimiter="\t", index_col=0, engine="python")
+    # Replace null values with 0 - if any
+    df.fillna(0, inplace=True)    
     # Initialize DataFrame to store relative aundances
     relative_abundance_df = pd.DataFrame(index=df.index)
 
