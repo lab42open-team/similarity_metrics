@@ -73,7 +73,13 @@ def count_taxa_occurrences(file_path, ignore_prefix):
                         prev_taxon = taxon  
                         # Increment the count for the taxon and sample name in the dictionary
                         taxon_counts[taxon] = taxon_counts.get(taxon, {})
-                        taxon_counts[taxon][sample_name] = taxon_counts[taxon].get(sample_name, 0.0) + float(column)
+                        if column.strip() == "":
+                            column = "0.0"
+                        try:
+                            taxon_counts[taxon][sample_name] = taxon_counts[taxon].get(sample_name, 0.0) + float(column.strip())
+                        except ValueError as e:
+                            print("Error converting to float:", e)
+                            print("String causing the error:", column.strip())
             else:
                 # Raise warning if not enough columns in line & ignore line
                 logging.warning("Ignoring line: {} in {}. Not enough columns.".format(line_number, file_path))
@@ -114,13 +120,9 @@ def main(input_directory, output_directory, ignore_prefix):
             if os.path.exists(output_file_path):
                 logging.warning("Output file already exists for {}. - Skip processing.".format(file_name))
                 continue
-            try:
-                # Apply count_taxa_occurences & write_output functions
-                taxon_counts, header, sample_names = count_taxa_occurrences(file_path, ignore_prefix)
-                write_output(output_file_path, header, taxon_counts, sample_names)
-                logging.info("Processed data written to: {}".format(output_file_path))
-            except Exception as e:
-                logging.error("Error processing file {}: {}".format(file_name, str(e)))
+            taxon_counts, header, sample_names = count_taxa_occurrences(file_path, ignore_prefix)
+            write_output(output_file_path, header, taxon_counts, sample_names)
+            logging.info("Processed data written to: {}".format(output_file_path))
                 
     # Record end time
     end_time =time.time()
