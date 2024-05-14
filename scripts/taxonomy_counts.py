@@ -1,0 +1,45 @@
+#!/usr/bin/python3.5
+
+# script name: taxonomy_counts.py
+# developed by: Nefeli Venetsianou
+# description: 
+    # Calculate counts per taxonomy (k > p > c > o > f > g > s) in each version Super Table. 
+# input parameters from cmd:
+    # --input_dir="your_input_directory"
+    # --output_dir="your_output_directory"
+# no input parameters are allowed 
+# framework: CCMRI
+# last update: 14/05/2024
+
+import pandas as pd 
+import re
+
+# Read file 
+df = pd.read_csv("/ccmri/similarity_metrics/data/super_table/long_format/lf_v1.0_super_table.tsv", sep = "\t")
+# Extract taxa column
+taxa = df["Taxa"]
+#print(taxa)
+# Initialize dictionary for each taxonomic level 
+counts = {"k__" : set(), "p__" : set(), "c__" : set(), 
+          "o__" : set(), "f__": set(), "g__" : set(), "s__" : set()}
+# Iterate over each taxon 
+for taxon in taxa: 
+    # Split taxon by semicolon if necessary 
+    sub_taxa = taxon.split(";")
+    # Ensure each subtaxon is counted only once - remove duplicates
+    unique_sub_taxa = set(sub_taxa)
+    for sub in unique_sub_taxa:
+        # Extract taxonomic level
+        matched_taxa = re.match(r"([kpcofgs])__", sub) # regex used to match any taxonomic level of interest followed by underscores
+        if matched_taxa:
+            # Define level by grouping according to the single character matched within the regex
+            level = matched_taxa.group(1)
+            # Extract key to access counts dictionary and add subtaxon to the list
+            counts[level + "__"].add(sub) 
+# Count unique taxa for each taxonomic level 
+unique_counts = {level:len(taxa) for level, taxa in counts.items()}
+
+# Print counts of unique taxa found
+for level, count in unique_counts.items():
+    print("{}:{}".format(level, count))
+        
