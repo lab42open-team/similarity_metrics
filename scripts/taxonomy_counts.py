@@ -13,9 +13,10 @@
 
 import pandas as pd 
 import re
+from matplotlib import pyplot as plt
 
 # Read file 
-df = pd.read_csv("/ccmri/similarity_metrics/data/super_table/long_format/lf_v1.0_super_table.tsv", sep = "\t")
+df = pd.read_csv("/ccmri/similarity_metrics/data/super_table/long_format/lf_v5.0_LSU_super_table.tsv", sep = "\t")
 # Extract taxa column
 taxa = df["Taxa"]
 #print(taxa)
@@ -38,6 +39,16 @@ for taxon in taxa:
             counts[level + "__"].add(sub) 
 # Count unique taxa for each taxonomic level 
 unique_counts = {level:len(taxa) for level, taxa in counts.items()}
+
+# Create pie plot
+fig = plt.figure(figsize=(10,7))
+# filter out items with zero counts
+non_zero_counts = {level : count for level, count in unique_counts.items() if count != 0}
+# Combine taxonomic labels and counts for display
+labels_with_counts = ["{}:{}".format(level, count) for level, count in non_zero_counts.items()]
+plt.pie(non_zero_counts.values(), labels = labels_with_counts)
+plt.title("Unique Taxa Counts v5.0_LSU")
+plt.savefig("/ccmri/similarity_metrics/data/super_table/long_format/plots/v5.0_LSU_taxonomy.png")
 
 # Print counts of unique taxa found
 for level, count in unique_counts.items():
