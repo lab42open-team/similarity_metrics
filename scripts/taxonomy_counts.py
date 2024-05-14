@@ -4,9 +4,6 @@
 # developed by: Nefeli Venetsianou
 # description: 
     # Calculate counts per taxonomy (k > p > c > o > f > g > s) in each version Super Table. 
-# input parameters from cmd:
-    # --input_dir="your_input_directory"
-    # --output_dir="your_output_directory"
 # no input parameters are allowed 
 # framework: CCMRI
 # last update: 14/05/2024
