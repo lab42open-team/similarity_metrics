@@ -46,7 +46,7 @@ plt.title("Taxa Distribution Plot")
 plt.xticks(rotation=90)
 plt.yticks(range(0, max(filtered_taxa_frequency) + 1, 200))
 plt.tight_layout()
-plt.savefig("/ccmri/similarity_metrics/data/super_table/long_format/distribution_test.png")
+plt.savefig("/ccmri/similarity_metrics/data/super_table/long_format/plots/distribution_test.png")
 
 
 """ 
