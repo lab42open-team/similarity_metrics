@@ -24,7 +24,7 @@ filename = sys.argv[1]
 file_path = os.path.join(parent_directory, filename)
 # check is file exists and is a tsv file
 if not os.path.exists(file_path) or not file_path.endswith(".tsv"):
-    print("File not found or not a .tsv file. Please provide a valid file.")
+    print("File not found or not a .tsv file. Please provide a valid file. If you wish, check parent directory '/ccmri/similarity_metrics/data/super_table/long_format/' for available input files.")
     sys.exit(1)
 
 # Read file 
