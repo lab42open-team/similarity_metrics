@@ -59,11 +59,13 @@ percentages = {level: round((count / total_taxa_count) * 100, 2) for level, coun
 
 # Create pie plot
 fig = plt.figure(figsize=(10,7))
-# filter out items with zero counts
+# Filter out items with zero counts
 non_zero_counts = {level : count for level, count in unique_counts.items() if count != 0}
 # Combine taxonomic labels and counts for display
 labels_with_counts = ["{}:{} ({}%)".format(level, count, percentages[level]) for level, count in non_zero_counts.items()]
-plt.pie(non_zero_counts.values(), labels = labels_with_counts)
+plt.pie(non_zero_counts.values(), labels = [None]*len(non_zero_counts)) # Set labels = labels_with_counts if you prefer labels instead of legend
+# Add legend to avoid overlapping of labels - please comment below row if you prefer labels instead of legend
+plt.legend(labels_with_counts, loc = "center left", bbox_to_anchor=(1, 0.5), fontsize="small" )
 # Adjusting title name by filename provided
 plot_title = "Unique Taxa Counts " + re.sub(r"^lf_", "", filename)[:-16] 
 plt.title(plot_title)
@@ -76,3 +78,4 @@ plt.savefig(output_file_path)
 # Print counts of unique taxa found
 for level, count in unique_counts.items():
     print("{}:{}".format(level, count))
+print("Total Unique Taxa Count: {}".format(total_taxa_count))
