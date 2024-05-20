@@ -1,6 +1,6 @@
 #!/usr/bin/python3.5
 
-# script name: taxonomy_counts.py
+# script name: taxonomy_dustribution.py
 # developed by: Nefeli Venetsianou
 # description: 
     # Calculate counts per taxonomy (k > p > c > o > f > g > s) in each version Super Table. 
