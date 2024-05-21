@@ -70,9 +70,9 @@ plt.legend(labels_with_counts, loc = "center left", bbox_to_anchor=(1, 0.5), fon
 plot_title = "Unique Taxa Counts " + re.sub(r"^lf_", "", filename)[:-16] 
 plt.title(plot_title)
 # Adjusting output filename according to input filename 
-output_direcroty = "/ccmri/similarity_metrics/data/super_table/long_format/plots/"
+output_directory = "/ccmri/similarity_metrics/data/super_table/long_format/plots/"
 output_filename = re.sub(r"^lf_", "", filename)[:-16] + "_taxonomy_counts.png"
-output_file_path = os.path.join(output_direcroty, output_filename)
+output_file_path = os.path.join(output_directory, output_filename)
 plt.savefig(output_file_path)
 
 # Print counts of unique taxa found

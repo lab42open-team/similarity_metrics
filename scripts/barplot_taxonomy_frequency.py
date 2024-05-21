@@ -8,17 +8,28 @@
 # no input parameters are allowed (for now)
 # framework: CCMRI
 # last update: 14/05/2024
-
+import sys, os, re
 import pandas as pd
-import numpy as np
 import matplotlib 
+import matplotlib.pyplot as plt
 # use non-interactive backend
 matplotlib.use("Agg")
 
-import matplotlib.pyplot as plt
+
+parent_directory = "/ccmri/similarity_metrics/data/super_table/long_format/"
+# Add filename from command-line arguments
+if len(sys.argv) < 2:
+    print("Please provide the filename (eg. lf_v4.1_LSU_super_table.tsv)")
+    sys.exit(1)   
+filename = sys.argv[1]
+file_path = os.path.join(parent_directory, filename)
+# check is file exists and is a tsv file
+if not os.path.exists(file_path) or not file_path.endswith(".tsv"):
+    print("File not found or not a .tsv file. Please provide a valid file. If you wish, check parent directory '/ccmri/similarity_metrics/data/super_table/long_format/' for available input files.")
+    sys.exit(1)
 
 # Parse data into a DataFrame 
-df = pd.read_csv("/ccmri/similarity_metrics/data/super_table/long_format/lf_v1.0_super_table.tsv", sep="\t")
+df = pd.read_csv(file_path, sep="\t")
 #print(df)
 
 # Calculate frequency (number of occurrences) per unique taxon 
@@ -34,19 +45,25 @@ lower_quartile = taxa_frequency.quantile(0.25)
 med_quartile = taxa_frequency.quantile(0.50)
 higher_quartile = taxa_frequency.quantile(0.75)
 # Filter out frequencies below 
-filtered_taxa_frequency = taxa_frequency[taxa_frequency >= med_quartile]
-print("Number of filtered taxa: ", len(filtered_taxa_frequency))
+#filtered_taxa_frequency = taxa_frequency[taxa_frequency >= med_quartile]
+#print("Number of filtered taxa: ", len(filtered_taxa_frequency))
 
 # Plot histogram 
 plt.figure(figsize=(20,15))
-filtered_taxa_frequency.plot(kind="bar")
+taxa_frequency.plot(kind="bar")
 plt.xlabel("Taxa")
 plt.ylabel("Total Count")
-plt.title("Taxa Distribution Plot")
+# Adjusting title name by filename provided
+plot_title = "Taxa Distribution Plot " + re.sub(r"^lf_", "", filename)[:-16] 
+plt.title(plot_title)
 plt.xticks(rotation=90)
-plt.yticks(range(0, max(filtered_taxa_frequency) + 1, 200))
-plt.tight_layout()
-plt.savefig("/ccmri/similarity_metrics/data/super_table/long_format/plots/distribution_test.png")
+plt.yticks(range(0, max(taxa_frequency) + 1, 200))
+#plt.tight_layout()
+# Adjusting output filename according to input filename 
+output_directory = "/ccmri/similarity_metrics/data/super_table/long_format/plots/"
+output_filename = re.sub(r"^lf_", "", filename)[:-16] + "_taxonomy_distribution_plot.png"
+output_file_path = os.path.join(output_directory, output_filename)
+plt.savefig(output_file_path)
 
 
 """ 
