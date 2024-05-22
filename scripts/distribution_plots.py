@@ -1,17 +1,20 @@
 #!/usr/bin/python3.5
 
-# script name: distribution_plot.py
+# script name: distribution_plots.py
 # developed by: Nefeli Venetsianou
 # description: 
-    # Plot distribution in taxonomic depth accross all samples per version.
-    # Applied in normalized & aggregated data in Super Table (produced by: normalization_counts_ra.py & ra_aggregation.py)
-# no input parameters are allowed (for now)
+    # Plot taxa frequency accross all samples per version (def: bar_plot_taxa_frequency)
+    # Plot total percentage (count) of taxa per version (def: pie_plot_taxonomy_distribution)
+    # Applied in normalized data in Super Table (produced by: normalization_counts_ra.py (oxygen) & long_format_super_table.py (zorba hpc))
+# Input parameters: filename of super table to be analyzed (eg. lf_v1.0_super_table.tsv)
 # framework: CCMRI
-# last update: 14/05/2024
+# last update: 22/05/2024
+
 import sys, os, re
 import pandas as pd
 import matplotlib 
 import matplotlib.pyplot as plt
+import seaborn as sns
 # use non-interactive backend
 matplotlib.use("Agg")
 
@@ -32,7 +35,7 @@ def bar_plot_taxa_frequency(df, filename):
     taxa_frequency = df["Taxa"].value_counts()
     # Get descriptive statistics on taxa frequency 
     taxa_description = taxa_frequency.describe()
-    print(taxa_description)
+    print("Taxa Description: ", taxa_description)
     # Calculate lower quartile - if needed for filtered_taxa_frequency - uncomment below
     #lower_quartile = taxa_frequency.quantile(0.25)
     #med_quartile = taxa_frequency.quantile(0.50)
@@ -52,7 +55,7 @@ def bar_plot_taxa_frequency(df, filename):
     plt.xticks(rotation=90)
     plt.yticks(range(0, max(taxa_frequency) + 1, 200))
     # Adjusting output filename according to input filename 
-    output_filename = re.sub(r"^lf_", "", filename)[:-16] + "_taxonomy_distribution_plot.png"
+    output_filename = re.sub(r"^lf_", "", filename)[:-16] + "_bar_plot_taxa_frequency.png"
     output_file_path = os.path.join(output_directory, output_filename)
     plt.savefig(output_file_path)
 
@@ -94,13 +97,46 @@ def pie_plot_taxonomy_distribution(df, filename):
     plot_title = "Unique Taxa Counts " + re.sub(r"^lf_", "", filename)[:-16] 
     plt.title(plot_title)
     # Adjusting output filename according to input filename 
-    output_filename = re.sub(r"^lf_", "", filename)[:-16] + "_taxonomy_counts.png"
+    output_filename = re.sub(r"^lf_", "", filename)[:-16] + "_pie_plot_taxa_distribution.png"
     output_file_path = os.path.join(output_directory, output_filename)
     plt.savefig(output_file_path)
     # Print counts of unique taxa found
     for level, count in unique_counts.items():
         print("{}:{}".format(level, count))
     print("Total Unique Taxa Count: {}".format(total_taxa_count))
+
+def total_unique_taxonomy_sample_counts(df, filename):
+    # Count total unique taxa occurrences
+    unique_taxa_per_sample = df.drop_duplicates(subset=["Sample", "Taxa"])
+    taxa_sample_counts = unique_taxa_per_sample.groupby("Sample")["Taxa"].nunique()
+    # Plot histogram 
+    plt.figure(figsize=(20,15))
+    taxa_sample_counts.plot(kind="bar")
+    plt.xlabel("Total Sample")
+    plt.ylabel("Total Unique Taxa Count")
+    # Adjusting title name by filename provided
+    plot_title = "Unique Taxonomy Sample Count " + re.sub(r"^lf_", "", filename)[:-16] 
+    plt.title(plot_title)
+    plt.xticks(rotation=90,  fontsize=12)
+    plt.yticks(range(0, max(taxa_sample_counts) + 1, 50))
+    # Adjusting output filename according to input filename 
+    output_filename = re.sub(r"^lf_", "", filename)[:-16] + "_unique_taxonomy_sample_plot.png"
+    output_file_path = os.path.join(output_directory, output_filename)
+    plt.savefig(output_file_path)
+    print( "Unique Taxonomy Sample Count Description: " , taxa_sample_counts.describe())
+
+def taxa_sample_ra_plot(df, filename):
+    plt.figure(figsize=(20,15))
+    sns.boxplot(x="Count", y="Taxa", data = df, palette="vlag")
+    sns.stripplot(x="Count", y="Taxa", data = df, size = 4, color=".3", linewidth=0)
+    plt.xlabel("Relative abundance")
+    plt.ylabel("Taxa")
+    plot_title = "Taxa Relative Abundance" + re.sub(r"^lf_", "", filename)[:-16] 
+    plt.title(plot_title)
+    plt.tight_layout()
+    output_filename = re.sub(r"^lf_", "", filename)[:-16] + "_taxa_ra_sample_plot.png"
+    output_file_path = os.path.join(output_directory, output_filename)
+    plt.savefig(output_file_path)       
 
 def main():
     # Add filename from command-line arguments
@@ -109,8 +145,10 @@ def main():
         sys.exit(1)   
     filename = sys.argv[1]
     df = read_file(filename)
-    bar_plot_taxa_frequency(df, filename)
+    #bar_plot_taxa_frequency(df, filename)
     pie_plot_taxonomy_distribution(df, filename)
+    #total_unique_taxonomy_sample_counts(df, filename)
+    taxa_sample_ra_plot(df, filename)
     
 if __name__ == "__main__":
     main()
