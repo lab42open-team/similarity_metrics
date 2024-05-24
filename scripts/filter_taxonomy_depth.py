@@ -20,7 +20,8 @@ def read_file(filename):
     file_path = os.path.join(parent_directory, filename)
     # check is file exists and is a tsv file
     if not os.path.exists(file_path) or not file_path.endswith(".tsv"):
-        print("File not found or not a .tsv file. Please provide a valid file. If you wish, check parent directory '{}' for available input files.".format(parent_directory))
+        print("File not found or not a .tsv file. Please provide a valid file. If you wish, check parent directory '{}' \
+              for available input files.".format(parent_directory))
         sys.exit(1)
     return pd.read_csv(file_path, sep="\t")
 
