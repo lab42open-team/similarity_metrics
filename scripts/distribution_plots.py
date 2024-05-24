@@ -3,12 +3,12 @@
 # script name: distribution_plots.py
 # developed by: Nefeli Venetsianou
 # description: 
-    # bar_plot_taxa_frequency: creates taxa frequency accross all samples per version 
+    # bar_plot_taxa_frequency: creates taxa frequency across all samples per version 
     # pie_plot_taxonomy_distribution: creates plot total percentage (count) of taxa per version 
-    # total_unique_taxonomy_sample_counts: creates plot with unique taxa in sample counts
-    # taxa_sample_ra_plot: created plot with total taxa found, the relative abundance and dots representing samples that contain specific taxa.  
+    # total_unique_taxonomy_sample_counts: creates plot with unique taxa in sample counts (scatter plot)
+    # taxa_sample_ra_plot: creates plot with total taxa found, the relative abundance and dots representing samples that contain specific taxa.  
     # Applied in normalized data in Super Table (produced by: normalization_counts_ra.py (oxygen) & long_format_super_table.py (zorba hpc))
-# Input parameters: filename of super table to be analyzed (eg. lf_v1.0_super_table.tsv)
+# Input parameters: filename of super table to be analyzed (eg. lf_v1.0_super_table.tsv OR v1.0_outfiltered.tsv)
 # framework: CCMRI
 # last update: 24/05/2024
 
@@ -120,27 +120,30 @@ def pie_plot_taxonomy_distribution(df, filename):
         print("{}:{}".format(level, count))
     print("Total Unique Taxa Count: {}".format(total_taxa_count))
 
-"""
+
 def total_unique_taxonomy_sample_counts(df, filename):
     # Count total unique taxa occurrences
     unique_taxa_per_sample = df.drop_duplicates(subset=["Sample", "Taxa"])
     taxa_sample_counts = unique_taxa_per_sample.groupby("Sample")["Taxa"].nunique()
-    # Plot histogram 
+    # Prepare data for scatter plot
+    x = range(len(taxa_sample_counts))
+    y = taxa_sample_counts.values
+    # Plot scatter plot 
     plt.figure(figsize=(20,15))
-    taxa_sample_counts.plot(kind="bar")
-    plt.xlabel("Total Sample")
-    plt.ylabel("Total Unique Taxa Count")
+    plt.scatter(x, y, c = "blue", alpha=0.5)
+    plt.xlabel("Number of Samples")
+    plt.ylabel("Number of Taxa")
     # Adjusting title name by filename provided
-    plot_title = "Unique Taxonomy Sample Count " + re.sub(r"^lf_", "", filename)[:-16] 
+    plot_title = "Scatter Plot Taxa-Sample Number " + re.sub(r"^lf_", "", filename)[:-16] 
     plt.title(plot_title)
-    plt.xticks(rotation=90,  fontsize=12)
-    plt.yticks(range(0, max(taxa_sample_counts) + 1, 200))
-    # Adjusting output filename according to input filename 
-    output_filename = re.sub(r"^lf_", "", filename)[:-16] + "_unique_taxonomy_sample_plot.png"
+    plt.xticks(rotation=90, fontsize=12)
+    plt.yticks(range(0, max(y) + 1, 5))
+     # Adjusting output filename according to input filename 
+    output_filename = re.sub(r"^lf_", "", filename)[:-16] + "_scatter_plot_taxa_sample_number.png"
     output_file_path = os.path.join(output_directory, output_filename)
-    plt.savefig(output_file_path)
-    print( "Unique Taxonomy Sample Count Description: " , taxa_sample_counts.describe())
-"""
+    plt.savefig(output_file_path)   
+    print("Unique Taxonomy Sample Count Description: " , taxa_sample_counts.describe())
+
 
 def taxa_sample_ra_plot(df, filename):
     plt.figure(figsize=(20,15))
@@ -164,8 +167,8 @@ def main():
     df = read_file(filename)
     bar_plot_taxa_frequency(df, filename)
     pie_plot_taxonomy_distribution(df, filename)
-    #total_unique_taxonomy_sample_counts(df, filename)
-    #taxa_sample_ra_plot(df, filename)
+    total_unique_taxonomy_sample_counts(df, filename)
+    taxa_sample_ra_plot(df, filename)
     
 if __name__ == "__main__":
     main()
