@@ -33,7 +33,7 @@ def filter_taxa_depth(df):
     return phylum_df
 
 def sum_abundance(phylum_df):
-    # Sum abundance (count) for the same sample - taxa
+    # Sum abundance (count) for the same sample - taxa group
     sumed_df = phylum_df.groupby(["Taxa", "Sample"]).agg({"Count":"sum"}).reset_index()
     return sumed_df
     
