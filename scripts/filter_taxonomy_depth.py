@@ -8,7 +8,7 @@
     # Output saved automatically and user can choose (optionally) to save unique phyla found is a separate .tsv file.
 # Input parameters: filename of super table to be analyzed (eg. lf_v1.0_super_table.tsv)
 # framework: CCMRI
-# last update: 24/05/2024
+# last update: 28/05/2024
 
 import sys, os, re
 import pandas as pd
@@ -32,6 +32,11 @@ def filter_taxa_depth(df):
     phylum_df.loc[:, "Taxa"] = phylum_df["Taxa"].str.replace(r"(p__[^;]*);.*", r"\1",regex = True)
     return phylum_df
 
+def sum_abundance(phylum_df):
+    # Sum abundance (count) for the same sample - taxa
+    sumed_df = phylum_df.groupby(["Taxa", "Sample"]).agg({"Count":"sum"}).reset_index()
+    return sumed_df
+    
 def unique_phyla_df(df):
     unique_phyla_df = df.drop_duplicates(subset=["Taxa"])
     unique_phyla_count = unique_phyla_df.shape[0]
@@ -51,13 +56,14 @@ def main():
     filename = sys.argv[1]
     df = read_file(filename)
     filtered_data = filter_taxa_depth(df)
-    unique_phyla_df(filtered_data)
+    filtered_sumed_data = sum_abundance(filtered_data)
+    unique_phyla_df(filtered_sumed_data)
     # Uncomment below if you want to save in tsv file the unique taxa found
     #unique_phlya_data = unique_phyla_df(filtered_data)
     #unique_phyla_filename = re.sub(r"^lf_", "", filename)[:-16] + "_unique_phyla.tsv"
     #save_filtered_data(unique_phlya_data, unique_phyla_filename)
-    filtered_data_filename = re.sub(r"^lf_", "", filename)[:-16] + "_outfiltered.tsv"
-    save_filtered_data(filtered_data, filtered_data_filename)
+    filtered_sumed_data_filename = re.sub(r"^lf_", "", filename)[:-16] + "_ph_filtered.tsv"
+    save_filtered_data(filtered_sumed_data, filtered_sumed_data_filename)
     
     
 if __name__ == "__main__":
