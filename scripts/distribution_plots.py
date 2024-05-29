@@ -10,7 +10,7 @@
     # Applied in normalized data in Super Table (produced by: normalization_counts_ra.py (oxygen) & long_format_super_table.py (zorba hpc))
 # Input parameters: filename of super table to be analyzed (eg. lf_v1.0_super_table.tsv OR v1.0_outfiltered.tsv)
 # framework: CCMRI
-# last update: 24/05/2024
+# last update: 29/05/2024
 
 import sys, os, re
 import pandas as pd
@@ -40,6 +40,13 @@ def bar_plot_taxa_frequency(df, filename):
     # Get descriptive statistics on taxa frequency 
     taxa_description = taxa_frequency.describe()
     print("Taxa Description: ", taxa_description)
+    # save descriptive statistics
+    stats_filename = re.sub(r"^lf_", "", filename)[:-16] + "_taxa_descriptive_stats.txt"
+    stats_file_path = os.path.join(output_directory, stats_filename)
+    with open(stats_file_path, "w") as f:
+        f.write("Taxa Descriptive Statistics:\n")
+        f.write(str(taxa_description))
+        f.write("\n")
     # Calculate lower quartile - if needed for filtered_taxa_frequency - uncomment below
     #lower_quartile = taxa_frequency.quantile(0.25)
     #med_quartile = taxa_frequency.quantile(0.50)
@@ -146,6 +153,16 @@ def total_unique_taxonomy_sample_counts(df, filename):
 
 
 def taxa_sample_ra_plot(df, filename):
+    # Calculate descriptive statistics about relative abundance 
+    ra_description = df["Count"].describe()
+    print("RA Description: ", ra_description)
+    # Save descriptive stats output
+    ra_stats_filename = re.sub(r"^lf_", "", filename)[:-16] + "_ra_descriptive_stats.txt"
+    ra_stats_file_path = os.path.join(output_directory, ra_stats_filename)
+    with open(ra_stats_file_path, "w") as f:
+        f.write("RA Descriptive Statistics:\n")
+        f.write(str(ra_description))
+        f.write("\n")
     plt.figure(figsize=(20,15))
     sns.boxplot(x="Count", y="Taxa", data = df, palette="vlag")
     sns.stripplot(x="Count", y="Taxa", data = df, size = 4, color=".3", linewidth=0)
@@ -165,9 +182,9 @@ def main():
         sys.exit(1)   
     filename = sys.argv[1]
     df = read_file(filename)
-    bar_plot_taxa_frequency(df, filename)
-    pie_plot_taxonomy_distribution(df, filename)
-    total_unique_taxonomy_sample_counts(df, filename)
+    #bar_plot_taxa_frequency(df, filename)
+    #pie_plot_taxonomy_distribution(df, filename)
+    #total_unique_taxonomy_sample_counts(df, filename)
     taxa_sample_ra_plot(df, filename)
     
 if __name__ == "__main__":
