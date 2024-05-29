@@ -7,7 +7,10 @@
     # Inflation parameter is usually 2.0 (typically in a range from 1.2 to 5). It can be changed:
         # higher infation parameter value --> more, smaller clusters
         # lower inflation parameter value --> less, larger clusters
-# Input parameters: filename of super table to be analyzed (eg. lf_v1.0_super_table.tsv OR v1.0_outfiltered.tsv)
+# Input parameters: no input parameters are allowed for now. 
+    # Script needs to be executed in Zorba HPC.
+    # input_file and threshold must be defined for each run, according to input file. 
+    # inflation parameter may be defined accordingly. 
 # framework: CCMRI
 # last update: 29/05/2024
 
@@ -24,7 +27,7 @@ def read_file(filename):
     file_path = os.path.join(parent_directory, filename)
     # check is file exists and is a tsv file
     if not os.path.exists(file_path) or not file_path.endswith(".tsv"):
-        print("File not found or not a .tsv file. Please provide a valid file. If you wish, check parent directory '{}' for available input files.".format(parent_directory))
+        print("File not found or not a .tsv file. Check parent directory '{}' for available input files.".format(parent_directory))
         sys.exit(1)
     return pd.read_csv(file_path, sep="\t")
 
