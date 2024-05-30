@@ -8,12 +8,17 @@
     # total_unique_taxonomy_sample_counts: creates plot with unique taxa in sample counts (scatter plot)
     # taxa_sample_ra_plot: creates plot with total taxa found, the relative abundance and dots representing samples that contain specific taxa.  
     # Applied in normalized data in Super Table (produced by: normalization_counts_ra.py (oxygen) & long_format_super_table.py (zorba hpc))
+    # Separate tsv files for sample-taxa distribution were created through bash:
+        # gawk -F"\t" '(NR>1){sample[$1FS$2]=1}END{for (i in sample){print i}}' lf_v4.1_SSU_super_table.tsv | 
+        # gawk -F"\t" '{sample[$2]++}END{for (i in sample){print i FS sample[i]}}' | 
+        # gawk -F"\t" 'BEGIN{print "Taxa" FS "Samples"}{dist[$2]++}END{for (i in dist){print i FS dist[i]}}' > v4.1_SSU_dist_samples_taxa.tsv
 # Input parameters: filename of super table to be analyzed (eg. lf_v1.0_super_table.tsv OR v1.0_outfiltered.tsv)
 # framework: CCMRI
-# last update: 29/05/2024
+# last update: 30/05/2024
 
 import sys, os, re
 import pandas as pd
+import numpy as np
 import matplotlib 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -21,9 +26,10 @@ import seaborn as sns
 matplotlib.use("Agg")
 
 #parent_directory = "/ccmri/similarity_metrics/data/lf_super_table/no_filtered/" # long format super table directory 
-#output_directory = "/ccmri/similarity_metrics/data/lf_super_table/no_filtered/plots"
-parent_directory = "/ccmri/similarity_metrics/data/lf_super_table/phylum_filtered/" # filtered data according to taxonomic depth of choice directory 
-output_directory = "/ccmri/similarity_metrics/data/lf_super_table/phylum_filtered/plots/"
+parent_directory = "/ccmri/similarity_metrics/data/lf_super_table/no_filtered/sample-taxa_files" # only used for total_unique_taxonomy_sample_counts def
+output_directory = "/ccmri/similarity_metrics/data/lf_super_table/no_filtered/plots"
+#parent_directory = "/ccmri/similarity_metrics/data/lf_super_table/phylum_filtered/" # filtered data according to taxonomic depth of choice directory 
+#output_directory = "/ccmri/similarity_metrics/data/lf_super_table/phylum_filtered/plots/"
 
 def read_file(filename):
     file_path = os.path.join(parent_directory, filename)
@@ -127,30 +133,27 @@ def pie_plot_taxonomy_distribution(df, filename):
         print("{}:{}".format(level, count))
     print("Total Unique Taxa Count: {}".format(total_taxa_count))
 
-
 def total_unique_taxonomy_sample_counts(df, filename):
-    # Count total unique taxa occurrences
-    unique_taxa_per_sample = df.drop_duplicates(subset=["Sample", "Taxa"])
-    taxa_sample_counts = unique_taxa_per_sample.groupby("Sample")["Taxa"].nunique()
-    # Prepare data for scatter plot
-    x = range(len(taxa_sample_counts))
-    y = taxa_sample_counts.values
-    # Plot scatter plot 
-    plt.figure(figsize=(20,15))
-    plt.scatter(x, y, c = "blue", alpha=0.5)
-    plt.xlabel("Number of Samples")
-    plt.ylabel("Number of Taxa")
+    plt.figure(figsize = (9,7))
+    plt.scatter(df["Samples"], df["Taxa"])
+    # Customize axes
+    plt.xlim(0,100)
+    plt.yscale("log")
+    plt.xlabel("Number of Samples", fontsize=13, fontweight="bold")
+    plt.ylabel("Number of Taxa", fontsize=13, fontweight="bold")
     # Adjusting title name by filename provided
-    plot_title = "Scatter Plot Taxa-Sample Number " + re.sub(r"^lf_", "", filename)[:-16] 
+    plot_title = "Scatter Plot Taxa-Sample Number " + re.sub(r"^lf_", "", filename)[:-18] 
     plt.title(plot_title)
-    plt.xticks(rotation=90, fontsize=12)
-    plt.yticks(range(0, max(y) + 1, 5))
+    plt.xticks(np.arange(0, 500, 50))
+    y_ticks = [10**i for i in range(int(np.floor(np.log10(df["Taxa"].min()))), int(np.ceil(np.log10(df["Taxa"].max())) + 1))]
+    y_labels = ["$10^{{{}}}$".format(i) for i in range (int(np.floor(np.log10(df["Taxa"].min()))), int(np.ceil(np.log10(df["Taxa"].max())) + 1))]
+    plt.yticks(y_ticks, y_labels)
+    plt.grid(False)
+    plt.tight_layout()
      # Adjusting output filename according to input filename 
-    output_filename = re.sub(r"^lf_", "", filename)[:-16] + "_scatter_plot_taxa_sample_number.png"
+    output_filename = re.sub(r"^lf_", "", filename)[:-18] + "_scatter_plot_taxa_sample_number.png"
     output_file_path = os.path.join(output_directory, output_filename)
-    plt.savefig(output_file_path)   
-    print("Unique Taxonomy Sample Count Description: " , taxa_sample_counts.describe())
-
+    plt.savefig(output_file_path) 
 
 def taxa_sample_ra_plot(df, filename):
     # Calculate descriptive statistics about relative abundance 
@@ -184,8 +187,8 @@ def main():
     df = read_file(filename)
     #bar_plot_taxa_frequency(df, filename)
     #pie_plot_taxonomy_distribution(df, filename)
-    #total_unique_taxonomy_sample_counts(df, filename)
-    taxa_sample_ra_plot(df, filename)
+    total_unique_taxonomy_sample_counts(df, filename)
+    #taxa_sample_ra_plot(df, filename)
     
 if __name__ == "__main__":
     main()
