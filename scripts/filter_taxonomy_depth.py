@@ -41,7 +41,9 @@ def unique_phyla_df(df):
     unique_phyla_df = df.drop_duplicates(subset=["Taxa"])
     unique_phyla_count = unique_phyla_df.shape[0]
     print("Number of unique phyla: {}".format(unique_phyla_count))
-    #return unique_phyla_df # uncomment if you want to save output 
+    for taxon in unique_phyla_df["Taxa"]:
+        print(taxon)
+    #return unique_phyla_df # uncomment if you want to save output     
 
 def save_filtered_data(df, output_filename):
     output_file_path = os.path.join(output_directory, output_filename)
@@ -60,6 +62,7 @@ def main():
     unique_phyla_df(filtered_sumed_data)
     # Uncomment below if you want to save in tsv file the unique taxa found
     #unique_phlya_data = unique_phyla_df(filtered_data)
+    #print(unique_phlya_data)
     #unique_phyla_filename = re.sub(r"^lf_", "", filename)[:-16] + "_unique_phyla.tsv"
     #save_filtered_data(unique_phlya_data, unique_phyla_filename)
     filtered_sumed_data_filename = re.sub(r"^lf_", "", filename)[:-16] + "_ph_filtered.tsv"
