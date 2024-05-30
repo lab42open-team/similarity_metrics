@@ -39,10 +39,10 @@ def mcl_clustering(adj_matrix, inflation):
     return clusters
 
 def main():
-    input_file = "v2.0_ph_filtered.tsv"
+    input_file = "v1.0_ph_filtered.tsv"
     df = read_file(input_file)
    # Define threshold according to ra descriptive stats (Q1 quartile)
-    threshold = 2.428953e-04
+    threshold = 1.612578e-03
     # Create graph
     G = nx.Graph()
     # Add edges to graph
@@ -60,7 +60,7 @@ def main():
         cluster_names = [index_to_names[idx] for idx in cluster]
         print("Cluster {} : {}".format((i+1), cluster_names)) 
     # Adjusting output filename according to input filename 
-    output_filename = re.sub(r"^lf_", "", input_file)[:-16] + "_mcl_clustering.png"
+    output_filename = re.sub(r"^lf_", "", input_file)[:-16] + "_mcl_clustering_i1.2.png"
     output_file_path = os.path.join(output_directory, output_filename)
     # Visualize clusters
     pos = nx.spring_layout(G)
