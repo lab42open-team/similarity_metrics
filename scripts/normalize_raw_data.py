@@ -5,7 +5,7 @@
 # description: 
     # Calculate relative abundances in raw data.
 # framework: CCMRI
-# last update: 17/06/2024#!/usr/bin/python3.5
+# last update: 17/06/2024
 
 import os
 import pandas as pd
