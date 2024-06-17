@@ -1,9 +1,11 @@
 #!/usr/bin/python3.5
 
-# script name: normalize_raw_data.py
+# script name: normalize_data.py
 # developed by: Nefeli Venetsianou
 # description: 
-    # Calculate relative abundances in raw data.
+    # Calculate relative abundances in raw data with process_raw_data function.
+    # Calculate relative abundances in filtered data with process_filtered_data function.
+    # Please make sure you use the correct input-output directories according to the data folder you wish to proceed. 
 # framework: CCMRI
 # last update: 17/06/2024
 
@@ -14,14 +16,13 @@ import time
 import logging
 logging.basicConfig(level=logging.INFO)
 
-def process_data(input_file):
+def process_raw_data(input_file):
    # Read tsv file into a DataFrame
     df = pd.read_csv(input_file, delimiter="\t", index_col=0, engine="python")
     # Replace null values with 0 - if any
     df.fillna(0, inplace=True)    
     # Initialize DataFrame to store relative aundances
     relative_abundance_df = pd.DataFrame(index=df.index)
-
     # Iterate over columns (samples) in dataframe 
     for sample in df.columns:
         # Calculate total counts per sample
@@ -30,8 +31,16 @@ def process_data(input_file):
         relative_abundance = df[sample] / total_counts
         # Store relative abundance for each taxa in sample counts dictionary
         relative_abundance_df[sample] = relative_abundance 
-    
     return relative_abundance_df
+
+def process_filtered_data(input_file):
+    # Read tsv file into a DataFrame
+    df = pd.read_csv(input_file, delimiter="\t", engine="python")
+    # Initialize dictionary to store total count per sample
+    total_count = df.groupby("Sample")["Count"].sum().to_dict()
+    # Calculate relative abundance 
+    df["Relative_Abundance"] = df.apply(lambda row: row["Count"] / total_count[row["Sample"]], axis=1)
+    return df
 
 def write_output(output_dir, study_name, input_file, data_frame):
     # Extract file name from input file 
@@ -44,13 +53,16 @@ def write_output(output_dir, study_name, input_file, data_frame):
 
 def normalization(input_file, output_dir):
     # Process data 
-    relative_abundance_df = process_data(input_file)
+    # Please select here if you want to proceed with raw data or filtered data
+    relative_abundance_df = process_filtered_data(input_file)
     # Extract the study name from the parent directory of the input file 
     study_name = os.path.basename(os.path.dirname(input_file))
     # Write output
     write_output(output_dir, study_name, input_file, relative_abundance_df)
     
-def process_folders(parent_dir, output_dir):
+# If normalization in raw data is selected (process_raw_data), please uncomment below   
+"""
+def process_raw_folders(parent_dir, output_dir):
     # List directories in the parent folder 
     all_folders = [folder for folder in os.listdir(parent_dir) if os.path.isdir(os.path.join(parent_dir, folder))]
     # Filter folders containing "MGYS" in their names
@@ -82,15 +94,24 @@ def process_folders(parent_dir, output_dir):
                 else:
                     logging.warning("No matching files found in {}.".format(folder_name))
     logging.info("Number of matching files: {}".format(num_matching_files))             
+"""
 
 def main():
+    # If process_raw_data, then uncomment below:
+    """
     input_dir = "/ccmri/data/mgnify/frozen_february_2024/2024_1_17/harvested_mgnify_studies"
     output_dir = "/ccmri/similarity_metrics/data/normalized_raw_data" 
-
-    # Record start time
-    start_time = time.time()
     # Process normalization for directory 
     process_folders(input_dir, output_dir)
+    """
+    # If process_filtered_data, then:
+    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/v5.0_LSU_ge_filtered.tsv" # add super table of choice
+    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/normalized_counts/"
+    
+    # Record start time
+    start_time = time.time()
+    # Process data to normalization 
+    normalization(input_file, output_dir)
     # Record end time
     end_time = time.time()
     # Calculate execution time 
