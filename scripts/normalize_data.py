@@ -39,15 +39,20 @@ def process_filtered_data(input_file):
     # Initialize dictionary to store total count per sample
     total_count = df.groupby("Sample")["Count"].sum().to_dict()
     # Calculate relative abundance 
-    df["Relative_Abundance"] = df.apply(lambda row: row["Count"] / total_count[row["Sample"]], axis=1)
+    df["Count"] = df.apply(lambda row: row["Count"] / total_count[row["Sample"]], axis=1)
     return df
 
 def write_output(output_dir, study_name, input_file, data_frame):
     # Extract file name from input file 
     file_name = os.path.basename(input_file)
-    # Construct output file path with study name + file name
-    output_file = os.path.join(output_dir, study_name + "_" + file_name)
+    # IMPORTANT # For process_raw_data:
+    # Construct output file path with study name + file name - uncomment below
+    #output_file = os.path.join(output_dir, study_name + "_" + file_name)
     # Save DataFrame with relative abundances to a new tsv file
+    # IMPORTANT # For process_filtered_data:
+    # Construct output file path with ra + file_name - uncomment below accordingly
+    output_file = os.path.join(output_dir, "ra_" + file_name)
+    
     data_frame.to_csv(output_file, sep="\t")
     logging.info("Output saved to: {}".format(output_file))
 
@@ -60,7 +65,7 @@ def normalization(input_file, output_dir):
     # Write output
     write_output(output_dir, study_name, input_file, relative_abundance_df)
     
-# If normalization in raw data is selected (process_raw_data), please uncomment below   
+# IMPORTANT # If normalization in raw data is selected (process_raw_data), please uncomment below   
 """
 def process_raw_folders(parent_dir, output_dir):
     # List directories in the parent folder 
@@ -97,15 +102,15 @@ def process_raw_folders(parent_dir, output_dir):
 """
 
 def main():
-    # If process_raw_data, then uncomment below:
+    # IMPORTANT # If process_raw_data, then uncomment below:
     """
     input_dir = "/ccmri/data/mgnify/frozen_february_2024/2024_1_17/harvested_mgnify_studies"
     output_dir = "/ccmri/similarity_metrics/data/normalized_raw_data" 
     # Process normalization for directory 
     process_folders(input_dir, output_dir)
     """
-    # If process_filtered_data, then:
-    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/v5.0_LSU_ge_filtered.tsv" # add super table of choice
+    # IMPORTANT # If process_filtered_data, then:
+    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/v4.1_LSU_ge_filtered.tsv" # add super table of choice
     output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/normalized_counts/"
     
     # Record start time
