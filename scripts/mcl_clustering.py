@@ -38,17 +38,33 @@ def mcl_clustering(adj_matrix, inflation):
     clusters = mcl.get_clusters(result)
     return clusters
 
+def visualize_graph(G, title="Graph Visualization"):
+    pos = nx.spring_layout(G)
+    plt.figure(figsize=(12,12))
+    nx.draw(G, pos, with_labels=False, node_size=50, node_color="skyblue", font_size=8)
+    plt.title(title)
+    output_filename = "test_visualize_graph.png"
+    output_file_path = os.path.join(output_directory, output_filename)
+    plt.savefig(output_file_path, format = "png")
+    
+
 def main():
     input_file = "v1.0_ph_filtered.tsv"
     df = read_file(input_file)
    # Define threshold according to ra descriptive stats (Q1 quartile)
-    threshold = 1.612578e-03
+    ra_threshold = 1.612578e-03
+    # Define threshold according to taxa frequency (Q1 quartile)
+    taxa_threshold = 19.750000
+    taxa_frequency = df["Taxa"].value_counts()
     # Create graph
     G = nx.Graph()
     # Add edges to graph
     for _, row in df.iterrows():
-        if row["Count"] >= threshold:
+        if taxa_frequency[row["Taxa"]] >= taxa_threshold:
+        #if row["Count"] >= ra_threshold:
             G.add_edge(row["Taxa"], row["Sample"], weight=row["Count"])
+    # visualize graph
+    visualize_graph(G, title="Test Graph visualization")
     # Convert graph to an adjacency matrix
     adj_matrix = nx.to_numpy_array(G, weight="weight")
     # Perform MCL 
@@ -60,7 +76,7 @@ def main():
         cluster_names = [index_to_names[idx] for idx in cluster]
         print("Cluster {} : {}".format((i+1), cluster_names)) 
     # Adjusting output filename according to input filename 
-    output_filename = re.sub(r"^lf_", "", input_file)[:-16] + "_mcl_clustering_i1.2.png"
+    output_filename = re.sub(r"^lf_", "", input_file)[:-16] + "_mcl_taxaThreshold_I1.2.png"
     output_file_path = os.path.join(output_directory, output_filename)
     # Visualize clusters
     pos = nx.spring_layout(G)

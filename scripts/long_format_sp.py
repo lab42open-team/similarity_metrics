@@ -131,9 +131,9 @@ def main():
             key, value = arg[:sep], arg[sep + 1:]
             arguments_dict[key] = value
     # Set default input - output directories
-    input_folder = "/ccmri/similarity_metrics/data/test_dataset/test_folder/input"
+    input_folder = "/ccmri/similarity_metrics/data/raw_data/v4.1_LSU"
     #input_dir = "/ccmri/similarity_metrics/data/taxa_counts_output"
-    output_dir = "/ccmri/similarity_metrics/data/test_dataset/test_folder/output"
+    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table"
     """      
     # Update parameters based on the values passed by the command line 
     input_folder = arguments_dict.get("--input_folder")

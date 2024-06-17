@@ -1,5 +1,12 @@
 #!/usr/bin/python3.5
 
+# script name: normalize_raw_data.py
+# developed by: Nefeli Venetsianou
+# description: 
+    # Calculate relative abundances in raw data.
+# framework: CCMRI
+# last update: 17/06/2024#!/usr/bin/python3.5
+
 import os
 import pandas as pd
 import re
