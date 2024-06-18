@@ -14,8 +14,8 @@
 import sys, os, re
 import pandas as pd
 
-parent_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table"
-output_directory = "/ccmri/similarity_metrics/data/raw_data/filtered_data/genus/"
+parent_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/no_filtered"
+output_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/"
 
 def read_file(filename):
     file_path = os.path.join(parent_directory, filename)
