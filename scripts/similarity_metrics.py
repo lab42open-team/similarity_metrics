@@ -2,12 +2,16 @@
 
 # script name: lf_jaccard.py
 # developed by: Nefeli Venetsianou
-# description: Calculate jaccard dissimilarity score by using long format super table (lf - sp) (lf -sp produced by long_format_sp.py)
+# description: 
+    # Calculate similarity metrcis by using long format super table (lf - sp) (lf -sp produced by long_format_sp.py)
+    # Used in noisy injection to get similarity metrics performance curve.
+    # For now: euklidean and cosine are calculated. 
 # framework: CCMRI
+# last update: 18/06/2024
 
 import os
 import pandas as pd
-#import numpy as np
+import numpy as np
 #from sklearn.metrics import jaccard_score 
 from scipy.spatial import distance
 import time
@@ -21,12 +25,46 @@ def preprocess_data(input_file):
     # Pivot table to get samples as columns and taxa as rows
     df_pivot = df.pivot(index="Taxa", columns="Sample", values="Count")
     # Fill NaN calues with 0
-    df_pivot = df_pivot.fillna(0)
+    #df_pivot = df_pivot.fillna(0)
     # Convert count to binary (0 - do not exist or 1 - exist)
     df_pivot = (df_pivot > 0).astype(int)
     return(df_pivot)
 
-def jaccard_score_long(input_file):
+
+def euklidean_distance():
+    #TODO
+             
+def write_euklidean_output():
+    #TODO
+    
+def cosine_similarity():
+    #TODO
+
+def write_cosine_output():
+    #TODO
+
+def main():
+    # Set input file (either .tsv or .parquet)
+    input_file = "" 
+    # Set output directory 
+    output_dir = ""
+    # Record total start time
+    tot_start_time = time.time()
+    # Perform jaccard dissimilarity calculation
+    jaccard_dissimality = jaccard_score_long(input_file)
+    write_output(jaccard_dissimality, input_file, output_dir)
+    # Record total end time 
+    tot_end_time = time.time()
+    # Calculate total execution time 
+    tot_execution_time = tot_end_time- tot_start_time
+    logging.info("Total execution time = {} seconds.".format(tot_execution_time))
+
+if __name__ == "__main__":
+    main()
+
+"""
+# JACCARD 
+def jaccard_score(input_file):
     # Record start time
     start_time = time.time()
     # Preprocess data
@@ -49,8 +87,8 @@ def jaccard_score_long(input_file):
     execution_def_time = end_time - start_time
     logging.info("Execution def time = {} seconds.".format(execution_def_time))        
     return jaccard_scores
-
-def write_output(jaccard_scores, input_file, output_dir):
+    
+def write_jaccard_output(jaccard_scores, input_file, output_dir):
      # Extract version pipeline from input file name 
     input_file_name = os.path.basename(input_file)
     version = input_file_name.split("_super_table.tsv")[0]
@@ -62,27 +100,7 @@ def write_output(jaccard_scores, input_file, output_dir):
         for item in jaccard_scores:
             file.write("{}\t{}\t{}\n".format(item[0], item[1], item[2]))
 
-def main():
-    # Set input file (either .tsv or .parquet)
-    input_file = "/ccmri/similarity_metrics/data/test_dataset/test_folder/output/lf_input_super_table.tsv" 
-    # Set output directory 
-    output_dir = "/ccmri/similarity_metrics/data/test_dataset/test_folder/output"
-    # Record total start time
-    tot_start_time = time.time()
-    # Perform jaccard dissimilarity calculation
-    jaccard_dissimality = jaccard_score_long(input_file)
-    write_output(jaccard_dissimality, input_file, output_dir)
-    # Record total end time 
-    tot_end_time = time.time()
-    # Calculate total execution time 
-    tot_execution_time = tot_end_time- tot_start_time
-    logging.info("Total execution time = {} seconds.".format(tot_execution_time))
-
-if __name__ == "__main__":
-    main()
-
-"""
 print("Jaccard Dissimilarity (Long Format): ")
 for score in jaccard_scores:
     print(score)
-"""    
+"""
