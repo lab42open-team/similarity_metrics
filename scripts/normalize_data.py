@@ -110,8 +110,11 @@ def main():
     process_folders(input_dir, output_dir)
     """
     # IMPORTANT # If process_filtered_data, then:
-    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/v4.1_LSU_ge_filtered.tsv" # add super table of choice
-    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/normalized_counts/"
+    #input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/v4.1_SSU_ge_filtered.tsv" # add super table of choice
+    #output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/normalized_counts/"
+    # IMPORTANT # NOISY Versions Input - Output
+    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/v4.1_SSU/0.2_v4.1_SSU_ge_filtered.tsv" # add parent dir + file here
+    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/v4.1_SSU/normalized_counts/"
     
     # Record start time
     start_time = time.time()
