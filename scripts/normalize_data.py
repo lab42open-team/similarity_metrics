@@ -53,7 +53,7 @@ def write_output(output_dir, study_name, input_file, data_frame):
     # Construct output file path with ra + file_name - uncomment below accordingly
     output_file = os.path.join(output_dir, "ra_" + file_name)
     
-    data_frame.to_csv(output_file, sep="\t")
+    data_frame.to_csv(output_file, sep="\t", index=False)
     logging.info("Output saved to: {}".format(output_file))
 
 def normalization(input_file, output_dir):
@@ -110,11 +110,11 @@ def main():
     process_folders(input_dir, output_dir)
     """
     # IMPORTANT # If process_filtered_data, then:
-    #input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/v4.1_SSU_ge_filtered.tsv" # add super table of choice
-    #output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/normalized_counts/"
+    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/v5.0_SSU_ge_filtered.tsv" # add super table of choice
+    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/normalized_counts/"
     # IMPORTANT # NOISY Versions Input - Output
-    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/v4.1_SSU/0.2_v4.1_SSU_ge_filtered.tsv" # add parent dir + file here
-    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/v4.1_SSU/normalized_counts/"
+    #input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/v4.1_SSU/0.2_v4.1_SSU_ge_filtered.tsv" # add parent dir + file here
+    #output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/v4.1_SSU/normalized_counts/"
     
     # Record start time
     start_time = time.time()
