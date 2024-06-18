@@ -4,7 +4,8 @@
 # developed by: Nefeli Venetsianou
 # description: 
     # Create noisy versions for noise injection step. 
-    # Define frac to get the corresponding percentage of data you wish.
+    # Sample method returns a random sample of items from an axis of object and this object of same type as the caller.
+    # Define frac to retrieve the number of noise you wish (eg. 0.2 = 20% of total rows)
 # framework: CCMRI
 # last update: 18/06/2024
 
@@ -18,7 +19,7 @@ output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtere
 
 # Read file as pandas DataFrame 
 df = pd.read_csv(input_file, delimiter = "\t")
-# Downsample by randomly choosing x% of rows - please define percentage in the frac variable
+# Noisy Version creation by randomly choosing x% of rows - please define percentage in the frac variable
 # For now, frac = 0.2 || 0.3 || 0.5 || 0.7
 frac = 0.7
 noisy_version_df = df.sample(frac=frac)
@@ -30,6 +31,3 @@ output_file = os.path.join(output_dir, "{}_{}".format(frac, file_name))
 # Save noisy version to tsv file 
 noisy_version_df.to_csv(output_file, sep="\t", index=False)
 logging.info("Output saved: {}".format(output_file))
-
-
-    
