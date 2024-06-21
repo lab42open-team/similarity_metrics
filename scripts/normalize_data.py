@@ -28,7 +28,10 @@ def process_raw_data(input_file):
         # Calculate total counts per sample
         total_counts = df[sample].sum()
         # Calculate relative abundance for each taxa in the sample
-        relative_abundance = df[sample] / total_counts
+        if total_counts!= 0:
+            relative_abundance = df[sample] / total_counts
+        else:
+            relative_abundance = 0
         # Store relative abundance for each taxa in sample counts dictionary
         relative_abundance_df[sample] = relative_abundance 
     return relative_abundance_df
@@ -39,7 +42,7 @@ def process_filtered_data(input_file):
     # Initialize dictionary to store total count per sample
     total_count = df.groupby("Sample")["Count"].sum().to_dict()
     # Calculate relative abundance 
-    df["Count"] = df.apply(lambda row: row["Count"] / total_count[row["Sample"]], axis=1)
+    df["Count"] = df.apply(lambda row: row["Count"] / total_count[row["Sample"]] if total_count[row["Sample"]] !=0 else 0, axis=1)
     return df
 
 def write_output(output_dir, study_name, input_file, data_frame):
@@ -112,9 +115,12 @@ def main():
     # IMPORTANT # If process_filtered_data, then:
     #input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/v5.0_SSU_ge_filtered.tsv" # add super table of choice
     #output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/normalized_counts/"
-    # IMPORTANT # NOISY Versions Input - Output
-    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/v5.0_SSU/0.2_v5.0_SSU_ge_filtered.tsv" # add parent dir + file here
-    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/v5.0_SSU/normalized_counts/"
+    # IMPORTANT # Downsampled Versions Input - Output
+    #input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions_data/downsampled_data/0.1_v4.1_SSU_ge_filtered.tsv" 
+    #output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions_data/downsampled_data/normalized/"
+    # IMPORTANT # Noisy Versions Input - Output
+    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/noisy_data/noisy_0.1_v4.1_LSU_ge_filtered.tsv"
+    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/noisy_data/normalized"
     
     # Record start time
     start_time = time.time()
