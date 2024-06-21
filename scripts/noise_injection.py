@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO)
 
 input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/downsampled_data/normalized/ra_0.1_v5.0_SSU_ge_filtered.tsv"
 # output to be defined according to std_noise_level picked
-output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/noisy_data/std_noise_level_0.1"
+output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/noisy_data/std_noise_level_5"
 
 def main():
     df = pd.read_csv(input_file, sep="\t")
@@ -26,7 +26,7 @@ def main():
     mean_noise = 0
     # To change the intensity (level) of noise, adjust the standard deviation.
     # Higher std_dev_noise leads to noisier dataset, while lower std_dev_noise leads to a dataset closer to the original. 
-    std_dev_noise = 0.1
+    std_dev_noise = 5
     noise = np.random.normal(mean_noise, std_dev_noise, len(df["Count"]))
     # Create a copy of df
     noisy_counts_df = df.copy()
@@ -59,7 +59,7 @@ def main():
     plt.ylabel("Frequency")
     # Plot Gaussian noise
     plt.subplot(1,3,2)
-    plt.hist(noise, bins=50, alpha=0.7, label="Gaussinal noise")
+    plt.hist(noise, bins=50, alpha=0.7, label="Gaussian noise")
     plt.title("Gaussian Noise Plot")
     plt.xlabel("Gaussian noise")
     plt.ylabel("Frequency")
