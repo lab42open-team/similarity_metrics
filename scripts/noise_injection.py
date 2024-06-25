@@ -15,9 +15,9 @@ import matplotlib.pyplot as plt
 import logging
 logging.basicConfig(level=logging.INFO)
 
-input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/downsampled_data/normalized/ra_0.1_v5.0_SSU_ge_filtered.tsv"
+input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/downsampled_data/1000_samples/normalized/ra_v5.0_SSU_ge_filtered.tsv"
 # output to be defined according to std_noise_level picked
-output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/noisy_data/std_noise_level_5"
+output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/gaussian_noisy_data/d_1000/std_noise_level_5"
 
 def main():
     df = pd.read_csv(input_file, sep="\t")
