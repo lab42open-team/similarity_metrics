@@ -116,11 +116,11 @@ def main():
     #input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/v5.0_SSU_ge_filtered.tsv" # add super table of choice
     #output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/normalized_counts/"
     # IMPORTANT # Downsampled Versions Input - Output
-    #input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions_data/downsampled_data/0.1_v4.1_SSU_ge_filtered.tsv" 
-    #output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions_data/downsampled_data/normalized/"
+    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/downsampled_data/1000_samples/v4.1_SSU_ge_filtered.tsv" 
+    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/downsampled_data/1000_samples/normalized/"
     # IMPORTANT # Noisy Versions Input - Output
-    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/noisy_data/noisy_0.1_v4.1_LSU_ge_filtered.tsv"
-    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/noisy_data/normalized"
+    #input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/noisy_data/noisy_0.1_v4.1_LSU_ge_filtered.tsv"
+    #output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/noisy_data/normalized"
     
     # Record start time
     start_time = time.time()
