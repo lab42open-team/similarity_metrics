@@ -13,8 +13,8 @@ import pandas as pd
 import logging
 logging.basicConfig(level=logging.INFO)
 
-input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/v5.0_LSU_ge_filtered.tsv"
-output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions_data/downsampled_data"
+input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/v4.1_SSU_ge_filtered.tsv"
+output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/downsampled_data/1000_samples"
 
 def main():
     # Read file as pandas DataFrame 
@@ -22,8 +22,9 @@ def main():
     # Find unique samples
     unique_samples = df["Sample"].unique()
     # Downsample at 10% of total samples
-    frac = 0.1
-    num_samples = max(1, int(len(unique_samples) * frac))
+    #frac = 0.1
+    # Downsample at 1000 unique samples
+    num_samples = min(1000, len(unique_samples))
     downsampled_samples = pd.Series(unique_samples).sample(n=num_samples, random_state=1)
     # Filter DataFrame based on the downsampled unique samples
     downsampled_data = df[df["Sample"].isin(downsampled_samples)]
@@ -33,7 +34,7 @@ def main():
     # # Extract file name from input file 
     file_name = os.path.basename(input_file)
     # Construct output file path with frac + file_name 
-    output_file = os.path.join(output_dir, "{}_{}".format(frac, file_name))
+    output_file = os.path.join(output_dir, file_name)
     # Save downsampled version to tsv file 
     sorted_downsampled_df.to_csv(output_file, sep="\t", index=False)
     logging.info("Output saved: {}".format(output_file))
