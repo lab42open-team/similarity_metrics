@@ -7,7 +7,7 @@
     # Calculate relative abundances in filtered data with process_filtered_data function.
     # Please make sure you use the correct input-output directories according to the data folder you wish to proceed. 
 # framework: CCMRI
-# last update: 17/06/2024
+# last update: 26/06/2024
 
 import os
 import pandas as pd
@@ -56,7 +56,7 @@ def write_output(output_dir, study_name, input_file, data_frame):
     # Construct output file path with ra + file_name - uncomment below accordingly
     output_file = os.path.join(output_dir, "ra_" + file_name)
     
-    data_frame.to_csv(output_file, sep="\t", index=False)
+    data_frame.to_csv(output_file, sep="\t", index=False, float_format="%.15f") # keep up to 15 demical places
     logging.info("Output saved to: {}".format(output_file))
 
 def normalization(input_file, output_dir):
@@ -116,7 +116,7 @@ def main():
     #input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/v5.0_SSU_ge_filtered.tsv" # add super table of choice
     #output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/normalized_counts/"
     # IMPORTANT # Downsampled Versions Input - Output
-    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/downsampled_data/1000_samples/v4.1_SSU_ge_filtered.tsv" 
+    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/downsampled_data/1000_samples/d_v4.1_SSU_ge_filtered.tsv" 
     output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/downsampled_data/1000_samples/normalized/"
     # IMPORTANT # Noisy Versions Input - Output
     #input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/noisy_data/noisy_0.1_v4.1_LSU_ge_filtered.tsv"
