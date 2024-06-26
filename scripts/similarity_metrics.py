@@ -20,10 +20,12 @@ logging.basicConfig(level=logging.INFO)
 # Define parent directory of intial data [downsampled]
 initial_parent_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/downsampled_data/1000_samples/normalized/"
 # Define parent directory of noisy data [level of noise]
-noisy_parent_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/gaussian_noisy_data/d_1000/std_noise_level_0.1"
+#noisy_parent_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/gaussian_noisy_data/d_1000/std_noise_level_5"
+noisy_parent_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/impulse_noisy_data"
 # Define file names to be compared
-intial_file_name = "ra_v5.0_LSU_ge_filtered.tsv"
-noisy_file_name = "noisy_0.1_stdDev_v5.0_LSU_ge_filtered.tsv"
+intial_file_name = "ra_v4.1_LSU_ge_filtered.tsv"
+#noisy_file_name = "noisy_5_stdDev_v4.1_LSU_ge_filtered.tsv"
+noisy_file_name = "noisy_impulse_v4.1_LSU_ge_filtered.tsv"
 
 def load_data(initial_file, noisy_file):
     # Create DataFrames from input files
@@ -50,7 +52,8 @@ def calculate_euclidean_scores(df1, df2, pivot_df):
     # Group by Noisy Sample and sort according to similarity score within each group
     grouped_euclidean_similarity_df = euclidean_similarity_df.groupby("Noisy_Sample").apply(lambda x: x.sort_values(by="Similarity_Score", ascending=False))
     # Define euclidean output directory and path
-    euclidean_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSgaussian_noisy/euclidean_output/"
+    #euclidean_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSgaussian_noisy/euclidean_output/"
+    euclidean_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSimpulse_noisy/euclidean_output"
     euclidean_output_path = os.path.join(euclidean_output_dir, "e_initial_VS_{}".format(os.path.basename(noisy_file_name)))
     # Save DataFrame
     grouped_euclidean_similarity_df.to_csv(euclidean_output_path, sep="\t", index=False)
@@ -72,41 +75,14 @@ def calculate_cosine_scores(df1, df2, pivot_df):
     # Group by Noisy Sample and sort according to similarity score within each group
     grouped_cosine_similarity_df = cosine_similarity_df.groupby("Noisy_Sample").apply(lambda x: x.sort_values(by="Similarity_Score", ascending=False))
     # Define cosine output directory and path 
-    cosine_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSgaussian_noisy/cosine_output/"
+    #cosine_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSgaussian_noisy/cosine_output/"
+    cosine_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSimpulse_noisy/cosine_output"
     cosine_output_path = os.path.join(cosine_output_dir, "c_initial_VS_{}".format(os.path.basename(noisy_file_name)))
     # Save DataFrame 
     grouped_cosine_similarity_df.to_csv(cosine_output_path, sep="\t", index=False)
     logging.info("Cosine output saved to: {}".format(cosine_output_path))
     return grouped_cosine_similarity_df
-"""
-def create_euclidean_ranking_table(euclidean_similarity_df): #TODO not working properly
-    ranking_pairs = []
-    for noisy_sample in euclidean_similarity_df["Noisy_Sample"].unique():
-        noisy_sample_df = euclidean_similarity_df[euclidean_similarity_df["Noisy_Sample"] == noisy_sample]
-        rank = noisy_sample_df[noisy_sample_df["Initial_Sample"]].index[0] + 1
-        ranking_pairs.append([noisy_sample, rank])
-    ranking_df = pd.DataFrame(ranking_pairs, columns=["Noisy_Sample", "Rank"])
-    # Define ranking output directory and path
-    ranking_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSgaussian_noisy/euclidean_output/ranking_output"
-    ranking_output_path = os.path.join(ranking_output_dir, "ranking_output_{}".format(os.path.basename(noisy_file_name)))
-    # Save DataFrame
-    ranking_df.to_csv(ranking_output_path, sep="\t", index=False)
-    logging.info("Ranking euclidean output saved to: {}".format(ranking_output_path))
-    
-def create_cosine_ranking_table(cosine_similarity_df): #TODO not working properly
-    ranking_pairs = []
-    for noisy_sample in cosine_similarity_df["Noisy_Sample"].unique():
-        noisy_sample_df = cosine_similarity_df[cosine_similarity_df["Noisy_Sample"] == noisy_sample]
-        rank = noisy_sample_df[noisy_sample_df["Initial_Sample"]].index[0] + 1
-        ranking_pairs.append([noisy_sample, rank])
-    ranking_df = pd.DataFrame(ranking_pairs, columns=["Noisy_Sample", "Rank"])
-    # Define ranking output directory and path
-    ranking_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSgaussian_noisy/cosine_output/ranking_output"
-    ranking_output_path = os.path.join(ranking_output_dir, "ranking_output_{}".format(os.path.basename(noisy_file_name)))
-    # Save DataFrame
-    ranking_df.to_csv(ranking_output_path, sep="\t", index=False)
-    logging.info("Ranking cosine output saved to: {}".format(ranking_output_path))
-"""
+
 def main():
     # Load data
     initial_file = os.path.join(initial_parent_directory, intial_file_name)
@@ -118,10 +94,6 @@ def main():
     logging.info("Euclidean similarity scores calculated successfully.")
     cosine_similarity_matrix = calculate_cosine_scores(df1, df2, pivot_df)
     logging.info("Cosine similarity scores calculated successfully.")
-    """ #TODO not working properly
-    # Create ranking tables
-    create_euclidean_ranking_table(grouped_euclidean_similarity_df)
-    create_cosine_ranking_table(grouped_cosine_similarity_df)
-    """
+
 if __name__ == "__main__":
     main()
