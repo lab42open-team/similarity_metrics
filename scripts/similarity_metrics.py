@@ -20,7 +20,6 @@ from sklearn.metrics.pairwise import euclidean_distances, cosine_distances
 import logging
 logging.basicConfig(level=logging.INFO)
 
-
 def load_data(initial_file, noisy_file):
     # Create DataFrames from input files
     df_initial = pd.read_csv(initial_file,sep="\t")
