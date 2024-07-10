@@ -87,8 +87,8 @@ def main():
     """
     ### TO BE ADJUSTED ###
     # Define output directories
-    gaussian_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output/v5.0_LSU"
-    impulse_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output/v5.0_LSU"
+    gaussian_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output/v5.0_LSU"
+    impulse_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output/v5.0_LSU"
         
     # Define file names to be compared
     euclidean_gaussian_file = os.path.join(gaussian_ranking_parent_dir, "ranking_e_initial_VS_noisy_5_stdDev_d_v5.0_LSU_ge_filtered.tsv")
@@ -120,8 +120,8 @@ def main():
     plot_sim_performance(ranking_impulse_noise, impulse_output_file, impulse_noise_level)
     """
     ### OVERALL PERFORMANCE ###
-    gaussian_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output"
-    impulse_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output"
+    gaussian_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output"
+    impulse_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output"
     # Define noise level
     gaussian_noise_level = "0.2_stdDev"
     impulse_noise_level = "0.2_impL"
@@ -138,8 +138,8 @@ def main():
     gaussian_combined_df = load_and_combine_multiple_data(all_gaussian_files)
     impulse_combined_df = load_and_combine_multiple_data(all_impulse_files)
     # Create output dir 
-    gaussian_output_overall_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output/"
-    impulse_output_overall_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output/"
+    gaussian_output_overall_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output/"
+    impulse_output_overall_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output/"
     gaussian_output_file = os.path.join(gaussian_output_overall_dir, "g_{}_".format(gaussian_noise_level) + "overall_performance.png")
     impulse_output_file = os.path.join(impulse_output_overall_dir, "i_{}_".format(impulse_noise_level) + "overall_performance.png")
     # Plot overall performance

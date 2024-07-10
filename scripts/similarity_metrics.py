@@ -88,9 +88,9 @@ def main():
     ### TO BE ADJUSTED ###
     # Define parent directory of noisy data [type and level of noise] 
     # Gaussian Noise Parent dir
-    gaussian_noisy_parent_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/gaussian_noisy_data/d_1000/5_stdDev"
+    gaussian_noisy_parent_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/gaussian_noisy_data/d_1000/5_stdDev"
     # Impulse Noise Parent dir
-    impulse_noisy_parent_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/impulse_noisy_data/d_1000/0.9_noiseLevel"
+    impulse_noisy_parent_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/impulse_noisy_data/d_1000/0.9_noiseLevel"
     # Define file names to be compared
     initial_file_name = "ra_d_v4.1_LSU_ge_filtered.tsv"
     gaussian_noisy_file_name = "noisy_5_stdDev_d_v4.1_LSU_ge_filtered.tsv"
@@ -104,11 +104,11 @@ def main():
     impulse_noisy_file = os.path.join(impulse_noisy_parent_directory, impulse_noisy_file_name)
     impulse_df1, impulse_df2 = load_data(initial_file, impulse_noisy_file)
     # Define Gaussian Output dir
-    gaussian_euclidean_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSgaussian_noisy/euclidean_output/"
-    gaussian_cosine_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSgaussian_noisy/cosine_output"
+    gaussian_euclidean_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/euclidean_output/"
+    gaussian_cosine_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/cosine_output"
     # Define Impulse Output dir
-    impulse_euclidean_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSimpulse_noisy/euclidean_output"
-    impulse_cosine_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/similarity_metrics/sim_initialVSimpulse_noisy/cosine_output"
+    impulse_euclidean_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/euclidean_output"
+    impulse_cosine_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/cosine_output"
     # Calculate and Save similarities 
     # Gaussian noisy files 
     calculate_similarity_scores(gaussian_df1, gaussian_df2, gaussian_euclidean_output_dir, gaussian_noisy_file, metric="euclidean")
