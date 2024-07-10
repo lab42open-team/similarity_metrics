@@ -8,7 +8,7 @@
     # No input parameters provided, but input/output should be adjusted accordingly. 
         # Please check the session: ### TO BE ADJUSTED ### within the main function. 
 # framework: CCMRI
-# last update: 02/07/2024
+# last update: 10/07/2024
 
 import os
 import pandas as pd

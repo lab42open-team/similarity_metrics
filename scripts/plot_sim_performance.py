@@ -6,7 +6,7 @@
     # Plot similarity metrics performance.
     # Please check "### TO BE ADJUSTED ###" part for input file name changes. 
 # framework: CCMRI
-# last update: 09/07/2024
+# last update: 10/07/2024
 
 import os, re
 import pandas as pd
