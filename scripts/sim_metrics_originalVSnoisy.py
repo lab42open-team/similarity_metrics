@@ -1,6 +1,6 @@
 #!/usr/bin/python3.5
 
-# script name: similarity_metrics.py
+# script name: sim_metrics_originalVSnoisy.py
 # developed by: Nefeli Venetsianou
 # description: 
     # Calculate similarity scores between downsampled intial data VS noisy data. 
