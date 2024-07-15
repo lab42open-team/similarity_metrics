@@ -90,7 +90,7 @@ def impulse_noise_injection(input_file, original_plot_file, output_dir, impulse_
     # Higher bound value for impulse noise
     high_val = df["Count"].max()
     # Generate random impulse noise values # p represents the probability of choosing each low-high val
-    random_values = np.random.choice([low_val, high_val], size=len(df["Count"]), p=[0.9,0.1])
+    random_values = np.random.choice([low_val, high_val], size=len(df["Count"]), p=[0.5,0.5])
     # Generate a mask fro where to apply the impulse noise
     mask = np.random.choice([True, False], size=len(df["Count"]), p=[impulse_noise_level, 1 - impulse_noise_level])
     # Apply the impulse noise to the Count column
@@ -144,19 +144,19 @@ def impulse_noise_injection(input_file, original_plot_file, output_dir, impulse_
     logging.info("Plot saved to: {}".format(img_plot_path))
     
 def main():
-    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/downsampled_data/1000_samples/d_v5.0_LSU_ge_filtered.tsv"
-    original_plot_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/downsampled_data/1000_samples/normalized/ra_d_v5.0_LSU_ge_filtered.tsv"
+    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/downsampled_data/1000_samples/d_v5.0_SSU_ge_filtered.tsv"
+    original_plot_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/downsampled_data/1000_samples/normalized/ra_d_v5.0_SSU_ge_filtered.tsv"
     # output to be defined according to std_noise_level picked
     gaussian_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/gaussian_noisy_data/d_1000/0.2_stdDev"
-    impulse_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/impulse_noisy_data/d_1000/0.2_noiseLevel"
+    impulse_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/impulse_noisy_data/d_1000/0.05_noiseLevel"
     # Define Noise Level per noise injection
     # To change the intensity of noise, adjust the standard deviation. - Noise Level
     # Higher std_dev_noise leads to noisier dataset, while lower std_dev_noise leads to a dataset closer to the original. 
     gaussian_std_dev_noise = 0.2
     # Probability of injecting impulse noise to counts - Noise Level
-    impulse_noise_level = 0.2
+    impulse_noise_level = 0.05
     # Apply Gaussian injection noise
-    gaussian_noise_injection(input_file, original_plot_file, gaussian_output_dir, gaussian_std_dev_noise)    
+    #gaussian_noise_injection(input_file, original_plot_file, gaussian_output_dir, gaussian_std_dev_noise)    
     impulse_noise_injection(input_file, original_plot_file, impulse_output_dir, impulse_noise_level)
     
 if __name__ == "__main__":
