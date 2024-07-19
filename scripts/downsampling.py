@@ -3,18 +3,21 @@
 # script name: downsampling.py
 # developed by: Nefeli Venetsianou
 # description: 
-    # Create downsampled versions for noise injection step. 
+    # Create downsampled versions.
+    # Filter by number of reads per taxon and number of taxa per sample. 
+    # If number of samples for the output is defined, then purpose is for noise injection step. 
     # Sample method returns a random sample of items from an axis of object and this object of same type as the caller.
 # framework: CCMRI
-# last update: 26/06/2024
+# last update: 19/07/2024
 
 import os
 import pandas as pd
 import logging
 logging.basicConfig(level=logging.INFO)
 
-input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/v4.1_LSU_ge_filtered.tsv"
-output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/downsampled_data/1000_samples"
+input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/v5.0_SSU_ge_filtered.tsv"
+output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/downsampled_data"
+# output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/downsampled_data/1000_samples" # For noise injection
 
 def main():
     # Read file as pandas DataFrame 
@@ -28,6 +31,7 @@ def main():
     valid_samples = sample_genera_count[sample_genera_count > 10].index
     # Filter DataFrame based on valid samples
     df = df[df["Sample"].isin(valid_samples)]
+    """ ### If uncomment this part, then mnoise injected versions will be created 
     # Find unique samples 
     unique_samples = df["Sample"].unique()
     # Downsample at 10% of total samples
@@ -38,19 +42,21 @@ def main():
     # Ensure retrieval of 1000 Samples
     if len(downsampled_samples) < 1000:
         logging.info("Expected 1000 Samples, but retrieved {}".format(len(downsampled_samples)))
-    # Filter DataFrame based on the downsampled unique samples
-    downsampled_data = df[df["Sample"].isin(downsampled_samples)]
+    """
     # Drop genus column 
-    downsampled_data = downsampled_data.drop(columns=["Genus"])
+    df = df.drop(columns=["Genus"])
+    # Normalize counts
+    sample_total = df.groupby("Sample")["Count"].sum().to_dict()
+    df["Count"] = df.apply(lambda row: row["Count"] / sample_total[row["Sample"]] if sample_total[row["Sample"]] != 0 else 0, axis=1)
     # Sort DataFrame by Sample 
-    sorted_downsampled_df = downsampled_data.sort_values(by="Sample")
+    sorted_df = df.sort_values(by="Sample")
     # Save downsampled version 
     # # Extract file name from input file 
     file_name = os.path.basename(input_file)
     # Construct output file path with frac + file_name 
-    output_file = os.path.join(output_dir, "d_" + file_name)
+    output_file = os.path.join(output_dir, "filtered_" + file_name)
     # Save downsampled version to tsv file 
-    sorted_downsampled_df.to_csv(output_file, sep="\t", index=False)
+    sorted_df.to_csv(output_file, sep="\t", index=False)
     logging.info("Output saved: {}".format(output_file))
     
 if __name__ == "__main__":
