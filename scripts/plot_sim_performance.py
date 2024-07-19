@@ -6,7 +6,7 @@
     # Plot similarity metrics performance.
     # Please check "### TO BE ADJUSTED ###" part for input file name changes. 
 # framework: CCMRI
-# last update: 10/07/2024
+# last update: 16/07/2024
 
 import os, re
 import pandas as pd
@@ -87,14 +87,14 @@ def main():
     """
     ### TO BE ADJUSTED ###
     # Define output directories
-    gaussian_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output/v5.0_LSU"
-    impulse_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output/v5.0_LSU"
+    gaussian_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output/v4.1_LSU"
+    impulse_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output/v4.1_LSU"
         
     # Define file names to be compared
-    euclidean_gaussian_file = os.path.join(gaussian_ranking_parent_dir, "ranking_e_initial_VS_noisy_5_stdDev_d_v5.0_LSU_ge_filtered.tsv")
-    cosine_gaussian_file = os.path.join(gaussian_ranking_parent_dir, "ranking_c_initial_VS_noisy_5_stdDev_d_v5.0_LSU_ge_filtered.tsv")
-    euclidean_impulse_file = opatterns.path.join(impulse_ranking_parent_dir, "ranking_e_initial_VS_noisy_0.9_impL_d_v5.0_LSU_ge_filtered.tsv")
-    cosine_impulse_file = os.path.join(impulse_ranking_parent_dir, "ranking_c_initial_VS_noisy_0.9_impL_d_v5.0_LSU_ge_filtered.tsv")
+    euclidean_gaussian_file = os.path.join(gaussian_ranking_parent_dir, "ranking_e_initial_VS_noisy_5_stdDev_d_v4.1_LSU_ge_filtered.tsv")
+    cosine_gaussian_file = os.path.join(gaussian_ranking_parent_dir, "ranking_c_initial_VS_noisy_5_stdDev_d_v4.1_LSU_ge_filtered.tsv")
+    euclidean_impulse_file = os.path.join(impulse_ranking_parent_dir, "ranking_e_initial_VS_noisy_0.03_impL_d_v4.1_LSU_ge_filtered.tsv")
+    cosine_impulse_file = os.path.join(impulse_ranking_parent_dir, "ranking_c_initial_VS_noisy_0.03_impL_d_v4.1_LSU_ge_filtered.tsv")
     ### --- ###
     
     # Extract pattern of interest and noise level from filename
@@ -124,7 +124,7 @@ def main():
     impulse_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output"
     # Define noise level
     gaussian_noise_level = "0.2_stdDev"
-    impulse_noise_level = "0.2_impL"
+    impulse_noise_level = "0.03_impL"
     # Find all relevant files
     all_gaussian_files = find_files(gaussian_parent_dir, gaussian_noise_level)
     all_impulse_files = find_files(impulse_parent_dir, impulse_noise_level)

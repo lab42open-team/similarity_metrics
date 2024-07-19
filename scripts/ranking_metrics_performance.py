@@ -6,7 +6,7 @@
     # Rank performance of similarity metrics applied to initial versus noisy data. 
     # Please check "### TO BE ADJUSTED ###" part for input file name changes. 
 # framework: CCMRI
-# last update: 10/07/2024
+# last update: 16/07/2024
 
 import os
 import pandas as pd
@@ -35,16 +35,15 @@ def main():
 
     ### TO BE ADJUSTED ###
     # Define file names to be compared
-    euclidean_gaussian_file_name = "e_initial_VS_noisy_5_stdDev_d_v4.1_SSU_ge_filtered.tsv"
-    cosine_gaussian_file_name = "c_initial_VS_noisy_5_stdDev_d_v4.1_SSU_ge_filtered.tsv"
-    euclidean_impulse_file_name = "e_initial_VS_noisy_0.9_impL_d_v5.0_SSU_ge_filtered.tsv"
-    cosine_impulse_file_name = "c_initial_VS_noisy_0.9_impL_d_v4.1_SSU_ge_filtered.tsv"
+    euclidean_gaussian_file_name = "e_initial_VS_noisy_5_stdDev_d_v4.1_LSU_ge_filtered.tsv"
+    cosine_gaussian_file_name = "c_initial_VS_noisy_5_stdDev_d_v4.1_LSU_ge_filtered.tsv"
+    euclidean_impulse_file_name = "e_initial_VS_noisy_0.03_impL_d_v4.1_LSU_ge_filtered.tsv"
+    cosine_impulse_file_name = "c_initial_VS_noisy_0.03_impL_d_v4.1_LSU_ge_filtered.tsv"
     
     # Define output directories
-    euclidean_gaussian_ranking_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/euclidean_output/ranking_output"
-    cosine_gaussian_ranking_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/cosine_output/ranking_output"   
-    euclidean_impulse_ranking_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/euclidean_output/ranking_output"
-    cosine_impulse_ranking_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/cosine_output/ranking_output"
+    gaussian_ranking_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output"
+    impulse_ranking_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output/v4.1_LSU"
+   
     
     # Load data - create DataFrames
     euclidean_gaussian_df = load_data(os.path.join(euclidean_gaussian_parent_directory, euclidean_gaussian_file_name))
@@ -59,10 +58,10 @@ def main():
     cosine_impulse_match_ranks = rank_df(cosine_impulse_df)
     
     # Construct output path and filename
-    euclidean_gaussian_ranked_file_path = os.path.join(euclidean_gaussian_ranking_output_dir, "ranking_" + euclidean_gaussian_file_name)
-    cosine_gaussian_ranked_file_path = os.path.join(cosine_gaussian_ranking_output_dir, "ranking_" + cosine_gaussian_file_name)
-    euclidean_impulse_ranked_file_path = os.path.join(euclidean_impulse_ranking_output_dir, "ranking_" + euclidean_impulse_file_name)
-    cosine_impulse_ranked_file_path = os.path.join(cosine_impulse_ranking_output_dir, "ranking_" + cosine_impulse_file_name)
+    euclidean_gaussian_ranked_file_path = os.path.join(gaussian_ranking_output_dir, "ranking_" + euclidean_gaussian_file_name)
+    cosine_gaussian_ranked_file_path = os.path.join(gaussian_ranking_output_dir, "ranking_" + cosine_gaussian_file_name)
+    euclidean_impulse_ranked_file_path = os.path.join(impulse_ranking_output_dir, "ranking_" + euclidean_impulse_file_name)
+    cosine_impulse_ranked_file_path = os.path.join(impulse_ranking_output_dir, "ranking_" + cosine_impulse_file_name)
     
     # Save output to new .tsv file
     euclidean_gaussian_match_ranks.to_csv(euclidean_gaussian_ranked_file_path, sep="\t", index=False)

@@ -5,7 +5,7 @@
 # description: 
     # Calculate average ranking per noise level & type in already created ranking files (produced by: ranking_metrics_performance.py)
 # framework: CCMRI
-# last update: 10/07/2024
+# last update: 16/07/2024
 
 import logging.config
 import os, re
@@ -53,7 +53,7 @@ def main():
     output_file_name = "average_ranking.tsv"
     output_file = os.path.join(output_dir, output_file_name)
     # Define noise level
-    noise_levels = ["0.2_stdDev", "0.5_stdDev", "1_stdDev", "5_stdDev", "0.2_impL", "0.5_impL", "0.7_impL", "0.9_impL"]
+    noise_levels = ["0.2_stdDev", "0.5_stdDev", "1_stdDev", "5_stdDev", "0.01_impL", "0.03_impL" ,"0.05_impL", "0.1_impL"]
     # Iterate over each noise level
     for noise_level in noise_levels:
         if "stdDev" in noise_level:
