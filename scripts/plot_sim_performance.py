@@ -15,7 +15,6 @@ import matplotlib.pyplot as plt
 import logging
 logging.basicConfig(level=logging.INFO)
 
-### BOX PLOTS ###
 def load_and_combine_data(euclidean_input_file, cosine_input_file):
     df_euclidean = pd.read_csv(euclidean_input_file, sep="\t")
     df_euclidean["Metric"] = "Euclidean"
@@ -25,15 +24,6 @@ def load_and_combine_data(euclidean_input_file, cosine_input_file):
     # Combine data into one DataFrame
     combined_df = pd.concat([df_euclidean, df_cosine])
     return combined_df
-
-def plot_sim_performance(combined_df, output_file, noise_level):
-    plt.figure(figsize=(12,6))
-    sns.boxplot(x="Metric", y="Rank", data=combined_df)
-    plt.title("Similarity Metrics Performance (Noise Level: {})".format(noise_level))
-    plt.xlabel("Metric")
-    plt.ylabel("Rank")
-    plt.savefig(output_file)
-    logging.info("Plot saved successfully to: {}".format(output_file))
 
 def extract_pattern(filename):
     pattern_match = re.search(r"_noisy_(.*)\.tsv", filename)
@@ -48,6 +38,29 @@ def ensure_dir(directory):
         logging.info("Created directory: {}".format(directory))
     else:
         logging.info("Directory already exists.")
+
+### HISTOGRAMS ###
+def hist_plot_sim_performance(combined_df, output_file, noise_level):
+    plt.figure(figsize=(12,6))
+    for metric in combined_df["Metric"].unique():
+        subset = combined_df[combined_df["Metric"] == metric]
+        plt.hist(subset["Rank"], bins=20, alpha=0.5, label=metric)
+    plt.title("Histogram Similarity Metrics Performance (Noise Level: {})".format(noise_level))
+    plt.xlabel("Rank")
+    plt.ylabel("Count")
+    plt.legend(title="Metric")
+    plt.savefig(output_file)
+    logging.info("Histogram saved successfully to: {}".format(output_file))    
+
+### BOX PLOTS ###
+def box_plot_sim_performance(combined_df, output_file, noise_level):
+    plt.figure(figsize=(12,6))
+    sns.boxplot(x="Metric", y="Rank", data=combined_df)
+    plt.title("Box-Plot Similarity Metrics Performance (Noise Level: {})".format(noise_level))
+    plt.xlabel("Metric")
+    plt.ylabel("Rank")
+    plt.savefig(output_file)
+    logging.info("Box-plot saved successfully to: {}".format(output_file))
 
 ### TOTAL PERFORMANCE ###
 def find_files(dir, noise_level):
@@ -74,17 +87,28 @@ def load_and_combine_multiple_data(files):
     logging.debug("Data loaded and combined correctly. Shape: {}".format(combined_df.shape))
     return combined_df
 
-def plot_sim_performance_overall(combined_df, output_file, noise_level):
+def box_plot_sim_performance_overall(combined_df, output_file, noise_level):
     plt.figure(figsize=(12,6))
     sns.boxplot(x="Metric", y="Rank", data=combined_df)
-    plt.title("Similarity Metrics Performance Noise Level: {}".format(noise_level))
+    plt.title("Box-Plot Similarity Metrics Performance Noise Level: {}".format(noise_level))
     plt.xlabel("Metric")
     plt.ylabel("Rank")
     plt.savefig(output_file)
-    logging.info("Plot saved successfully to: {}".format(output_file))
+    logging.info("Overall box-plot saved successfully to: {}".format(output_file))
+
+def hist_plot_sim_performance_overall(combined_df, output_file, noise_level):
+    plt.figure(figsize=(12,6))
+    for metric in combined_df["Metric"].unique():
+        subset = combined_df[combined_df["Metric"] == metric]
+        plt.hist(subset["Rank"], bins=20, alpha=0.5, label=metric)
+    plt.title("Histogram Similarity Metrics Performance Noise Level: {}".format(noise_level))
+    plt.xlabel("Rank")
+    plt.ylabel("Count")
+    plt.legend(title="Metric")
+    plt.savefig(output_file)
+    logging.info("Overall hist-plot saved successfully to: {}".format(output_file))
 
 def main():
-    """
     ### TO BE ADJUSTED ###
     # Define output directories
     gaussian_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output/v4.1_LSU"
@@ -93,8 +117,8 @@ def main():
     # Define file names to be compared
     euclidean_gaussian_file = os.path.join(gaussian_ranking_parent_dir, "ranking_e_initial_VS_noisy_5_stdDev_d_v4.1_LSU_ge_filtered.tsv")
     cosine_gaussian_file = os.path.join(gaussian_ranking_parent_dir, "ranking_c_initial_VS_noisy_5_stdDev_d_v4.1_LSU_ge_filtered.tsv")
-    euclidean_impulse_file = os.path.join(impulse_ranking_parent_dir, "ranking_e_initial_VS_noisy_0.03_impL_d_v4.1_LSU_ge_filtered.tsv")
-    cosine_impulse_file = os.path.join(impulse_ranking_parent_dir, "ranking_c_initial_VS_noisy_0.03_impL_d_v4.1_LSU_ge_filtered.tsv")
+    euclidean_impulse_file = os.path.join(impulse_ranking_parent_dir, "ranking_e_initial_VS_noisy_0.1_impL_d_v4.1_LSU_ge_filtered.tsv")
+    cosine_impulse_file = os.path.join(impulse_ranking_parent_dir, "ranking_c_initial_VS_noisy_0.1_impL_d_v4.1_LSU_ge_filtered.tsv")
     ### --- ###
     
     # Extract pattern of interest and noise level from filename
@@ -116,15 +140,17 @@ def main():
     ranking_impulse_noise = load_and_combine_data(euclidean_impulse_file, cosine_impulse_file)
     
     # Plot
-    plot_sim_performance(ranking_gaussian_noise, gaussian_output_file, gaussian_noise_level)
-    plot_sim_performance(ranking_impulse_noise, impulse_output_file, impulse_noise_level)
-    """
+    #box_plot_sim_performance(ranking_gaussian_noise, gaussian_output_file, gaussian_noise_level)
+    hist_plot_sim_performance(ranking_gaussian_noise, gaussian_output_file, gaussian_noise_level)
+    #box_plot_sim_performance(ranking_impulse_noise, impulse_output_file, impulse_noise_level)
+    hist_plot_sim_performance(ranking_impulse_noise, impulse_output_file, impulse_noise_level)
+
     ### OVERALL PERFORMANCE ###
     gaussian_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output"
     impulse_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output"
     # Define noise level
-    gaussian_noise_level = "0.2_stdDev"
-    impulse_noise_level = "0.03_impL"
+    gaussian_noise_level = "5_stdDev"
+    impulse_noise_level = "0.1_impL"
     # Find all relevant files
     all_gaussian_files = find_files(gaussian_parent_dir, gaussian_noise_level)
     all_impulse_files = find_files(impulse_parent_dir, impulse_noise_level)
@@ -143,8 +169,8 @@ def main():
     gaussian_output_file = os.path.join(gaussian_output_overall_dir, "g_{}_".format(gaussian_noise_level) + "overall_performance.png")
     impulse_output_file = os.path.join(impulse_output_overall_dir, "i_{}_".format(impulse_noise_level) + "overall_performance.png")
     # Plot overall performance
-    plot_sim_performance_overall(gaussian_combined_df, gaussian_output_file, gaussian_noise_level)
-    plot_sim_performance_overall(impulse_combined_df, impulse_output_file, impulse_noise_level)
+    #hist_plot_sim_performance_overall(gaussian_combined_df, gaussian_output_file, gaussian_noise_level)
+    #hist_plot_sim_performance_overall(impulse_combined_df, impulse_output_file, impulse_noise_level)
     
     
 if __name__ ==  "__main__":
