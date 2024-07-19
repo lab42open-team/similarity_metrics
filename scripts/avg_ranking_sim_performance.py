@@ -3,9 +3,10 @@
 # script name: avg_ranking_sim_performance.py
 # developed by: Nefeli Venetsianou
 # description: 
+    # Calculate top-X ranks for euclidean and cosine metrics. 
     # Calculate average ranking per noise level & type in already created ranking files (produced by: ranking_metrics_performance.py)
 # framework: CCMRI
-# last update: 16/07/2024
+# last update: 19/07/2024
 
 import logging.config
 import os, re
@@ -28,6 +29,27 @@ def load_ranking_data(file):
     logging.info("Data from {} loaded correctly.".format(format(os.path.basename(file))))
     return df["Rank"]
 
+def calculate_summary_statistics(files):
+    euclidean_ranks = []
+    cosine_ranks = []
+    for e_file, c_file in files:
+        euclidean_ranks.extend(load_ranking_data(e_file))
+        cosine_ranks.extend(load_ranking_data(c_file))
+    def calculate_counts(ranks):
+        counts = {
+            "top_1": sum(1 for r in ranks if r <= 1), # 1 if expression satisfied, 0 if not
+            "top_3": sum(1 for r in ranks if r <= 3),
+            "top_5": sum(1 for r in ranks if r <= 5),
+            "top_10": sum(1 for r in ranks if r <= 10), 
+            "top_100": sum(1 for r in ranks if r <= 100)
+        }
+        return counts
+    euclidean_counts = calculate_counts(euclidean_ranks)
+    cosine_counts = calculate_counts(cosine_ranks)
+    
+    return euclidean_counts, cosine_counts
+
+"""
 def calculate_average_ranking(files):
     euclidean_ranks = []
     cosine_ranks = []
@@ -37,20 +59,25 @@ def calculate_average_ranking(files):
     avg_euclidean_rank = sum(euclidean_ranks) / len(euclidean_ranks) if euclidean_ranks else float("nan")
     avg_cosine_rank = sum(cosine_ranks) / len(cosine_ranks) if cosine_ranks else float("nan")
     return avg_euclidean_rank, avg_cosine_rank
-
-def save_results(output_file, noise_level, avg_euclidean_rank, avg_cosine_rank):
+"""
+def save_results(output_file, noise_level, euclidean_counts, cosine_counts):
     if not os.path.exists(output_file):
         with open(output_file, "w") as f:
-            f.write("Noise\tEuclidean Rank\tCosine Rank\n")
+            f.write("Noise\tMetric\tTop-1\tTop-3\tTop-5\tTop-10\tTop-100\n")
+            #f.write("Noise\tEuclidean Rank\tCosine Rank\n")
+    def write_counts(f, noise_level, metric, counts):
+        f.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(noise_level, metric, counts["top_1"], counts["top_3"], counts["top_5"],counts["top_10"], counts["top_100"]))
+        
     with open(output_file, "a") as f:
-        f.write("{}\t{}\t{}\n".format(noise_level, avg_euclidean_rank, avg_cosine_rank))
+        write_counts(f, noise_level, "Euclidean", euclidean_counts)
+        write_counts(f, noise_level, "Cosine", cosine_counts)
 
 def main():
     # Define output directories
     gaussian_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output"
     impulse_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output"
     output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics"
-    output_file_name = "average_ranking.tsv"
+    output_file_name = "summary_statistics.tsv"
     output_file = os.path.join(output_dir, output_file_name)
     # Define noise level
     noise_levels = ["0.2_stdDev", "0.5_stdDev", "1_stdDev", "5_stdDev", "0.01_impL", "0.03_impL" ,"0.05_impL", "0.1_impL"]
@@ -62,15 +89,13 @@ def main():
             parent_dir = impulse_parent_dir
         # Find all relevant file
         all_files = find_files(parent_dir, noise_level)
-        # Calculate average ranking 
-        avg_euclidean_rank, avg_cosine_rank = calculate_average_ranking(all_files)
+        # Calculate summary statistics 
+        euclidean_counts, cosine_counts = calculate_summary_statistics(all_files)
         # Save results 
-        save_results(output_file, noise_level, avg_euclidean_rank, avg_cosine_rank)
+        save_results(output_file, noise_level, euclidean_counts, cosine_counts)
         # Log results 
-        logging.info("Average euclidean rank for noise level {} : {}".format(noise_level, avg_euclidean_rank))
-        logging.info("Average cosine rank for noise level {} : {}".format(noise_level, avg_cosine_rank))
+        logging.info("Average euclidean rank for noise level {} : {}".format(noise_level, euclidean_counts))
+        logging.info("Average cosine rank for noise level {} : {}".format(noise_level, cosine_counts))
         
 if __name__ == "__main__":
     main()
-            
-    
