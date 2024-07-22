@@ -6,7 +6,7 @@
     # Plot similarity metrics performance.
     # Please check "### TO BE ADJUSTED ###" part for input file name changes. 
 # framework: CCMRI
-# last update: 16/07/2024
+# last update: 22/07/2024
 
 import os, re
 import pandas as pd
@@ -42,9 +42,14 @@ def ensure_dir(directory):
 ### HISTOGRAMS ###
 def hist_plot_sim_performance(combined_df, output_file, noise_level):
     plt.figure(figsize=(12,6))
-    for metric in combined_df["Metric"].unique():
+    metrics = combined_df["Metric"].unique()
+    # Calculate bins using data from both metrics 
+    all_data = combined_df["Rank"]
+    # Get bin edges using all data 
+    bins = plt.hist(all_data, bins=20, alpha=0)[1]
+    for metric in metrics:
         subset = combined_df[combined_df["Metric"] == metric]
-        plt.hist(subset["Rank"], bins=20, alpha=0.5, label=metric)
+        plt.hist(subset["Rank"], bins=bins, alpha=0.5, label=metric)
     plt.title("Histogram Similarity Metrics Performance (Noise Level: {})".format(noise_level))
     plt.xlabel("Rank")
     plt.ylabel("Count")
@@ -98,9 +103,14 @@ def box_plot_sim_performance_overall(combined_df, output_file, noise_level):
 
 def hist_plot_sim_performance_overall(combined_df, output_file, noise_level):
     plt.figure(figsize=(12,6))
-    for metric in combined_df["Metric"].unique():
+    metrics = combined_df["Metric"].unique()
+    # Calculate bins using data from both metrics 
+    all_data = combined_df["Rank"]
+    # Get bin edges using all data 
+    bins = plt.hist(all_data, bins=20, alpha=0)[1]
+    for metric in metrics:
         subset = combined_df[combined_df["Metric"] == metric]
-        plt.hist(subset["Rank"], bins=20, alpha=0.5, label=metric)
+        plt.hist(subset["Rank"], bins=bins, alpha=0.5, label=metric)
     plt.title("Histogram Similarity Metrics Performance Noise Level: {}".format(noise_level))
     plt.xlabel("Rank")
     plt.ylabel("Count")
@@ -111,14 +121,14 @@ def hist_plot_sim_performance_overall(combined_df, output_file, noise_level):
 def main():
     ### TO BE ADJUSTED ###
     # Define output directories
-    gaussian_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output/v4.1_LSU"
-    impulse_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output/v4.1_LSU"
+    gaussian_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output/v5.0_LSU"
+    impulse_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output/v5.0_LSU"
         
     # Define file names to be compared
-    euclidean_gaussian_file = os.path.join(gaussian_ranking_parent_dir, "ranking_e_initial_VS_noisy_5_stdDev_d_v4.1_LSU_ge_filtered.tsv")
-    cosine_gaussian_file = os.path.join(gaussian_ranking_parent_dir, "ranking_c_initial_VS_noisy_5_stdDev_d_v4.1_LSU_ge_filtered.tsv")
-    euclidean_impulse_file = os.path.join(impulse_ranking_parent_dir, "ranking_e_initial_VS_noisy_0.1_impL_d_v4.1_LSU_ge_filtered.tsv")
-    cosine_impulse_file = os.path.join(impulse_ranking_parent_dir, "ranking_c_initial_VS_noisy_0.1_impL_d_v4.1_LSU_ge_filtered.tsv")
+    euclidean_gaussian_file = os.path.join(gaussian_ranking_parent_dir, "ranking_e_initial_VS_noisy_5_stdDev_d_v5.0_LSU_ge_filtered.tsv")
+    cosine_gaussian_file = os.path.join(gaussian_ranking_parent_dir, "ranking_c_initial_VS_noisy_5_stdDev_d_v5.0_LSU_ge_filtered.tsv")
+    euclidean_impulse_file = os.path.join(impulse_ranking_parent_dir, "ranking_e_initial_VS_noisy_0.1_impL_d_v5.0_LSU_ge_filtered.tsv")
+    cosine_impulse_file = os.path.join(impulse_ranking_parent_dir, "ranking_c_initial_VS_noisy_0.1_impL_d_v5.0_LSU_ge_filtered.tsv")
     ### --- ###
     
     # Extract pattern of interest and noise level from filename
@@ -149,8 +159,8 @@ def main():
     gaussian_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output"
     impulse_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output"
     # Define noise level
-    gaussian_noise_level = "5_stdDev"
-    impulse_noise_level = "0.1_impL"
+    gaussian_noise_level = "0.2_stdDev"
+    impulse_noise_level = "0.01_impL"
     # Find all relevant files
     all_gaussian_files = find_files(gaussian_parent_dir, gaussian_noise_level)
     all_impulse_files = find_files(impulse_parent_dir, impulse_noise_level)
