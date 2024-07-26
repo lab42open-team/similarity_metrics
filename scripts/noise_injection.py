@@ -38,9 +38,11 @@ def downsample_counts_noise_injection(input_file, original_plot_file, downsample
         for sample in samples_to_downsample:
             sample_mask = downsampled_df["Sample"] == sample
             sample_counts = downsampled_df[sample_mask]["Count"].values
+            # Calculate total initial count
             total_count = sample_counts.sum()
+            # Calculate downsampled count according to total initial count and ratio
             downsampled_count = total_count * ratio 
-            # Apply multinomial downsampling to the selected sample
+            # Apply multinomial downsampling to the selected sample based on probability distribution (pvalues)
             downsampled_sample_counts = np.random.multinomial(n=int(downsampled_count), pvals = sample_counts / sample_counts.sum())
             downsampled_df.loc[sample_mask, "Count"] = downsampled_sample_counts
         # Normalize counts to sum to 1 within each sample
