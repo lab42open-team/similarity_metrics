@@ -6,7 +6,7 @@
     # Plot similarity metrics performance.
     # Please check "### TO BE ADJUSTED ###" part for input file name changes. 
 # framework: CCMRI
-# last update: 22/07/2024
+# last update: 26/07/2024
 
 import os, re
 import pandas as pd
@@ -26,8 +26,8 @@ def load_and_combine_data(euclidean_input_file, cosine_input_file):
     return combined_df
 
 def extract_pattern(filename):
-    pattern_match = re.search(r"_noisy_(.*)\.tsv", filename)
-    noise_level_match = re.search(r"_noisy_(.*?)_d", filename)
+    pattern_match = re.search(r"_downsampled_(.*)\.tsv", filename)
+    noise_level_match = re.search(r"_downsampled_(.*?)_d", filename)
     pattern = pattern_match.group(1) if pattern_match else ""
     noise_level = noise_level_match.group(1) if noise_level_match else ""
     return pattern, noise_level
@@ -46,13 +46,15 @@ def hist_plot_sim_performance(combined_df, output_file, noise_level):
     # Calculate bins using data from both metrics 
     all_data = combined_df["Rank"]
     # Get bin edges using all data 
-    bins = plt.hist(all_data, bins=20, alpha=0)[1]
+    bins = plt.hist(all_data, bins=50, alpha=0)[1]
     for metric in metrics:
         subset = combined_df[combined_df["Metric"] == metric]
         plt.hist(subset["Rank"], bins=bins, alpha=0.5, label=metric)
     plt.title("Histogram Similarity Metrics Performance (Noise Level: {})".format(noise_level))
     plt.xlabel("Rank")
     plt.ylabel("Count")
+    plt.ylim((0,1000))
+    plt.xticks(range(0, int(max(all_data)+1), 20))
     plt.legend(title="Metric")
     plt.savefig(output_file)
     logging.info("Histogram saved successfully to: {}".format(output_file))    
@@ -119,69 +121,74 @@ def hist_plot_sim_performance_overall(combined_df, output_file, noise_level):
     logging.info("Overall hist-plot saved successfully to: {}".format(output_file))
 
 def main():
+    ### PER VERSION AND NOISE LEVEL PERFORMANCE PLOTS ###
+    # Define ranking parent directory of noisy version 
+    downsampled_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output/v4.1_LSU"
+    
     ### TO BE ADJUSTED ###
-    # Define output directories
-    gaussian_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output/v5.0_LSU"
-    impulse_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output/v5.0_LSU"
-        
-    # Define file names to be compared
-    euclidean_gaussian_file = os.path.join(gaussian_ranking_parent_dir, "ranking_e_initial_VS_noisy_5_stdDev_d_v5.0_LSU_ge_filtered.tsv")
-    cosine_gaussian_file = os.path.join(gaussian_ranking_parent_dir, "ranking_c_initial_VS_noisy_5_stdDev_d_v5.0_LSU_ge_filtered.tsv")
-    euclidean_impulse_file = os.path.join(impulse_ranking_parent_dir, "ranking_e_initial_VS_noisy_0.1_impL_d_v5.0_LSU_ge_filtered.tsv")
-    cosine_impulse_file = os.path.join(impulse_ranking_parent_dir, "ranking_c_initial_VS_noisy_0.1_impL_d_v5.0_LSU_ge_filtered.tsv")
+    # Define file names to be compared  
+    euclidean_downsampled_file = os.path.join(downsampled_ranking_parent_dir, "ranking_e_initial_VS_downsampled_0.1_ratio_d_v4.1_LSU_ge_filtered.tsv")
+    cosine_downsampled_file = os.path.join(downsampled_ranking_parent_dir, "ranking_c_initial_VS_downsampled_0.1_ratio_d_v4.1_LSU_ge_filtered.tsv")
     ### --- ###
     
     # Extract pattern of interest and noise level from filename
-    gaussian_pattern, gaussian_noise_level = extract_pattern(euclidean_gaussian_file)
-    impulse_pattern, impulse_noise_level = extract_pattern(euclidean_impulse_file)
-    
+    downsampled_pattern, downsampled_noise_level = extract_pattern(euclidean_downsampled_file)
     # Create subdirectories
-    gaussian_plots_dir = os.path.join(gaussian_ranking_parent_dir, "plots")
-    impulse_plots_dir = os.path.join(impulse_ranking_parent_dir, "plots")
+    downsampled_plots_dir = os.path.join(downsampled_ranking_parent_dir, "plots")
     # Check if directory exists - if not, create dir 
-    ensure_dir(gaussian_plots_dir)
-    ensure_dir(impulse_plots_dir)
-    # Construct file name     
-    gaussian_output_file = os.path.join(gaussian_plots_dir, gaussian_pattern) + ".png"
-    impulse_output_file = os.path.join(impulse_plots_dir, impulse_pattern) + ".png"
-    
+    ensure_dir(downsampled_plots_dir)
+    # Construct file name 
+    downsampled_output_file = os.path.join(downsampled_plots_dir, downsampled_pattern) + ".png"
     # Load data
-    ranking_gaussian_noise = load_and_combine_data(euclidean_gaussian_file, cosine_gaussian_file)
-    ranking_impulse_noise = load_and_combine_data(euclidean_impulse_file, cosine_impulse_file)
+    ranking_downsampled_noise = load_and_combine_data(euclidean_downsampled_file, cosine_downsampled_file)
+    # Plot per version & ratio - noise level  
+    hist_plot_sim_performance(ranking_downsampled_noise, downsampled_output_file, downsampled_noise_level)
     
-    # Plot
-    #box_plot_sim_performance(ranking_gaussian_noise, gaussian_output_file, gaussian_noise_level)
-    hist_plot_sim_performance(ranking_gaussian_noise, gaussian_output_file, gaussian_noise_level)
-    #box_plot_sim_performance(ranking_impulse_noise, impulse_output_file, impulse_noise_level)
-    hist_plot_sim_performance(ranking_impulse_noise, impulse_output_file, impulse_noise_level)
-
-    ### OVERALL PERFORMANCE ###
-    gaussian_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output"
-    impulse_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output"
+    ### OVERALL PERFORMANCE ### 
+    downsampled_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output"
     # Define noise level
-    gaussian_noise_level = "0.2_stdDev"
-    impulse_noise_level = "0.01_impL"
-    # Find all relevant files
-    all_gaussian_files = find_files(gaussian_parent_dir, gaussian_noise_level)
-    all_impulse_files = find_files(impulse_parent_dir, impulse_noise_level)
-    logging.debug("Total gaussian files found: {}".format(len(all_gaussian_files)))
-    logging.debug("Total impulse files found: {}".format(len(all_impulse_files)))
-    if not all_gaussian_files:
-        logging.debug("No gaussian files found. Check patterns and directories.")
-    if not all_impulse_files:
-        logging.debug("No impulse files found. Check patterns and directories.")
-    # Load and combine data
-    gaussian_combined_df = load_and_combine_multiple_data(all_gaussian_files)
-    impulse_combined_df = load_and_combine_multiple_data(all_impulse_files)
-    # Create output dir 
-    gaussian_output_overall_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output/"
-    impulse_output_overall_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output/"
-    gaussian_output_file = os.path.join(gaussian_output_overall_dir, "g_{}_".format(gaussian_noise_level) + "overall_performance.png")
-    impulse_output_file = os.path.join(impulse_output_overall_dir, "i_{}_".format(impulse_noise_level) + "overall_performance.png")
+    downsampling_noise_level = "0.1_ratio"
+    # find all relevant files 
+    all_downsampled_files = find_files(downsampled_directory, downsampling_noise_level)
+    logging.info("Total downsampled files found: {}".format(len(all_downsampled_files)))
+    if not all_downsampled_files:
+        logging.debug("No downsampled files found. Check patterns and directories.")
+    # Load and combine data 
+    downsampled_combined_df = load_and_combine_multiple_data(all_downsampled_files)
+    # Construct output file path 
+    downsampled_output_file = os.path.join(downsampled_directory, "{}_".format(downsampling_noise_level) + "overall_performance.png")
     # Plot overall performance
-    #hist_plot_sim_performance_overall(gaussian_combined_df, gaussian_output_file, gaussian_noise_level)
-    #hist_plot_sim_performance_overall(impulse_combined_df, impulse_output_file, impulse_noise_level)
-    
+    hist_plot_sim_performance_overall(downsampled_combined_df, downsampled_output_file, downsampling_noise_level)
+    logging.info("Downsampled Overall performance plots saved to: {}".format(downsampled_output_file))
     
 if __name__ ==  "__main__":
     main()
+    
+""" NOTE   
+### OVERALL PERFORMANCE ###
+gaussian_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output"
+impulse_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output"
+# Define noise level
+gaussian_noise_level = "0.2_stdDev"
+impulse_noise_level = "0.01_impL"
+# Find all relevant files
+all_gaussian_files = find_files(gaussian_parent_dir, gaussian_noise_level)
+all_impulse_files = find_files(impulse_parent_dir, impulse_noise_level)
+logging.debug("Total gaussian files found: {}".format(len(all_gaussian_files)))
+logging.debug("Total impulse files found: {}".format(len(all_impulse_files)))
+if not all_gaussian_files:
+    logging.debug("No gaussian files found. Check patterns and directories.")
+if not all_impulse_files:
+    logging.debug("No impulse files found. Check patterns and directories.")
+# Load and combine data
+gaussian_combined_df = load_and_combine_multiple_data(all_gaussian_files)
+impulse_combined_df = load_and_combine_multiple_data(all_impulse_files)
+# Create output dir 
+gaussian_output_overall_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output/"
+impulse_output_overall_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output"
+gaussian_output_file = os.path.join(gaussian_output_overall_dir, "g_{}_".format(gaussian_noise_level) + "overall_performance.png")
+impulse_output_file = os.path.join(impulse_output_overall_dir, "i_{}_".format(impulse_noise_level) + "overall_performance.png")
+# Plot overall performance
+#hist_plot_sim_performance_overall(gaussian_combined_df, gaussian_output_file, gaussian_noise_level)
+#hist_plot_sim_performance_overall(impulse_combined_df, impulse_output_file, impulse_noise_level)
+"""
