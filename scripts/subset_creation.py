@@ -1,6 +1,6 @@
 #!/usr/bin/python3.5
 
-# script name: downsampling.py
+# script name: subset.py
 # developed by: Nefeli Venetsianou
 # description: 
     # Create downsampled versions.
@@ -31,18 +31,6 @@ def main():
     valid_samples = sample_genera_count[sample_genera_count > 10].index
     # Filter DataFrame based on valid samples
     df = df[df["Sample"].isin(valid_samples)]
-    """ ### If uncomment this part, then mnoise injected versions will be created 
-    # Find unique samples 
-    unique_samples = df["Sample"].unique()
-    # Downsample at 10% of total samples
-    #frac = 0.1
-    # Downsample at 1000 unique samples
-    num_samples = min(1000, len(unique_samples))
-    downsampled_samples = pd.Series(unique_samples).sample(n=num_samples, random_state=1)
-    # Ensure retrieval of 1000 Samples
-    if len(downsampled_samples) < 1000:
-        logging.info("Expected 1000 Samples, but retrieved {}".format(len(downsampled_samples)))
-    """
     # Drop genus column 
     df = df.drop(columns=["Genus"])
     # Normalize counts
