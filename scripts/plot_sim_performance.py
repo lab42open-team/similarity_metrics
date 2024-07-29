@@ -6,7 +6,7 @@
     # Plot similarity metrics performance.
     # Please check "### TO BE ADJUSTED ###" part for input file name changes. 
 # framework: CCMRI
-# last update: 29/07/2024
+# last update: 26/07/2024
 
 import os, re
 import pandas as pd
@@ -25,8 +25,7 @@ def load_and_combine_data(euclidean_input_file, cosine_input_file):
     combined_df = pd.concat([df_euclidean, df_cosine])
     return combined_df
 
-def extract_pattern(filename):plt.ylim((0,1000))
-    plt.xticks(range(0, int(max(all_data)+1), 20))
+def extract_pattern(filename):
     pattern_match = re.search(r"_downsampled_(.*)\.tsv", filename)
     noise_level_match = re.search(r"_downsampled_(.*?)_d", filename)
     pattern = pattern_match.group(1) if pattern_match else ""
@@ -101,6 +100,7 @@ def box_plot_sim_performance_overall(combined_df, output_file, noise_level):
     plt.title("Box-Plot Similarity Metrics Performance Noise Level: {}".format(noise_level))
     plt.xlabel("Metric")
     plt.ylabel("Rank")
+    plt.ylim((0,4000))
     plt.savefig(output_file)
     logging.info("Overall box-plot saved successfully to: {}".format(output_file))
 
