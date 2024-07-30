@@ -33,8 +33,8 @@ def main():
 
     ### TO BE ADJUSTED ###
     # Define file names to be compared
-    euclidean_downsampled_file_name = "e_initial_VS_downsampled_0.75_ratio_d_v4.1_LSU_ge_filtered.tsv"
-    cosine_downsampled_file_name = "c_initial_VS_downsampled_0.75_ratio_d_v4.1_LSU_ge_filtered.tsv"
+    euclidean_downsampled_file_name = "e_initial_VS_downsampled_0.9_ratio_d_v5.0_LSU_ge_filtered.tsv"
+    cosine_downsampled_file_name = "c_initial_VS_downsampled_0.9_ratio_d_v5.0_LSU_ge_filtered.tsv"
     ### --- ###
     
     # Define output directories    

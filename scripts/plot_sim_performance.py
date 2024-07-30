@@ -126,12 +126,12 @@ def hist_plot_sim_performance_overall(combined_df, output_file, noise_level):
 def main():
     ### PER VERSION AND NOISE LEVEL PERFORMANCE PLOTS ###
     # Define ranking parent directory of noisy version 
-    downsampled_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output/v4.1_LSU"
+    downsampled_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output/v5.0_LSU"
     
     ### TO BE ADJUSTED ###
     # Define file names to be compared  
-    euclidean_downsampled_file = os.path.join(downsampled_ranking_parent_dir, "ranking_e_initial_VS_downsampled_0.1_ratio_d_v4.1_LSU_ge_filtered.tsv")
-    cosine_downsampled_file = os.path.join(downsampled_ranking_parent_dir, "ranking_c_initial_VS_downsampled_0.1_ratio_d_v4.1_LSU_ge_filtered.tsv")
+    euclidean_downsampled_file = os.path.join(downsampled_ranking_parent_dir, "ranking_e_initial_VS_downsampled_0.9_ratio_d_v5.0_LSU_ge_filtered.tsv")
+    cosine_downsampled_file = os.path.join(downsampled_ranking_parent_dir, "ranking_c_initial_VS_downsampled_0.9_ratio_d_v5.0_LSU_ge_filtered.tsv")
     ### --- ###
     
     # Extract pattern of interest and noise level from filename
@@ -145,12 +145,12 @@ def main():
     # Load data
     ranking_downsampled_noise = load_and_combine_data(euclidean_downsampled_file, cosine_downsampled_file)
     # Plot per version & ratio - noise level  
-    #hist_plot_sim_performance(ranking_downsampled_noise, downsampled_output_file, downsampled_noise_level)
-    
+    hist_plot_sim_performance(ranking_downsampled_noise, downsampled_output_file, downsampled_noise_level)
+    """
     ### OVERALL PERFORMANCE ### 
     downsampled_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output"
     # Define noise level
-    downsampling_noise_level = "0.75_ratio"
+    downsampling_noise_level = "0.9_ratio"
     # find all relevant files 
     all_downsampled_files = find_files(downsampled_directory, downsampling_noise_level)
     logging.info("Total downsampled files found: {}".format(len(all_downsampled_files)))
@@ -163,6 +163,7 @@ def main():
     # Plot overall performance
     hist_plot_sim_performance_overall(downsampled_combined_df, downsampled_output_file, downsampling_noise_level)
     logging.info("Downsampled Overall performance plots saved to: {}".format(downsampled_output_file))
+    """
     
 if __name__ ==  "__main__":
     main()

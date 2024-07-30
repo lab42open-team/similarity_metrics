@@ -74,19 +74,24 @@ def save_results(output_file, noise_level, euclidean_counts, cosine_counts):
 
 def main():
     # Define output directories
-    gaussian_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output"
-    impulse_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output"
+    #gaussian_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output"
+    #impulse_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output"
+    downsampled_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output"
     output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics"
-    output_file_name = "summary_statistics.tsv"
+    output_file_name = "summary_downsampled_statistics.tsv"
     output_file = os.path.join(output_dir, output_file_name)
     # Define noise level
-    noise_levels = ["0.2_stdDev", "0.5_stdDev", "1_stdDev", "5_stdDev", "0.01_impL", "0.03_impL" ,"0.05_impL", "0.1_impL"]
+    #noise_levels = ["0.2_stdDev", "0.5_stdDev", "1_stdDev", "5_stdDev", "0.01_impL", "0.03_impL" ,"0.05_impL", "0.1_impL"]
+    noise_levels = ["0.1_ratio", "0.25_ratio", "0.5_ratio", "0.75_ratio", "0.9_ratio"]
     # Iterate over each noise level
     for noise_level in noise_levels:
+        """
         if "stdDev" in noise_level:
             parent_dir = gaussian_parent_dir
         else:
             parent_dir = impulse_parent_dir
+        """
+        parent_dir = downsampled_parent_dir
         # Find all relevant file
         all_files = find_files(parent_dir, noise_level)
         # Calculate summary statistics 
