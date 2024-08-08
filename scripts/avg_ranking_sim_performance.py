@@ -11,6 +11,8 @@
 import logging.config
 import os, re
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 import logging
 logging.basicConfig(level=logging.INFO)
 
@@ -49,6 +51,52 @@ def calculate_summary_statistics(files):
     
     return euclidean_counts, cosine_counts
 
+### Line Plot ###
+def plot_results(data, output_dir):
+    df = pd.DataFrame(data)
+    df_melt = pd.melt(df, id_vars=["Noise_Ratio", "Metric"], var_name="Top-k", value_name="Performance")
+    plt.figure(figsize=(14,8))
+    sns.lineplot(data=df_melt, x="Top-k", y="Performance", hue="Noise_Ratio", style="Metric", markers=True)
+    plt.title("Performance vs Top-k Level for Different Noise Ratios and Metrics")
+    # Save plot
+    output_file = os.path.join(output_dir, "performance_plot.png")
+    plt.savefig(output_file)
+    plt.close() 
+
+### Bar Plot ###
+def plot_bar_subplots(data, output_dir):
+    df = pd.DataFrame(data)
+    df_melt = pd.melt(df, id_vars=["Noise_Ratio", "Metric"], var_name="Top-k", value_name="Performance") 
+    # Create subplots
+    fig, axes = plt.subplots(2, 3, figsize=(18, 10), sharey=True)
+    top_k_levels = ["Top-1", "Top-3", "Top-5", "Top-10", "Top-100"]
+    for i, top_k in enumerate(top_k_levels):
+        ax = axes[i//3, i%3]  # Arrange plots in grid
+        sns.barplot(data=df_melt[df_melt["Top-k"] == top_k], x="Noise_Ratio", y="Performance", hue="Metric", ax=ax)
+        ax.set_title("Performance at {}".format(top_k))
+        ax.set_xlabel('Noise Ratio')
+        ax.set_ylabel('Count')
+        if i % 3 != 0:
+            ax.set_ylabel('')  # Remove y-labels for better layout
+        if i < 3:
+            ax.set_xlabel('')  # Remove x-labels for top plots
+    plt.tight_layout()
+    plt.savefig(os.path.join(output_dir, "performance_bar_plot.png"))
+    plt.close()
+
+### HeatMap ###
+def plot_heatmap(data, output_dir):
+    df = pd.DataFrame(data)
+    df_melt = pd.melt(df, id_vars=["Noise_Ratio", "Metric"], var_name="Top-k", value_name="Performance")
+    df_pivot = df_melt.pivot_table(index=["Noise_Ratio", "Metric"], columns="Top-k", values="Performance")
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(df_pivot, annot=True, fmt="d", cmap="Blues", linewidths=.5)
+    plt.title("Performance Heatmap for Different Noise Ratios and Metrics")
+    plt.xlabel("Top-k Levels")
+    plt.ylabel("Noise Ratio & Metric")
+    plt.savefig(os.path.join(output_dir, "performance_heatmap.png"))
+    plt.close()
+
 """
 def calculate_average_ranking(files):
     euclidean_ranks = []
@@ -83,6 +131,7 @@ def main():
     # Define noise level
     #noise_levels = ["0.2_stdDev", "0.5_stdDev", "1_stdDev", "5_stdDev", "0.01_impL", "0.03_impL" ,"0.05_impL", "0.1_impL"]
     noise_levels = ["0.1_ratio", "0.25_ratio", "0.5_ratio", "0.75_ratio", "0.9_ratio"]
+    summary_data = []
     # Iterate over each noise level
     for noise_level in noise_levels:
         """
@@ -99,8 +148,34 @@ def main():
         # Save results 
         save_results(output_file, noise_level, euclidean_counts, cosine_counts)
         # Log results 
-        logging.info("Average euclidean rank for noise level {} : {}".format(noise_level, euclidean_counts))
-        logging.info("Average cosine rank for noise level {} : {}".format(noise_level, cosine_counts))
-        
+        #logging.info("Average euclidean rank for noise level {} : {}".format(noise_level, euclidean_counts))
+        #logging.info("Average cosine rank for noise level {} : {}".format(noise_level, cosine_counts))
+        logging.info("Summary for noise level {}: Euclidean = {}, Cosine = {}".format(noise_level, euclidean_counts, cosine_counts))
+
+        # Prepare data for plotting
+        summary_data.append({
+            "Noise_Ratio": noise_level,
+            "Metric": "Euclidean", 
+            "Top-1": euclidean_counts["top_1"],
+            "Top-3": euclidean_counts["top_3"],
+            "Top-5": euclidean_counts["top_5"],
+            "Top-10": euclidean_counts["top_10"],
+            "Top-100": euclidean_counts["top_100"]
+        })
+        summary_data.append({
+            "Noise_Ratio": noise_level,
+            "Metric": "Cosine", 
+            "Top-1": cosine_counts["top_1"],
+            "Top-3": cosine_counts["top_3"],
+            "Top-5": cosine_counts["top_5"],
+            "Top-10": cosine_counts["top_10"],
+            "Top-100": cosine_counts["top_100"]
+        })
+
+    # Plot results after processing all noise levels
+    plot_results(summary_data, output_dir)
+    plot_heatmap(summary_data, output_dir)
+    plot_bar_subplots(summary_data, output_dir)
+
 if __name__ == "__main__":
     main()
