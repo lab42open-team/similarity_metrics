@@ -119,6 +119,7 @@ def hist_plot_sim_performance_overall(combined_df, output_file, noise_level):
     plt.ylabel("Count")
     plt.ylim((0,4000))
     plt.xticks(range(0, int(max(all_data)+1), 20))
+    plt.xlim((0,260))
     plt.legend(title="Metric")
     plt.savefig(output_file)
     logging.info("Overall hist-plot saved successfully to: {}".format(output_file))
@@ -143,14 +144,14 @@ def main():
     # Construct file name 
     downsampled_output_file = os.path.join(downsampled_plots_dir, downsampled_pattern) + ".png"
     # Load data
-    ranking_downsampled_noise = load_and_combine_data(euclidean_downsampled_file, cosine_downsampled_file)
+    #ranking_downsampled_noise = load_and_combine_data(euclidean_downsampled_file, cosine_downsampled_file)
     # Plot per version & ratio - noise level  
-    hist_plot_sim_performance(ranking_downsampled_noise, downsampled_output_file, downsampled_noise_level)
-    """
+    #hist_plot_sim_performance(ranking_downsampled_noise, downsampled_output_file, downsampled_noise_level)
+    
     ### OVERALL PERFORMANCE ### 
     downsampled_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output"
     # Define noise level
-    downsampling_noise_level = "0.9_ratio"
+    downsampling_noise_level = "0.1_ratio"
     # find all relevant files 
     all_downsampled_files = find_files(downsampled_directory, downsampling_noise_level)
     logging.info("Total downsampled files found: {}".format(len(all_downsampled_files)))
@@ -163,7 +164,7 @@ def main():
     # Plot overall performance
     hist_plot_sim_performance_overall(downsampled_combined_df, downsampled_output_file, downsampling_noise_level)
     logging.info("Downsampled Overall performance plots saved to: {}".format(downsampled_output_file))
-    """
+    
     
 if __name__ ==  "__main__":
     main()
