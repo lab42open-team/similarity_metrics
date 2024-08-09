@@ -51,51 +51,21 @@ def calculate_summary_statistics(files):
     
     return euclidean_counts, cosine_counts
 
-### Line Plot ###
+### Scatter Plot ###
 def plot_results(data, output_dir):
     df = pd.DataFrame(data)
-    df_melt = pd.melt(df, id_vars=["Noise_Ratio", "Metric"], var_name="Top-k", value_name="Performance")
+    sorted_df = df[["Metric", "Noise_Ratio", "Top-1", "Top-3", "Top-5", "Top-10", "Top-100"]]
+    df_melt = pd.melt(sorted_df, id_vars=["Noise_Ratio", "Metric"], var_name="Top-k", value_name="Performance")
+    #print(df_melt)
+    # Plot only points by using scatterplot 
     plt.figure(figsize=(14,8))
-    sns.lineplot(data=df_melt, x="Top-k", y="Performance", hue="Noise_Ratio", style="Metric", markers=True)
+    custom_palette = ["#ffeb99", "#a1dab4", "#41b6c4", "#2c7fb8", "#253494"]
+    sns.scatterplot(data=df_melt, x="Top-k", y="Performance", hue="Noise_Ratio", style="Metric", s=100, palette=custom_palette)
     plt.title("Performance vs Top-k Level for Different Noise Ratios and Metrics")
     # Save plot
     output_file = os.path.join(output_dir, "performance_plot.png")
     plt.savefig(output_file)
     plt.close() 
-
-### Bar Plot ###
-def plot_bar_subplots(data, output_dir):
-    df = pd.DataFrame(data)
-    df_melt = pd.melt(df, id_vars=["Noise_Ratio", "Metric"], var_name="Top-k", value_name="Performance") 
-    # Create subplots
-    fig, axes = plt.subplots(2, 3, figsize=(18, 10), sharey=True)
-    top_k_levels = ["Top-1", "Top-3", "Top-5", "Top-10", "Top-100"]
-    for i, top_k in enumerate(top_k_levels):
-        ax = axes[i//3, i%3]  # Arrange plots in grid
-        sns.barplot(data=df_melt[df_melt["Top-k"] == top_k], x="Noise_Ratio", y="Performance", hue="Metric", ax=ax)
-        ax.set_title("Performance at {}".format(top_k))
-        ax.set_xlabel('Noise Ratio')
-        ax.set_ylabel('Count')
-        if i % 3 != 0:
-            ax.set_ylabel('')  # Remove y-labels for better layout
-        if i < 3:
-            ax.set_xlabel('')  # Remove x-labels for top plots
-    plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, "performance_bar_plot.png"))
-    plt.close()
-
-### HeatMap ###
-def plot_heatmap(data, output_dir):
-    df = pd.DataFrame(data)
-    df_melt = pd.melt(df, id_vars=["Noise_Ratio", "Metric"], var_name="Top-k", value_name="Performance")
-    df_pivot = df_melt.pivot_table(index=["Noise_Ratio", "Metric"], columns="Top-k", values="Performance")
-    plt.figure(figsize=(12, 8))
-    sns.heatmap(df_pivot, annot=True, fmt="d", cmap="Blues", linewidths=.5)
-    plt.title("Performance Heatmap for Different Noise Ratios and Metrics")
-    plt.xlabel("Top-k Levels")
-    plt.ylabel("Noise Ratio & Metric")
-    plt.savefig(os.path.join(output_dir, "performance_heatmap.png"))
-    plt.close()
 
 """
 def calculate_average_ranking(files):
@@ -146,11 +116,11 @@ def main():
         # Calculate summary statistics 
         euclidean_counts, cosine_counts = calculate_summary_statistics(all_files)
         # Save results 
-        save_results(output_file, noise_level, euclidean_counts, cosine_counts)
+        #save_results(output_file, noise_level, euclidean_counts, cosine_counts)
         # Log results 
         #logging.info("Average euclidean rank for noise level {} : {}".format(noise_level, euclidean_counts))
         #logging.info("Average cosine rank for noise level {} : {}".format(noise_level, cosine_counts))
-        logging.info("Summary for noise level {}: Euclidean = {}, Cosine = {}".format(noise_level, euclidean_counts, cosine_counts))
+        #logging.info("Summary for noise level {}: Euclidean = {}, Cosine = {}".format(noise_level, euclidean_counts, cosine_counts))
 
         # Prepare data for plotting
         summary_data.append({
@@ -174,8 +144,7 @@ def main():
 
     # Plot results after processing all noise levels
     plot_results(summary_data, output_dir)
-    plot_heatmap(summary_data, output_dir)
-    plot_bar_subplots(summary_data, output_dir)
+    logging.info("Plot saved successfully to: {}".format(output_dir))
 
 if __name__ == "__main__":
     main()
