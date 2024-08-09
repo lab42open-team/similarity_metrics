@@ -47,7 +47,11 @@ def create_pie_plot(unique_counts, plot_title, output_file_path):
     non_zero_counts = {level : count for level, count in unique_counts.items() if count != 0}
     # Combine taxonomic labels and counts for display
     labels_with_counts = ["{}:{} ({}%)".format(level, count, percentages[level]) for level, count in non_zero_counts.items()]
-    plt.pie(non_zero_counts.values(), labels = [None]*len(non_zero_counts)) # Set labels = labels_with_counts if you prefer labels instead of legend
+    # Custom color paletter to be colorblind safe
+    custom_colors = ["#f0f9e8", "#ccebc5", "#a8ddb5", "#7bccc4", "#4eb3d3", "#2b8cbe", "#08589e"]
+    # Ensure number of colors matches number of pie segments
+    colors = custom_colors[:len(non_zero_counts)] 
+    plt.pie(non_zero_counts.values(), colors=colors, labels = [None]*len(non_zero_counts)) # Set labels = labels_with_counts if you prefer labels instead of legend
     # Add legend to avoid overlapping of labels - please comment below row if you prefer labels instead of legend
     plt.legend(labels_with_counts, loc = "center left", bbox_to_anchor=(1, 0.5), fontsize="small" ) 
     plt.title(plot_title)
@@ -70,7 +74,7 @@ def main():
             plot_title = "Unique Taxa Counts Distribution Pieplot " + re.sub(r"^lf_", "", filename)[:-16]
             output_filename = re.sub(r"^lf_", "", filename)[:-16] + "_taxonomy_level_pieplot.png"
             output_file_path = os.path.join(output_directory, output_filename)
-            create_pie_plot(unique_counts, plot_title, output_file_path)
+            #create_pie_plot(unique_counts, plot_title, output_file_path)
             # Accumulate counts for the overall pie plot 
             for level in total_counts:
                 total_counts[level].update(file_counts[level])
