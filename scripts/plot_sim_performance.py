@@ -111,15 +111,22 @@ def hist_plot_sim_performance_overall(combined_df, output_file, noise_level):
     all_data = combined_df["Rank"]
     # Get bin edges using all data 
     bins = plt.hist(all_data, bins=20, alpha=0)[1]
-    for metric in metrics:
-        subset = combined_df[combined_df["Metric"] == metric]
-        plt.hist(subset["Rank"], bins=bins, alpha=0.5, label=metric)
+    # Define color map 
+    color_map = {
+        "Cosine": "#d7191c",
+        "Euclidean": "#2c7bb6"        
+    }
+    for metric in ["Cosine", "Euclidean"]:
+        if metric in combined_df["Metric"].values:
+            subset = combined_df[combined_df["Metric"] == metric]
+            color = color_map.get(metric, "#7f7f7f") # set default to grey, if metric not in color_map
+            plt.hist(subset["Rank"], bins=bins, alpha=0.5, label=metric, color=color)
     plt.title("Histogram Similarity Metrics Performance Noise Level: {}".format(noise_level))
     plt.xlabel("Rank")
     plt.ylabel("Count")
     plt.ylim((0,4000))
-    plt.xticks(range(0, int(max(all_data)+1), 20))
-    plt.xlim((0,260))
+    plt.xticks(range(0, int(max(all_data)+1), 10))
+    plt.xlim((0,200))
     plt.legend(title="Metric")
     plt.savefig(output_file)
     logging.info("Overall hist-plot saved successfully to: {}".format(output_file))
@@ -151,7 +158,7 @@ def main():
     ### OVERALL PERFORMANCE ### 
     downsampled_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output"
     # Define noise level
-    downsampling_noise_level = "0.1_ratio"
+    downsampling_noise_level = "0.75_ratio"
     # find all relevant files 
     all_downsampled_files = find_files(downsampled_directory, downsampling_noise_level)
     logging.info("Total downsampled files found: {}".format(len(all_downsampled_files)))
@@ -164,7 +171,6 @@ def main():
     # Plot overall performance
     hist_plot_sim_performance_overall(downsampled_combined_df, downsampled_output_file, downsampling_noise_level)
     logging.info("Downsampled Overall performance plots saved to: {}".format(downsampled_output_file))
-    
     
 if __name__ ==  "__main__":
     main()
