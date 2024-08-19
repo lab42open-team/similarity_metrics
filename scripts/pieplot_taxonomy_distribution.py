@@ -20,6 +20,7 @@ def process_file(file_path):
     # Initialize directory to store taxonomic leve
     counts = {"k__" : set(), "p__" : set(), "c__" : set(), 
               "o__" : set(), "f__": set(), "g__" : set(), "s__" : set()}
+    #ordered_labels = ["k__", "p__", "c__", "o__", "f__", "g__", "s__"]
     # Iterate over each taxon
     for taxon in taxa:
         # Split taxon by semicolon if necessary 
@@ -31,29 +32,40 @@ def process_file(file_path):
             matched_taxa = re.match(r"([kpcofgs])__", sub) # regex used to match any taxonomic level of interest followed by underscores
             if matched_taxa:
                 # Define level by grouping according to the single character matched within the regex
-                level = matched_taxa.group(1)
-                # Extract key to access counts dictionary and add subtaxon to the list
-                counts[level + "__"].add(sub) 
+                level = matched_taxa.group(1) + "__"
+                if level in counts:
+                    # Extract key to access counts dictionary and add subtaxon to the list
+                    counts[level].add(sub) 
     # Count unique taxa for each taxonomic level 
     unique_counts = {level:len(taxa) for level, taxa in counts.items()}
     return unique_counts, counts
 
 def create_pie_plot(unique_counts, plot_title, output_file_path):
+    taxonomic_labels = {
+        "k__": "Kingdom",
+        "p__": "Phylum",
+        "c__": "Class",
+        "o__": "Order",
+        "f__": "Family", 
+        "g__": "Genus",
+        "s__": "Species"
+    }
+    ordered_labels = ["k__", "p__", "c__", "o__", "f__", "g__", "s__"]
     total_taxa_count = sum(unique_counts.values())
     percentages = {level: round((count / total_taxa_count) * 100, 2) for level, count in unique_counts.items()} 
-    # Create pie plot
-    fig = plt.figure(figsize=(10,7))
     # Filter out items with zero counts
-    non_zero_counts = {level : count for level, count in unique_counts.items() if count != 0}
+    non_zero_counts = {level: unique_counts.get(level, 0) for level in ordered_labels if unique_counts.get(level, 0) != 0}   
     # Combine taxonomic labels and counts for display
-    labels_with_counts = ["{}:{} ({}%)".format(level, count, percentages[level]) for level, count in non_zero_counts.items()]
+    labels_with_counts = ["{}:{} ({}%)".format(taxonomic_labels[level], non_zero_counts[level], percentages[level]) for level in ordered_labels if level in non_zero_counts]
     # Custom color paletter to be colorblind safe
     custom_colors = ["#f0f9e8", "#ccebc5", "#a8ddb5", "#7bccc4", "#4eb3d3", "#2b8cbe", "#08589e"]
+    # Create pie plot
+    plt.figure(figsize=(10,7))
     # Ensure number of colors matches number of pie segments
     colors = custom_colors[:len(non_zero_counts)] 
     plt.pie(non_zero_counts.values(), colors=colors, labels = [None]*len(non_zero_counts)) # Set labels = labels_with_counts if you prefer labels instead of legend
     # Add legend to avoid overlapping of labels - please comment below row if you prefer labels instead of legend
-    plt.legend(labels_with_counts, loc = "center left", bbox_to_anchor=(1, 0.5), fontsize="small" ) 
+    plt.legend(labels_with_counts, loc = "lower left", bbox_to_anchor=(0.8, 0.5), fontsize="medium") 
     plt.title(plot_title)
     plt.savefig(output_file_path)
     plt.close()
@@ -64,6 +76,7 @@ def main():
     # Initialize directory to store taxonomic level accross all files
     total_counts = {"k__" : set(), "p__" : set(), "c__" : set(), 
                     "o__" : set(), "f__": set(), "g__" : set(), "s__" : set()}
+    ordered_labels = ["k__", "p__", "c__", "o__", "f__", "g__", "s__"]
     # Iterate over each .tsv file in parent directory 
     for filename in os.listdir(parent_directory):
         if filename.endswith(".tsv"):
@@ -76,7 +89,7 @@ def main():
             output_file_path = os.path.join(output_directory, output_filename)
             #create_pie_plot(unique_counts, plot_title, output_file_path)
             # Accumulate counts for the overall pie plot 
-            for level in total_counts:
+            for level in ordered_labels:
                 total_counts[level].update(file_counts[level])
     # Create overall pie plot 
     overall_unique_counts = {level: len(taxa) for level, taxa in total_counts.items()}
