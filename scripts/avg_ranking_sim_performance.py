@@ -59,7 +59,7 @@ def plot_results(data, output_dir):
     #print(df_melt)
     # Plot only points by using scatterplot 
     plt.figure(figsize=(14,8))
-    custom_palette = ["#ffeb99", "#a1dab4", "#41b6c4", "#2c7fb8", "#253494"]
+    custom_palette = ["#fed976", "#a1dab4", "#41b6c4", "#2c7fb8", "#253494"]
     sns.scatterplot(data=df_melt, x="Top-k", y="Performance", hue="Noise_Ratio", style="Metric", s=100, palette=custom_palette)
     plt.title("Performance vs Top-k Level for Different Noise Ratios and Metrics")
     # Save plot
