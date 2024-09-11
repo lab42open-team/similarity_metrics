@@ -15,14 +15,17 @@ import matplotlib.pyplot as plt
 import logging
 logging.basicConfig(level=logging.INFO)
 
-def load_and_combine_data(euclidean_input_file, cosine_input_file):
+def load_and_combine_data(euclidean_input_file, cosine_input_file, jsd_input_file):
     df_euclidean = pd.read_csv(euclidean_input_file, sep="\t")
     df_euclidean["Metric"] = "Euclidean"
     df_cosine = pd.read_csv(cosine_input_file, sep="\t")
     df_cosine["Metric"] = "Cosine"
-    logging.info("Data from e: {} and c: {} loaded correctly.".format(os.path.basename(euclidean_input_file), os.path.basename(cosine_input_file)))
+    df_jensen_shannon = pd.read_csv(jsd_input_file, sep="\t")
+    df_jensen_shannon["Metric"] = "Jensen-Shannon"
+    logging.info("Data from e: {}, c: {}, and j: {} loaded correctly.".format(os.path.basename(euclidean_input_file), os.path.basename(cosine_input_file), 
+                                                                              os.path.basename(jsd_input_file)))
     # Combine data into one DataFrame
-    combined_df = pd.concat([df_euclidean, df_cosine])
+    combined_df = pd.concat([df_euclidean, df_cosine, df_jensen_shannon])
     return combined_df
 
 def extract_pattern(filename):
@@ -76,21 +79,26 @@ def find_files(dir, noise_level):
     for root, dirs, filenames in os.walk(dir):
         euclidean_files = [os.path.join(root, f) for f in filenames if noise_level in f and "e_" in f]
         cosine_files = [os.path.join(root, f) for f in filenames if noise_level in f and "c_" in f]
-        if euclidean_files and cosine_files:
-            files.append((euclidean_files[0], cosine_files[0]))
+        jsd_files = [os.path.join(root, f) for f in filenames if noise_level in f and "j_" in f]
+        if euclidean_files and cosine_files and jsd_files:
+            files.append((euclidean_files[0], cosine_files[0], jsd_files[0]))
     return files
 
 def load_and_combine_multiple_data(files):
     euclidean_dfs = []
     cosine_dfs = []
-    for euclidean_file, cosine_file in files :
+    jsd_dfs = []
+    for euclidean_file, cosine_file, jsd_file in files :
         df_euclidean = pd.read_csv(euclidean_file, sep="\t")
         df_euclidean["Metric"] = "Euclidean"
         euclidean_dfs.append(df_euclidean)
         df_cosine = pd.read_csv(cosine_file, sep="\t")
         df_cosine["Metric"] = "Cosine"
         cosine_dfs.append(df_cosine)
-    combined_df = pd.concat(euclidean_dfs + cosine_dfs, ignore_index=True)
+        df_jensen_shannon = pd.read_csv(jsd_file, sep="\t")
+        df_jensen_shannon["Metric"] = "Jensen-Shannon"
+        jsd_dfs.append(df_jensen_shannon)
+    combined_df = pd.concat(euclidean_dfs + cosine_dfs + jsd_dfs, ignore_index=True)
     logging.debug("Data loaded and combined correctly. Shape: {}".format(combined_df.shape))
     return combined_df
 
@@ -105,6 +113,8 @@ def box_plot_sim_performance_overall(combined_df, output_file, noise_level):
     logging.info("Overall box-plot saved successfully to: {}".format(output_file))
 
 def hist_plot_sim_performance_overall(combined_df, output_file, noise_level):
+    # Drop or handle NaN values in the 'Rank' column
+    combined_df = combined_df.dropna(subset=["Rank"])
     plt.figure(figsize=(12,6))
     metrics = combined_df["Metric"].unique()
     # Calculate bins using data from both metrics 
@@ -116,7 +126,7 @@ def hist_plot_sim_performance_overall(combined_df, output_file, noise_level):
         "Cosine": "#d7191c",
         "Euclidean": "#2c7bb6"        
     }
-    for metric in ["Cosine", "Euclidean"]:
+    for metric in ["Cosine", "Euclidean", "Jensen-Shannon"]:
         if metric in combined_df["Metric"].values:
             subset = combined_df[combined_df["Metric"] == metric]
             color = color_map.get(metric, "#7f7f7f") # set default to grey, if metric not in color_map
@@ -138,8 +148,9 @@ def main():
     
     ### TO BE ADJUSTED ###
     # Define file names to be compared  
-    euclidean_downsampled_file = os.path.join(downsampled_ranking_parent_dir, "ranking_e_initial_VS_downsampled_0.9_ratio_d_v5.0_LSU_ge_filtered.tsv")
-    cosine_downsampled_file = os.path.join(downsampled_ranking_parent_dir, "ranking_c_initial_VS_downsampled_0.9_ratio_d_v5.0_LSU_ge_filtered.tsv")
+    euclidean_downsampled_file = os.path.join(downsampled_ranking_parent_dir, "ranking_e_initial_VS_downsampled_0.25_ratio_d_v5.0_LSU_ge_filtered.tsv")
+    cosine_downsampled_file = os.path.join(downsampled_ranking_parent_dir, "ranking_c_initial_VS_downsampled_0.25_ratio_d_v5.0_LSU_ge_filtered.tsv")
+    jsd_downsampled_file = os.path.join(downsampled_ranking_parent_dir, "ranking_j_initial_VS_downsampled_0.25_ratio_d_v5.0_LSU_ge_filtered.tsv")
     ### --- ###
     
     # Extract pattern of interest and noise level from filename
@@ -151,14 +162,14 @@ def main():
     # Construct file name 
     downsampled_output_file = os.path.join(downsampled_plots_dir, downsampled_pattern) + ".png"
     # Load data
-    #ranking_downsampled_noise = load_and_combine_data(euclidean_downsampled_file, cosine_downsampled_file)
+    ranking_downsampled_noise = load_and_combine_data(euclidean_downsampled_file, cosine_downsampled_file, jsd_downsampled_file)
     # Plot per version & ratio - noise level  
-    #hist_plot_sim_performance(ranking_downsampled_noise, downsampled_output_file, downsampled_noise_level)
-    
+    hist_plot_sim_performance(ranking_downsampled_noise, downsampled_output_file, downsampled_noise_level)
+    """
     ### OVERALL PERFORMANCE ### 
     downsampled_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output"
     # Define noise level
-    downsampling_noise_level = "0.75_ratio"
+    downsampling_noise_level = "0.1_ratio"
     # find all relevant files 
     all_downsampled_files = find_files(downsampled_directory, downsampling_noise_level)
     logging.info("Total downsampled files found: {}".format(len(all_downsampled_files)))
@@ -171,35 +182,6 @@ def main():
     # Plot overall performance
     hist_plot_sim_performance_overall(downsampled_combined_df, downsampled_output_file, downsampling_noise_level)
     logging.info("Downsampled Overall performance plots saved to: {}".format(downsampled_output_file))
-    
+    """
 if __name__ ==  "__main__":
     main()
-    
-""" NOTE   
-### OVERALL PERFORMANCE ###
-gaussian_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output"
-impulse_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output"
-# Define noise level
-gaussian_noise_level = "0.2_stdDev"
-impulse_noise_level = "0.01_impL"
-# Find all relevant files
-all_gaussian_files = find_files(gaussian_parent_dir, gaussian_noise_level)
-all_impulse_files = find_files(impulse_parent_dir, impulse_noise_level)
-logging.debug("Total gaussian files found: {}".format(len(all_gaussian_files)))
-logging.debug("Total impulse files found: {}".format(len(all_impulse_files)))
-if not all_gaussian_files:
-    logging.debug("No gaussian files found. Check patterns and directories.")
-if not all_impulse_files:
-    logging.debug("No impulse files found. Check patterns and directories.")
-# Load and combine data
-gaussian_combined_df = load_and_combine_multiple_data(all_gaussian_files)
-impulse_combined_df = load_and_combine_multiple_data(all_impulse_files)
-# Create output dir 
-gaussian_output_overall_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output/"
-impulse_output_overall_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output"
-gaussian_output_file = os.path.join(gaussian_output_overall_dir, "g_{}_".format(gaussian_noise_level) + "overall_performance.png")
-impulse_output_file = os.path.join(impulse_output_overall_dir, "i_{}_".format(impulse_noise_level) + "overall_performance.png")
-# Plot overall performance
-#hist_plot_sim_performance_overall(gaussian_combined_df, gaussian_output_file, gaussian_noise_level)
-#hist_plot_sim_performance_overall(impulse_combined_df, impulse_output_file, impulse_noise_level)
-"""

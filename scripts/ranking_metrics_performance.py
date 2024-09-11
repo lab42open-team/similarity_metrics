@@ -30,33 +30,40 @@ def main():
     # Define parent directory of data [metrics]   
     euclidean_downsampled_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/euclidean_output"
     cosine_downsampled_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/cosine_output"
+    jensen_shannon_downsampled_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/jensen_shannon_output"
 
     ### TO BE ADJUSTED ###
     # Define file names to be compared
     euclidean_downsampled_file_name = "e_initial_VS_downsampled_0.9_ratio_d_v5.0_LSU_ge_filtered.tsv"
     cosine_downsampled_file_name = "c_initial_VS_downsampled_0.9_ratio_d_v5.0_LSU_ge_filtered.tsv"
+    jensen_shannon_downsampled_file_name = "j_initial_VS_downsampled_0.25_ratio_d_v5.0_LSU_ge_filtered.tsv"
     ### --- ###
     
     # Define output directories    
-    downsampled_ranking_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output/v4.1_LSU"
+    downsampled_ranking_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output/v5.0_LSU"
     
     # Load data - create DataFrames   
     euclidean_downsampled_df = load_data(os.path.join(euclidean_downsampled_directory, euclidean_downsampled_file_name))
     cosine_downsampled_df = load_data(os.path.join(cosine_downsampled_directory, cosine_downsampled_file_name))
+    jensen_shannon_downsampled_df = load_data(os.path.join(jensen_shannon_downsampled_directory, jensen_shannon_downsampled_file_name))
 
     # Apply ranking     
-    euclidean_downsampled_match_ranks = rank_df(euclidean_downsampled_df)
-    cosine_downsampled_match_ranks = rank_df(cosine_downsampled_df)
+    #euclidean_downsampled_match_ranks = rank_df(euclidean_downsampled_df)
+    #cosine_downsampled_match_ranks = rank_df(cosine_downsampled_df)
+    jensen_shannon_downsampled_match_ranks = rank_df(jensen_shannon_downsampled_df)
 
     # Construct output path and filename 
-    euclidean_downsampled_ranked_file_path = os.path.join(downsampled_ranking_output_dir, "ranking_" + euclidean_downsampled_file_name)
-    cosine_downsampled_ranked_file_path = os.path.join(downsampled_ranking_output_dir, "ranking_" + cosine_downsampled_file_name)
+    #euclidean_downsampled_ranked_file_path = os.path.join(downsampled_ranking_output_dir, "ranking_" + euclidean_downsampled_file_name)
+    #cosine_downsampled_ranked_file_path = os.path.join(downsampled_ranking_output_dir, "ranking_" + cosine_downsampled_file_name)
+    jensen_shannon_downsampled_ranked_file_path = os.path.join(downsampled_ranking_output_dir, "ranking_" + jensen_shannon_downsampled_file_name)
     
     # Save output to new .tsv file    
-    euclidean_downsampled_match_ranks.to_csv(euclidean_downsampled_ranked_file_path, sep="\t", index=False)
-    logging.info("Euclidean Downsampled file ranking output saved to: {}".format(euclidean_downsampled_ranked_file_path))
-    cosine_downsampled_match_ranks.to_csv(cosine_downsampled_ranked_file_path, sep="\t", index=False)
-    logging.info("Cosine Downsampled file ranking output saved to: {}".format(cosine_downsampled_ranked_file_path))
+    #euclidean_downsampled_match_ranks.to_csv(euclidean_downsampled_ranked_file_path, sep="\t", index=False)
+    #logging.info("Euclidean Downsampled file ranking output saved to: {}".format(euclidean_downsampled_ranked_file_path))
+    #cosine_downsampled_match_ranks.to_csv(cosine_downsampled_ranked_file_path, sep="\t", index=False)
+    #logging.info("Cosine Downsampled file ranking output saved to: {}".format(cosine_downsampled_ranked_file_path))
+    jensen_shannon_downsampled_match_ranks.to_csv(jensen_shannon_downsampled_ranked_file_path, sep="\t", index=False)
+    logging.info("JSD Downsampled file ranking output saved to: {}".format(jensen_shannon_downsampled_ranked_file_path))
     
 if __name__ == "__main__":
     main()
