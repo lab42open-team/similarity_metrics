@@ -8,7 +8,7 @@
     # No input parameters provided, but input/output should be adjusted accordingly. 
         # Please check the session: ### TO BE ADJUSTED ### within the main function. 
 # framework: CCMRI
-# last update: 10/07/2024
+# last update: 13/09/2024
 
 import os
 import pandas as pd
@@ -96,12 +96,12 @@ def main():
     initial_parent_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/d_1000_data/normalized"   
     ### TO BE ADJUSTED ###
     # Initial files
-    initial_file_name = "ra_d_v5.0_LSU_ge_filtered.tsv"
+    initial_file_name = "ra_d_v4.1_SSU_ge_filtered.tsv"
     initial_file = os.path.join(initial_parent_directory, initial_file_name)   
     # Noisy files
     downsampled_noisy_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/downsampled_noisy_version"
     downsampled_noise_version_directory = os.path.join(downsampled_noisy_parent_dir, "0.25_ratio")
-    downsampled_file_name = "downsampled_0.25_ratio_d_v5.0_LSU_ge_filtered.tsv"  
+    downsampled_file_name = "downsampled_0.25_ratio_d_v4.1_SSU_ge_filtered.tsv"  
     ### --- ###
     
     # Load noisy data 

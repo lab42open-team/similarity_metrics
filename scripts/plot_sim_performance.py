@@ -57,7 +57,8 @@ def hist_plot_sim_performance(combined_df, output_file, noise_level):
     plt.xlabel("Rank")
     plt.ylabel("Count")
     plt.ylim((0,1000))
-    plt.xticks(range(0, int(max(all_data)+1), 20))
+    plt.xticks(range(0, int(max(all_data)+1), 10))
+    plt.xlim(0, 200)  # Set x-axis limits to start from 0
     plt.legend(title="Metric")
     plt.savefig(output_file)
     logging.info("Histogram saved successfully to: {}".format(output_file))    
@@ -120,17 +121,18 @@ def hist_plot_sim_performance_overall(combined_df, output_file, noise_level):
     # Calculate bins using data from both metrics 
     all_data = combined_df["Rank"]
     # Get bin edges using all data 
-    bins = plt.hist(all_data, bins=20, alpha=0)[1]
+    bins = plt.hist(all_data, bins=50, alpha=0)[1]
     # Define color map 
     color_map = {
         "Cosine": "#d7191c",
-        "Euclidean": "#2c7bb6"        
+        "Euclidean": "#2c7bb6", 
+        "Jensen-Shannon": "#fdae61"       
     }
     for metric in ["Cosine", "Euclidean", "Jensen-Shannon"]:
         if metric in combined_df["Metric"].values:
             subset = combined_df[combined_df["Metric"] == metric]
             color = color_map.get(metric, "#7f7f7f") # set default to grey, if metric not in color_map
-            plt.hist(subset["Rank"], bins=bins, alpha=0.5, label=metric, color=color)
+            plt.hist(subset["Rank"], bins=bins, alpha=0.8, label=metric, color=color)
     plt.title("Histogram Similarity Metrics Performance Noise Level: {}".format(noise_level))
     plt.xlabel("Rank")
     plt.ylabel("Count")
@@ -148,9 +150,9 @@ def main():
     
     ### TO BE ADJUSTED ###
     # Define file names to be compared  
-    euclidean_downsampled_file = os.path.join(downsampled_ranking_parent_dir, "ranking_e_initial_VS_downsampled_0.25_ratio_d_v5.0_LSU_ge_filtered.tsv")
-    cosine_downsampled_file = os.path.join(downsampled_ranking_parent_dir, "ranking_c_initial_VS_downsampled_0.25_ratio_d_v5.0_LSU_ge_filtered.tsv")
-    jsd_downsampled_file = os.path.join(downsampled_ranking_parent_dir, "ranking_j_initial_VS_downsampled_0.25_ratio_d_v5.0_LSU_ge_filtered.tsv")
+    euclidean_downsampled_file = os.path.join(downsampled_ranking_parent_dir, "ranking_e_initial_VS_downsampled_0.9_ratio_d_v5.0_LSU_ge_filtered.tsv")
+    cosine_downsampled_file = os.path.join(downsampled_ranking_parent_dir, "ranking_c_initial_VS_downsampled_0.9_ratio_d_v5.0_LSU_ge_filtered.tsv")
+    jsd_downsampled_file = os.path.join(downsampled_ranking_parent_dir, "ranking_j_initial_VS_downsampled_0.9_ratio_d_v5.0_LSU_ge_filtered.tsv")
     ### --- ###
     
     # Extract pattern of interest and noise level from filename
@@ -162,10 +164,10 @@ def main():
     # Construct file name 
     downsampled_output_file = os.path.join(downsampled_plots_dir, downsampled_pattern) + ".png"
     # Load data
-    ranking_downsampled_noise = load_and_combine_data(euclidean_downsampled_file, cosine_downsampled_file, jsd_downsampled_file)
+    #ranking_downsampled_noise = load_and_combine_data(euclidean_downsampled_file, cosine_downsampled_file, jsd_downsampled_file)
     # Plot per version & ratio - noise level  
-    hist_plot_sim_performance(ranking_downsampled_noise, downsampled_output_file, downsampled_noise_level)
-    """
+    #hist_plot_sim_performance(ranking_downsampled_noise, downsampled_output_file, downsampled_noise_level)
+    
     ### OVERALL PERFORMANCE ### 
     downsampled_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output"
     # Define noise level
@@ -182,6 +184,6 @@ def main():
     # Plot overall performance
     hist_plot_sim_performance_overall(downsampled_combined_df, downsampled_output_file, downsampling_noise_level)
     logging.info("Downsampled Overall performance plots saved to: {}".format(downsampled_output_file))
-    """
+    
 if __name__ ==  "__main__":
     main()

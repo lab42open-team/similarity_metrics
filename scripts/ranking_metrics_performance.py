@@ -34,13 +34,13 @@ def main():
 
     ### TO BE ADJUSTED ###
     # Define file names to be compared
-    euclidean_downsampled_file_name = "e_initial_VS_downsampled_0.9_ratio_d_v5.0_LSU_ge_filtered.tsv"
-    cosine_downsampled_file_name = "c_initial_VS_downsampled_0.9_ratio_d_v5.0_LSU_ge_filtered.tsv"
-    jensen_shannon_downsampled_file_name = "j_initial_VS_downsampled_0.25_ratio_d_v5.0_LSU_ge_filtered.tsv"
+    euclidean_downsampled_file_name = "e_initial_VS_downsampled_0.9_ratio_d_v5.0_SSU_ge_filtered.tsv"
+    cosine_downsampled_file_name = "c_initial_VS_downsampled_0.9_ratio_d_v5.0_SSU_ge_filtered.tsv"
+    jensen_shannon_downsampled_file_name = "j_initial_VS_downsampled_0.25_ratio_d_v4.1_LSU_ge_filtered.tsv"
     ### --- ###
     
     # Define output directories    
-    downsampled_ranking_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output/v5.0_LSU"
+    downsampled_ranking_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output/v4.1_LSU"
     
     # Load data - create DataFrames   
     euclidean_downsampled_df = load_data(os.path.join(euclidean_downsampled_directory, euclidean_downsampled_file_name))

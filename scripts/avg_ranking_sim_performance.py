@@ -22,8 +22,9 @@ def find_files(dir, noise_level):
     for root, dirs, filenames in os.walk(dir):
         euclidean_files = [os.path.join(root, f) for f in filenames if noise_level in f and "e_" in f]
         cosine_files = [os.path.join(root, f) for f in filenames if noise_level in f and "c_" in f]
-        if euclidean_files and cosine_files:
-            files.append((euclidean_files[0], cosine_files[0]))
+        jsd_files = [os.path.join(root, f) for f in filenames if noise_level in f and "j_" in f]
+        if euclidean_files and cosine_files and jsd_files:
+            files.append((euclidean_files[0], cosine_files[0], jsd_files[0]))
     return files
 
 def load_ranking_data(file):
@@ -34,9 +35,11 @@ def load_ranking_data(file):
 def calculate_summary_statistics(files):
     euclidean_ranks = []
     cosine_ranks = []
-    for e_file, c_file in files:
+    jsd_ranks = []
+    for e_file, c_file, j_file in files:
         euclidean_ranks.extend(load_ranking_data(e_file))
         cosine_ranks.extend(load_ranking_data(c_file))
+        jsd_ranks.extend(load_ranking_data(j_file))
     def calculate_counts(ranks):
         counts = {
             "top_1": sum(1 for r in ranks if r <= 1), # 1 if expression satisfied, 0 if not
@@ -48,8 +51,9 @@ def calculate_summary_statistics(files):
         return counts
     euclidean_counts = calculate_counts(euclidean_ranks)
     cosine_counts = calculate_counts(cosine_ranks)
+    jd_counts = calculate_counts(jsd_ranks)
     
-    return euclidean_counts, cosine_counts
+    return euclidean_counts, cosine_counts, jd_counts
 
 ### Scatter Plot ###
 def plot_results(data, output_dir):
@@ -59,8 +63,14 @@ def plot_results(data, output_dir):
     #print(df_melt)
     # Plot only points by using scatterplot 
     plt.figure(figsize=(14,8))
-    custom_palette = ["#fed976", "#a1dab4", "#41b6c4", "#2c7fb8", "#253494"]
-    sns.scatterplot(data=df_melt, x="Top-k", y="Performance", hue="Noise_Ratio", style="Metric", s=100, palette=custom_palette)
+    #custom_palette = ["#fed976", "#a1dab4", "#41b6c4", "#2c7fb8", "#253494"]
+     # Define markers for each metric
+    markers = {
+        "Euclidean": "o",        # Circle
+        "Cosine": "s",           # Square
+        "Jensen-Shannon": "^"    # Triangle
+    }
+    sns.scatterplot(data=df_melt, x="Top-k", y="Performance", hue="Noise_Ratio", style="Metric", markers=markers, s=100) #palette=custom_palette
     plt.title("Performance vs Top-k Level for Different Noise Ratios and Metrics")
     # Save plot
     output_file = os.path.join(output_dir, "performance_plot.png")
@@ -78,7 +88,7 @@ def calculate_average_ranking(files):
     avg_cosine_rank = sum(cosine_ranks) / len(cosine_ranks) if cosine_ranks else float("nan")
     return avg_euclidean_rank, avg_cosine_rank
 """
-def save_results(output_file, noise_level, euclidean_counts, cosine_counts):
+def save_results(output_file, noise_level, euclidean_counts, cosine_counts, jsd_counts):
     if not os.path.exists(output_file):
         with open(output_file, "w") as f:
             f.write("Noise\tMetric\tTop-1\tTop-3\tTop-5\tTop-10\tTop-100\n")
@@ -89,6 +99,7 @@ def save_results(output_file, noise_level, euclidean_counts, cosine_counts):
     with open(output_file, "a") as f:
         write_counts(f, noise_level, "Euclidean", euclidean_counts)
         write_counts(f, noise_level, "Cosine", cosine_counts)
+        write_counts(f, noise_level, "Jensen-Shannon", jsd_counts )
 
 def main():
     # Define output directories
@@ -100,7 +111,7 @@ def main():
     output_file = os.path.join(output_dir, output_file_name)
     # Define noise level
     #noise_levels = ["0.2_stdDev", "0.5_stdDev", "1_stdDev", "5_stdDev", "0.01_impL", "0.03_impL" ,"0.05_impL", "0.1_impL"]
-    noise_levels = ["0.1_ratio", "0.25_ratio", "0.5_ratio", "0.75_ratio", "0.9_ratio"]
+    noise_levels = ["0.1_ratio", "0.25_ratio", "0.75_ratio", "0.9_ratio"]
     summary_data = []
     # Iterate over each noise level
     for noise_level in noise_levels:
@@ -114,13 +125,13 @@ def main():
         # Find all relevant file
         all_files = find_files(parent_dir, noise_level)
         # Calculate summary statistics 
-        euclidean_counts, cosine_counts = calculate_summary_statistics(all_files)
+        euclidean_counts, cosine_counts, jsd_counts = calculate_summary_statistics(all_files)
         # Save results 
-        #save_results(output_file, noise_level, euclidean_counts, cosine_counts)
+        save_results(output_file, noise_level, euclidean_counts, cosine_counts, jsd_counts)
         # Log results 
-        #logging.info("Average euclidean rank for noise level {} : {}".format(noise_level, euclidean_counts))
-        #logging.info("Average cosine rank for noise level {} : {}".format(noise_level, cosine_counts))
-        #logging.info("Summary for noise level {}: Euclidean = {}, Cosine = {}".format(noise_level, euclidean_counts, cosine_counts))
+        logging.info("Average euclidean rank for noise level {} : {}".format(noise_level, euclidean_counts))
+        logging.info("Average cosine rank for noise level {} : {}".format(noise_level, cosine_counts))
+        logging.info("Summary for noise level {}: Euclidean = {}, Cosine = {}, Jensen-Shannon: {}".format(noise_level, euclidean_counts, cosine_counts, jsd_counts))
 
         # Prepare data for plotting
         summary_data.append({
@@ -140,6 +151,15 @@ def main():
             "Top-5": cosine_counts["top_5"],
             "Top-10": cosine_counts["top_10"],
             "Top-100": cosine_counts["top_100"]
+        }),
+        summary_data.append({
+            "Noise_Ratio": noise_level,
+            "Metric": "Jensen-Shannon", 
+            "Top-1": jsd_counts["top_1"],
+            "Top-3": jsd_counts["top_3"],
+            "Top-5": jsd_counts["top_5"],
+            "Top-10": jsd_counts["top_10"],
+            "Top-100": jsd_counts["top_100"]
         })
 
     # Plot results after processing all noise levels
