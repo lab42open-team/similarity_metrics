@@ -9,7 +9,7 @@
             # Heatmap / Clustermap
             # Dendrogram
 # framework: CCMRI
-# last update: 20/09/2024
+# last update: 18/10/2024
 
 import os 
 import pandas as pd
@@ -78,7 +78,7 @@ def downsample_data(df, sample_size=1000):
     except Exception as e:
         logging.error("Error during downsampling.".format(e))
         raise
-# TODO
+
 def perform_hierarchical_clustering(df, output_dir, input_file):
     try:
         logging.info("DataFrame: {}".format(df.head()))
@@ -118,6 +118,9 @@ def perform_hierarchical_clustering(df, output_dir, input_file):
         for lbl in xlbls:
             lbl.set_color(biome_color_map[df.loc[lbl.get_text(), "biome_info"]])
         plt.title("Hierarchical Clustering Dendrogram with Biome Color Coding")
+         # Create a legend to explain the colors for each biome
+        handles = [plt.Line2D([0], [0], color=biome_color_map[biome], lw=4) for biome in unique_biomes]
+        plt.legend(handles, unique_biomes, title="Biomes", bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
         plt.tight_layout()
         # Construct output file path
         output_path = os.path.join(output_dir, "non-interactive_dendrogram_{}.png".format(os.path.basename(input_file)[:-4]))
@@ -245,11 +248,10 @@ def silhouette_analysis(df, output_dir, input_file, metric):
 def main():
     input_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics"
     output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering"
+    biome_dir = "/ccmri/similarity_metrics/data/raw_data/studies_samples/biome_info"
     #ass_plot_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering/assessment"
-    #input_file = os.path.join(input_dir, "c_distances_filtered_v5.0_LSU_ge_filtered.tsv")
-    #biome_file = "/ccmri/similarity_metrics/data/raw_data/study_samples_biome_info.tsv"
-    input_file = os.path.join(input_dir, "test.tsv")
-    biome_file = os.path.join(input_dir, "test_biome.tsv")
+    input_file = os.path.join(input_dir, "c_distances_filtered_v4.1_LSU_ge_filtered.tsv")
+    biome_file = os.path.join(biome_dir, "study-sample-biome_v4.1_LSU.tsv") 
     try:
         # Step 1: Load and preprocess the data
         df = load_data(input_file, biome_file)
