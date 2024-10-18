@@ -8,7 +8,7 @@
 # last update: 17/10/2024
 
 study_sample_file = "/ccmri/similarity_metrics/data/raw_data/studies_samples/studies_samples_v5.0_SSU.tsv"
-study_biome_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/study_biome_info.tsv"
+study_biome_file = "/ccmri/similarity_metrics/data/raw_data/studies_samples/study_biome_info.tsv"
 
 import pandas as pd
 import os
