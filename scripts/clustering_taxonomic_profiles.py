@@ -133,7 +133,7 @@ def perform_hierarchical_clustering(df, output_dir, input_file, k_values):
             plt.title('Sample Counts per Biome and Cluster')
             # Use tight layout to fit everything nicely
             plt.tight_layout()
-            heatmap_output_path = os.path.join(output_dir, "biome_cluster_heatmap_k{}_{}.png".format(k), os.path.basename(input_file)[21:-4])
+            heatmap_output_path = os.path.join(output_dir, "biome_cluster_heatmap_k{}_{}.png".format(k, os.path.basename(input_file)[:-4]))
             plt.savefig(heatmap_output_path)
             logging.info("Heatmap saved to: {}".format(heatmap_output_path))
 
