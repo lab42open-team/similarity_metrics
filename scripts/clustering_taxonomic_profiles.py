@@ -26,6 +26,9 @@ from sklearn.metrics import pairwise_distances
 #from sklearn.metrics.pairwise import euclidean_distances, cosine_distances
 from sklearn.metrics import silhouette_score
 from scipy.cluster.hierarchy import cophenet
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import adjusted_rand_score
+from sklearn.preprocessing import LabelEncoder
 import logging
 logging.basicConfig(level=logging.INFO)
 
@@ -38,6 +41,9 @@ def load_data(input_file, biome_file):
         print(df)
         # Load biome information
         biome_df = pd.read_csv(biome_file, sep="\t")
+        # Preprocess biome info to keep only the first 3 elements 
+        biome_df["biome_info"] = biome_df["biome_info"].apply(lambda x: ":".join(x.split(":")[:2]) if pd.notna(x) else "Unknown")
+        # Create dictionary to map sample_id with biome_info
         biome_dict = dict(zip(biome_df["sample_id"], biome_df["biome_info"]))
         # Get the unique sample names
         samples = pd.concat([df["Sample1"], df["Sample2"]]).unique()
@@ -79,55 +85,81 @@ def downsample_data(df, sample_size=1000):
         logging.error("Error during downsampling.".format(e))
         raise
 
-def perform_hierarchical_clustering(df, output_dir, input_file):
+def perform_hierarchical_clustering(df, output_dir, input_file, k_values):
     try:
         logging.info("DataFrame: {}".format(df.head()))
-        # Perform hierarchical clustering
-        #Z = linkage(df, method="average")
-        Z = linkage(df.drop(columns="biome_info"), method="average")  # Exclude biome for clustering
-        logging.info("Hierarchical clustering completed")
-        """
-        # Create the interactive dendrogram
-        fig = ff.create_dendrogram(Z, labels=df.index, orientation='top')
-        # Get unique cluster labels
-        unique_clusters = np.unique(labels)
-        # Generate a list of colors (you can define your own or use a predefined color palette)
-        colors = pc.qualitative.Plotly  # Plotly's built-in qualitative color scale
-        color_map = {cluster: colors[i % len(colors)] for i, cluster in enumerate(unique_clusters)}
-        # Color the branches of the dendrogram
-        for i, d in enumerate(fig["data"]):
-        #sample_label = df.index[i]
-        cluster_label = labels[i]  # Get cluster label for the current sample
-        fig["data"][i]["line"]["color"] = color_map[cluster_label]  # Assign color based on cluster
-        fig.update_layout(width=1200, height=800, title="Interactive Dendrogram", xaxis_title="Samples", yaxis_title="Cluster Distance")
-        # Save the interactive plot to an HTML file
-        output_path = os.path.join(output_dir, "interactive_dendrogram_{}.html".format(os.path.basename(input_file)[:-4]))
-        fig.write_html(output_path)
-        logging.info("Interactive dendrogram saved to: {}".format(output_path))
-        """
-        # Plot dendrogram - NON-interactive
-        plt.figure(figsize=(10,7))
-        dendrogram(Z, labels=df.index, leaf_rotation=90, leaf_font_size=10)
-        # Create a color map based on biome information
-        unique_biomes = df["biome_info"].unique()
-        colors = sns.color_palette("hsv", len(unique_biomes)) # Generating distinct colors
-        biome_color_map = dict(zip(unique_biomes, colors))
-        # Color the dendrogram labels based on biome_info
-        ax = plt.gca()
-        xlbls = ax.get_xmajorticklabels()
-        for lbl in xlbls:
-            lbl.set_color(biome_color_map[df.loc[lbl.get_text(), "biome_info"]])
-        plt.title("Hierarchical Clustering Dendrogram with Biome Color Coding")
-         # Create a legend to explain the colors for each biome
-        handles = [plt.Line2D([0], [0], color=biome_color_map[biome], lw=4) for biome in unique_biomes]
-        plt.legend(handles, unique_biomes, title="Biomes", bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
-        plt.tight_layout()
-        # Construct output file path
-        output_path = os.path.join(output_dir, "non-interactive_dendrogram_{}.png".format(os.path.basename(input_file)[:-4]))
-        plt.savefig(output_path)
-        logging.info("Hierarchical clustering performed and dendrogram plotted successfully and saved to: {}".format(output_path))
         
-        return Z
+        for k in k_values:
+            logging.info("Performing hierarchical clustering for k={}".format(k))
+
+            # Perform hierarchical clustering, excluding biome info
+            Z = linkage(df.drop(columns="biome_info"), method="average")  
+            logging.info("Hierarchical clustering completed")
+            
+            # Extract cluster labels for k clusters
+            labels = fcluster(Z, t=k, criterion="maxclust")
+            df['cluster'] = labels  # Add cluster labels to DataFrame
+
+            # Plot dendrogram - NON-interactive
+            plt.figure(figsize=(10,7))
+            dendrogram(Z, labels=df.index, leaf_rotation=90, leaf_font_size=10)
+            # Color dendrogram labels based on biome_info
+            unique_biomes = df["biome_info"].unique()
+            colors = sns.color_palette("hsv", len(unique_biomes))
+            biome_color_map = dict(zip(unique_biomes, colors))
+            ax = plt.gca()
+            xlbls = ax.get_xmajorticklabels()
+            for lbl in xlbls:
+                lbl.set_color(biome_color_map[df.loc[lbl.get_text(), "biome_info"]])
+            plt.title("Hierarchical Clustering Dendrogram with Biome Color Coding (k={})".format(k))
+            # Create a legend for biomes
+            handles = [plt.Line2D([0], [0], color=biome_color_map[biome], lw=4) for biome in unique_biomes]
+            plt.legend(handles, unique_biomes, title="Biomes", bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+            plt.tight_layout()
+            output_path = os.path.join(output_dir, "non-interactive_dendrogram_k{}_{}.png".format(k, os.path.basename(input_file)[:-4]))
+            plt.savefig(output_path)
+            plt.close()  # Close the plot to avoid memory issues
+            logging.info("Dendrogram saved to: {}".format(output_path))
+
+            # Create a cross-tabulation table of counts per biome and cluster
+            contingency_table = pd.crosstab(df['biome_info'], df['cluster'])
+            # Log the contingency table for reference
+            logging.info("Contingency table (biome vs. cluster):\n{}".format(contingency_table))
+            # Visualize as a heatmap
+            plt.figure(figsize=(10, 7))
+            sns.heatmap(contingency_table, annot=True, fmt="d", cmap="YlGnBu")
+            plt.xlabel('Cluster')
+            plt.ylabel('Biome')
+            plt.title('Sample Counts per Biome and Cluster')
+            # Use tight layout to fit everything nicely
+            plt.tight_layout()
+            heatmap_output_path = os.path.join(output_dir, "biome_cluster_heatmap_k{}_{}.png".format(k), os.path.basename(input_file)[21:-4])
+            plt.savefig(heatmap_output_path)
+            logging.info("Heatmap saved to: {}".format(heatmap_output_path))
+
+            # Compute confusion matrix and Adjusted Rand Index (ARI)
+            true_labels = df['biome_info']
+            pred_labels = df['cluster']
+            # Convert true_labels to numeric labels
+            label_encoder = LabelEncoder()
+            true_labels_numeric = label_encoder.fit_transform(true_labels)
+            """
+            # Confusion Matrix
+            cm = confusion_matrix(true_labels_numeric, pred_labels)
+            plt.figure(figsize=(10, 7))
+            sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=np.unique(pred_labels), yticklabels=np.unique(true_labels_numeric))
+            plt.xlabel('Predicted Clusters')
+            plt.ylabel('True Biomes')
+            plt.title('Confusion Matrix: Clustering vs Biomes (k={})'.format(k))
+            confusion_matrix_output_path = os.path.join(output_dir, "confusion_matrix_k{}_{}.png".format(k, os.path.basename(input_file)[21:-4]))
+            plt.savefig(confusion_matrix_output_path)
+            plt.close()  # Close the plot to avoid memory issues
+            logging.info("Confusion Matrix saved to: {}".format(confusion_matrix_output_path))
+            """
+            # Adjusted Rand Index
+            ari_score = adjusted_rand_score(true_labels_numeric, pred_labels)
+            logging.info("Adjusted Rand Index for k={}: {}".format(k, ari_score))
+
     except Exception as e:
         logging.error("Error during hierarchical clustering: {}".format(e))
         raise
@@ -246,10 +278,9 @@ def silhouette_analysis(df, output_dir, input_file, metric):
 """
 
 def main():
-    input_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics"
-    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering"
-    biome_dir = "/ccmri/similarity_metrics/data/raw_data/studies_samples/biome_info"
-    #ass_plot_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering/assessment"
+    input_dir = "/home1/nvenet/data/filtered_data/genus/similarity_metrics/allVSall_version/"
+    output_dir = "/home1/nvenet/data/filtered_data/genus/similarity_metrics/allVSall_version/clustering/2b"
+    biome_dir = "/home1/nvenet/data/filtered_data/genus/biome_info"
     input_file = os.path.join(input_dir, "c_distances_filtered_v4.1_LSU_ge_filtered.tsv")
     biome_file = os.path.join(biome_dir, "study-sample-biome_v4.1_LSU.tsv") 
     try:
@@ -265,7 +296,8 @@ def main():
         #silhouette_analysis(downsampled_matrix, ass_plot_output_dir, input_file, metric="cosine")
         
         # Step 4: Perform hierarchical clustering on the downsampled matrix
-        Z = perform_hierarchical_clustering(downsampled_matrix, output_dir, input_file)
+        k_values = range(5, 41, 5) # k values from 5 to 40 with step 5
+        Z = perform_hierarchical_clustering(downsampled_matrix, output_dir, input_file, k_values)
         """
         # Step 5: Compute cluster centroid
         centroids = compute_cluster_centroids(downsampled_matrix.values, labels, n_clusters)
