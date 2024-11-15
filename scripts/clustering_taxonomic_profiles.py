@@ -101,16 +101,23 @@ def perform_hierarchical_clustering(df, output_dir, input_file, k_values):
             df['cluster'] = labels  # Add cluster labels to DataFrame
 
             # Plot dendrogram - NON-interactive
-            plt.figure(figsize=(10,7))
-            dendrogram(Z, labels=df.index, leaf_rotation=90, leaf_font_size=10)
+            plt.figure(figsize=(10, 7))
+            # Create a mapping from sample index to sample names
+            sample_names = df.index.tolist()
+            # Replace sample names with dots in the dendrogram labels
+            dendro_labels = ['.' for _ in sample_names]
+            dendrogram(Z, labels=dendro_labels, leaf_rotation=90, leaf_font_size=10)
             # Color dendrogram labels based on biome_info
             unique_biomes = df["biome_info"].unique()
             colors = sns.color_palette("hsv", len(unique_biomes))
             biome_color_map = dict(zip(unique_biomes, colors))
             ax = plt.gca()
             xlbls = ax.get_xmajorticklabels()
-            for lbl in xlbls:
-                lbl.set_color(biome_color_map[df.loc[lbl.get_text(), "biome_info"]])
+            for idx, lbl in enumerate(xlbls):
+                # Access the original sample name using the index
+                sample_name = sample_names[idx]
+                # Set the color based on the biome information of the original sample
+                lbl.set_color(biome_color_map[df.loc[sample_name, "biome_info"]])
             plt.title("Hierarchical Clustering Dendrogram with Biome Color Coding (k={})".format(k))
             # Create a legend for biomes
             handles = [plt.Line2D([0], [0], color=biome_color_map[biome], lw=4) for biome in unique_biomes]
@@ -282,8 +289,8 @@ def main():
     output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering"
     biome_dir = "/ccmri/similarity_metrics/data/raw_data/studies_samples/biome_info"
     #ass_plot_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering/assessment"
-    input_file = os.path.join(input_dir, "c_distances_filtered_v5.0_LSU_ge_filtered.tsv")
-    biome_file = os.path.join(biome_dir, "study-sample-biome_v5.0_LSU.tsv") 
+    input_file = os.path.join(input_dir, "c_distances_filtered_v4.1_LSU_ge_filtered.tsv")
+    biome_file = os.path.join(biome_dir, "study-sample-biome_v4.1_LSU.tsv") 
     try:
         # Step 1: Load and preprocess the data
         df = load_data(input_file, biome_file)
