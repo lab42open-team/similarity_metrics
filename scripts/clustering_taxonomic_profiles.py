@@ -285,12 +285,19 @@ def silhouette_analysis(df, output_dir, input_file, metric):
 """
 
 def main():
-    input_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics"
-    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering"
+    #input_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics"
+    #output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering"
+    
+     ### METAGENOMICS - RUNS ###
+    input_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/normalized_counts/runs_files/metagenomics/similarity_metrics"
+    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/normalized_counts/runs_files/metagenomics/clustering/2b"
+    
     biome_dir = "/ccmri/similarity_metrics/data/raw_data/studies_samples/biome_info"
     #ass_plot_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering/assessment"
-    input_file = os.path.join(input_dir, "c_distances_filtered_v4.1_LSU_ge_filtered.tsv")
-    biome_file = os.path.join(biome_dir, "study-sample-biome_v4.1_LSU.tsv") 
+    #input_file = os.path.join(input_dir, "c_distances_filtered_v4.1_LSU_ge_filtered.tsv")
+    input_file = os.path.join(input_dir, "c_distances_mtgmc_runs_ra_v5.0_LSU_ge_filtered.tsv") # metagenomics input file
+    biome_file = os.path.join(biome_dir, "study-sample-biome_v5.0_LSU.tsv") 
+    
     try:
         # Step 1: Load and preprocess the data
         df = load_data(input_file, biome_file)
