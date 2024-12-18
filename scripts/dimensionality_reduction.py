@@ -3,24 +3,21 @@
 # description: 
     # Apply dimensionality reduction in data using autoencoders and incorporate biome information.
 # framework: CCMRI
-# last update: 21/10/2024
+# last update: 25/11/2024
 
 import os 
 import pandas as pd
-from sklearn.calibration import LabelEncoder
-from sklearn.metrics import adjusted_rand_score
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense, LeakyReLU
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import adjusted_rand_score
 import seaborn as sns
 import itertools
 from matplotlib.lines import Line2D
-from sklearn.cluster import DBSCAN
-from sklearn.manifold import TSNE
-import umap
 import logging
 logging.basicConfig(level=logging.INFO)
 
@@ -44,7 +41,6 @@ def load_and_process_data(input_file, biome_file):
     except Exception as e:
         logging.error("Error in loading and preprocessing data: {}".format(e))
         raise
-
 def normalize_data(abundance_matrix):
     try:
         # Scale the abundance matrix
@@ -54,7 +50,6 @@ def normalize_data(abundance_matrix):
     except Exception as e:
         logging.error("Error in normalizing data: {}".format(e))
         raise
-
 def build_autoencoder(input_shape, latent_dim):
     try:
         input_layer = Input(shape=(input_shape,))
@@ -74,14 +69,12 @@ def build_autoencoder(input_shape, latent_dim):
     except Exception as e:
         logging.error("Error in building autoencoder: {}".format(e))
         raise
-
 def train_autoencoder(autoencoder, scaled_data, epochs=50, batch_size=32, validation_split=0.2):
     try:
         autoencoder.fit(scaled_data, scaled_data, epochs=epochs, batch_size=batch_size, validation_split=validation_split)
     except Exception as e:
         logging.error("Error in training autoencoder: {}".format(e))
         raise
-
 def extract_latent_features(autoencoder, scaled_data):
     try:
         encoder = Model(autoencoder.input, autoencoder.layers[-5].output)
@@ -94,7 +87,7 @@ def extract_latent_features(autoencoder, scaled_data):
 ### HIERARCHICAL CLUSTERING ###
 def perform_hierarchical_clustering(reduced_features, abundance_matrix, output_dir, input_file, latent_dim, max_distance=10):
     try:
-        Z = linkage(reduced_features, method="average")
+        Z = linkage(reduced_features, method="ward")
         dendrogram_labels = abundance_matrix.index  # Use actual sample IDs 
         plt.figure(figsize=(10, 7))
         dendrogram(Z, labels=dendrogram_labels)  # Ensure labels are set to sample names
@@ -124,7 +117,7 @@ def perform_hierarchical_clustering(reduced_features, abundance_matrix, output_d
         logging.error("Error in hierarchical clustering: {}".format(e))
         raise
 
-### 2D PCA Plot###
+### 2D PCA Plot ###
 def visualize_clusters_2d(reduced_features, labels, abundance_matrix, input_file, output_dir, latent_dim):
     try:
         pca = PCA(n_components=2)
@@ -152,63 +145,6 @@ def visualize_clusters_2d(reduced_features, labels, abundance_matrix, input_file
         logging.error("Error in 2D Clusters Visualization: {}".format(e))
         raise
 
-"""
-def perform_dbscan_clustering(reduced_features, abundance_matrix, output_dir, input_file, latent_dim, eps=0.5, min_samples=5):
-    try:
-        # Perform DBSCAN Clustering
-        dbscan = DBSCAN(eps=eps,min_samples=min_samples)
-        dbscan_labels = dbscan.fit_predict(reduced_features)
-        # Log number of clusters 
-        unique_clusters = set(dbscan_labels) - {-1} # Excluse noise points - dbscan assigns -1 to noisy points
-        logging.info("DBSCAN found {} clusters (latent_dim={})".format(len(unique_clusters), latent_dim))
-        logging.info("Number of noise points: {}".format(len(dbscan_labels == -1)))
-        # Save cluster assignments 
-        cluster_df = pd.DataFrame({"Cluster": dbscan_labels}, index=abundance_matrix.index)
-        cluster_df.to_csv(os.path.join(output_dir, "dbscan_clusters_latent{}.tsv".format(latent_dim)), sep="\t")
-        return dbscan_labels
-    except Exception as e:
-        logging.error("Error in DBSCAN clustering: {}".format(e))
-        raise
-
-def reduce_with_tsne(reduced_features, perplexity=30, n_iter=1000):
-    try:
-        tsne = TSNE(n_components=2, perplexity=perplexity, n_iter=n_iter, random_state=42)
-        tsne_results = tsne.fit_transform(reduced_features)
-        return tsne_results
-    except Exception as e:
-        logging.error("Error in t-SNE reduction: {}".format(e))
-        raise
-
-def visualize_clusters_2d_custom(reduced_2d, labels, abundance_matrix, input_file, output_dir, latent_dim, method):
-    try:
-        # Define unique biomes and markers
-        shapes = ['o', 's', '^', 'D', 'P', 'X', 'v', '<', '>', '8', 'p', '*', 'h', 'H', '+', 'x', '|', '_']
-        shape_cycle = itertools.cycle(shapes)
-        unique_biomes = abundance_matrix["biome_info"].unique()
-        shape_map = {biome: next(shape_cycle) for biome in unique_biomes}
-        # Plot clusters
-        plt.figure(figsize=(10, 12))
-        for i, biome in enumerate(abundance_matrix["biome_info"]):
-            label = labels[i]
-            marker = shape_map[biome]
-            color = 'gray' if label == -1 else sns.color_palette("hsv", len(set(labels) - {-1}))[label]
-            plt.scatter(reduced_2d[i, 0], reduced_2d[i, 1], marker=marker, color=color, edgecolor='black')
-        # Add legend
-        legend_elements = [Line2D([0], [0], marker=shape, color='w', markerfacecolor='black', markersize=8, label=biome) 
-                           for biome, shape in shape_map.items()]
-        plt.legend(handles=legend_elements, title="Biomes", bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
-        plt.title(f"{method} Clustering (Latent Dim={latent_dim})")
-        plt.tight_layout()
-        # Save visualization
-        vis_output = os.path.join(output_dir, f"{method}_clusters_latent{latent_dim}.png")
-        plt.savefig(vis_output)
-        plt.close()
-        logging.info(f"{method} cluster visualization saved to {vis_output}")
-    except Exception as e:
-        logging.error(f"Error in {method} Clusters Visualization: {e}")
-        raise
-"""
-
 def main():
     parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/"
     input_file = os.path.join(parent_dir, "v5.0_LSU_ge_filtered.tsv")
@@ -218,20 +154,19 @@ def main():
     
     # Set desired latent space dimensions to explore
     latent_dims = [4, 8, 16, 32, 64]
-    
+
     # STEP 1: LOAD AND PROCESS DATA (with biome info)
     abundance_matrix = load_and_process_data(input_file, biome_file)
-
     # STEP 2: NORMALIZE DATA
     scaled_abundance = normalize_data(abundance_matrix)
     
     # Iterate over multiple latent space dimensions
     for latent_dim in latent_dims:
-        logging.info("Processing latent space dimension={}".format(latent_dim))  
+        logging.info("Processing latent space dimension: {}".format(latent_dim))
         # Create subdirectory for current latent space dimension
         dim_output_dir = os.path.join(output_dir, "latent_{}".format(latent_dim))
         os.makedirs(dim_output_dir, exist_ok=True)
-        
+
         # STEP 3: BUILD AND TRAIN AUTOENCODER
         autoencoder = build_autoencoder(scaled_abundance.shape[1], latent_dim=latent_dim)
         train_autoencoder(autoencoder, scaled_abundance)
@@ -242,19 +177,6 @@ def main():
         # STEP 5: CLUSTERING (with biome info)
         hierarchical_labels = perform_hierarchical_clustering(reduced_features, abundance_matrix, dim_output_dir, input_file, latent_dim)
         logging.info("No of Clusters labels from hierarchical clustering = {}".format(len(set(hierarchical_labels))))
-        
-        # DBSCAN clustering
-        #dbscan_labels = perform_dbscan_clustering(reduced_features, abundance_matrix, dim_output_dir, input_file, latent_dim)
-        # t-SNE and UMAP reduction applied
-        #tsne_results = reduce_with_tsne(reduced_features)
-        # Visualize clusters
-        #visualize_clusters_2d_custom(tsne_results, dbscan_labels, abundance_matrix, input_file, dim_output_dir, latent_dim, method="t-SNE")
-        # Calculate ARI
-        #true_labels = abundance_matrix["biome_info"]
-        #calculate_ari(true_labels, dbscan_labels, method="DBSCAN", latent_dim=latent_dim, output_dir=dim_output_dir)
-        # Generate Heatmap
-        #generate_heatmap(true_labels, dbscan_labels, method="DBSCAN", latent_dim=latent_dim, output_dir=dim_output_dir)
-
         
         # Calculate ARI
         true_labels = abundance_matrix["biome_info"]
@@ -280,7 +202,6 @@ def main():
         
         # STEP 7: VISUALIZATION (with biome info)
         visualize_clusters_2d(reduced_features, hierarchical_labels, abundance_matrix, input_file, output_dir, latent_dim)
-        
 
 if __name__ == "__main__":
     main()
