@@ -285,16 +285,16 @@ def silhouette_analysis(df, output_dir, input_file, metric):
 """
 
 def main():
-    #input_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics"
-    #output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering/3b_ward"
-    #ass_plot_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering/assessment"
+    #input_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics"
+    #output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering/3b_ward"
+    #ass_plot_output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering/assessment"
     #input_file = os.path.join(input_dir, "c_distances_filtered_v5.0_LSU_ge_filtered.tsv")
-    biome_dir = "/ccmri/similarity_metrics/data/raw_data/studies_samples/biome_info"
+    biome_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/studies_samples/biome_info"
     biome_file = os.path.join(biome_dir, "study-sample-biome_v4.1_LSU.tsv")
     
      ### METAGENOMICS - RUNS ###
-    input_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/runs_metagenomics"
-    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering/runs_metagenomics/3b"
+    input_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/runs_metagenomics"
+    output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering/runs_metagenomics/3b"
     input_file = os.path.join(input_dir, "runs_metagenomics_c_distances_filtered_v4.1_LSU_ge_filtered.tsv") # metagenomics input file
 
     try:

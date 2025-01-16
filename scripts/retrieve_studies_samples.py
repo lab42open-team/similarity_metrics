@@ -32,8 +32,8 @@ def process_file(file, folder_path):
             return pd.DataFrame()  # Return an empty DataFrame in case of error
 
 def main():
-    parent_dir = "/ccmri/similarity_metrics/data/raw_data/taxonomy_abundances"
-    output_dir = "/ccmri/similarity_metrics/data/raw_data/studies_samples"
+    parent_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/taxonomy_abundances"
+    output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/studies_samples"
     folder_name = "v5.0_LSU"
 
     # Create the output directory if it does not exist

@@ -26,11 +26,11 @@ import seaborn as sns
 # use non-interactive backend
 matplotlib.use("Agg")
 
-#parent_directory = "/ccmri/similarity_metrics/data/lf_super_table/no_filtered/" # long format super table directory 
-#parent_directory = "/ccmri/similarity_metrics/data/lf_super_table/no_filtered/sample-taxa_files" # only used for total_unique_taxonomy_sample_counts def
-#output_directory = "/ccmri/similarity_metrics/data/lf_super_table/no_filtered/plots"
-parent_directory = "/ccmri/similarity_metrics/data/lf_super_table/phylum_filtered/" # filtered data according to taxonomic depth of choice directory 
-output_directory = "/ccmri/similarity_metrics/data/lf_super_table/phylum_filtered/plots/"
+#parent_directory = "/ccmri/similarity_metrics/data/taxonomic/lf_super_table/no_filtered/" # long format super table directory 
+#parent_directory = "/ccmri/similarity_metrics/data/taxonomic/lf_super_table/no_filtered/sample-taxa_files" # only used for total_unique_taxonomy_sample_counts def
+#output_directory = "/ccmri/similarity_metrics/data/taxonomic/lf_super_table/no_filtered/plots"
+parent_directory = "/ccmri/similarity_metrics/data/taxonomic/lf_super_table/phylum_filtered/" # filtered data according to taxonomic depth of choice directory 
+output_directory = "/ccmri/similarity_metrics/data/taxonomic/lf_super_table/phylum_filtered/plots/"
 
 def read_file(filename):
     file_path = os.path.join(parent_directory, filename)

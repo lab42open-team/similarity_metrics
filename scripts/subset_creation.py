@@ -15,9 +15,9 @@ import pandas as pd
 import logging
 logging.basicConfig(level=logging.INFO)
 
-input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/v5.0_SSU_ge_filtered.tsv"
-output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/down_filtered_data"
-# output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/downsampled_data/1000_samples" # For noise injection
+input_file = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/v5.0_SSU_ge_filtered.tsv"
+output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/down_filtered_data"
+# output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noisy_versions/downsampled_data/1000_samples" # For noise injection
 
 def main():
     # Read file as pandas DataFrame 

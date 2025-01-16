@@ -92,11 +92,11 @@ def main():
     # Define parent dir 
     parent_dir = "/ccmri/data/mgnify/frozen_february_2024/2024_1_17/harvested_mgnify_studies"
     # Define CC_related studies file 
-    cc_studies_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/cc_related/yes_studies_Dec_version.tsv"
+    cc_studies_file = "/ccmri/similarity_metrics/data/taxonomic/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/cc_related/yes_studies_Dec_version.tsv"
     # Define output for study-version-sampleID info
-    output_file_info = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/cc_related/studies_second_acc_samples.tsv"
+    output_file_info = "/ccmri/similarity_metrics/data/taxonomic/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/cc_related/studies_second_acc_samples.tsv"
     # Define output for extracted Taxonomy-SampleID-count info
-    output_taxonomy_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/cc_related/cc_taxonomy_abundances.tsv"
+    output_taxonomy_file = "/ccmri/similarity_metrics/data/taxonomic/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/cc_related/cc_taxonomy_abundances.tsv"
     # Retrieve_cc_strudies_info(parent_dir, cc_studies_file, output_file_info)
     extract_cc_taxonomy_sample_counts(parent_dir, cc_studies_file, output_taxonomy_file)
 

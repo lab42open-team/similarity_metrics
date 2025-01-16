@@ -28,9 +28,9 @@ def rank_df(df):
     
 def main(): 
     # Define parent directory of data [metrics]   
-    euclidean_downsampled_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/euclidean_output"
-    cosine_downsampled_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/cosine_output"
-    jensen_shannon_downsampled_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/jensen_shannon_output"
+    euclidean_downsampled_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/euclidean_output"
+    cosine_downsampled_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/cosine_output"
+    jensen_shannon_downsampled_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/jensen_shannon_output"
 
     ### TO BE ADJUSTED ###
     # Define file names to be compared
@@ -40,7 +40,7 @@ def main():
     ### --- ###
     
     # Define output directories    
-    downsampled_ranking_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output/v4.1_LSU"
+    downsampled_ranking_output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output/v4.1_LSU"
     
     # Load data - create DataFrames   
     euclidean_downsampled_df = load_data(os.path.join(euclidean_downsampled_directory, euclidean_downsampled_file_name))
@@ -71,10 +71,10 @@ if __name__ == "__main__":
 """ NOTE 
 ### GAUSSIAN & IMPULSE NOISE ###
     # Define parent directory of data [metrics]
-    euclidean_gaussian_parent_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/euclidean_output/"
-    cosine_gaussian_parent_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/cosine_output/"    
-    euclidean_impulse_parent_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/euclidean_output/"
-    cosine_impulse_parent_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/cosine_output/"
+    euclidean_gaussian_parent_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/euclidean_output/"
+    cosine_gaussian_parent_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/cosine_output/"    
+    euclidean_impulse_parent_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/euclidean_output/"
+    cosine_impulse_parent_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/cosine_output/"
     
     ### TO BE ADJUSTED ###
     # Define file names to be compared
@@ -83,8 +83,8 @@ if __name__ == "__main__":
     euclidean_impulse_file_name = "e_initial_VS_noisy_0.03_impL_d_v4.1_LSU_ge_filtered.tsv"
     cosine_impulse_file_name = "c_initial_VS_noisy_0.03_impL_d_v4.1_LSU_ge_filtered.tsv"
     # Define output directories
-    gaussian_ranking_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output"
-    impulse_ranking_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output/v4.1_LSU"
+    gaussian_ranking_output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSgaussian_noisy/ranking_output"
+    impulse_ranking_output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSimpulse_noisy/ranking_output/v4.1_LSU"
     # Load data - create DataFrames
     euclidean_gaussian_df = load_data(os.path.join(euclidean_gaussian_parent_directory, euclidean_gaussian_file_name))
     cosine_gaussian_df = load_data(os.path.join(cosine_gaussian_parent_directory, cosine_gaussian_file_name))

@@ -146,7 +146,7 @@ def hist_plot_sim_performance_overall(combined_df, output_file, noise_level):
 def main():
     ### PER VERSION AND NOISE LEVEL PERFORMANCE PLOTS ###
     # Define ranking parent directory of noisy version 
-    downsampled_ranking_parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output/v5.0_LSU"
+    downsampled_ranking_parent_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output/v5.0_LSU"
     
     ### TO BE ADJUSTED ###
     # Define file names to be compared  
@@ -169,7 +169,7 @@ def main():
     #hist_plot_sim_performance(ranking_downsampled_noise, downsampled_output_file, downsampled_noise_level)
     
     ### OVERALL PERFORMANCE ### 
-    downsampled_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output"
+    downsampled_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/ranking_output"
     # Define noise level
     downsampling_noise_level = "0.1_ratio"
     # find all relevant files 

@@ -12,7 +12,7 @@ import json
 import csv
 
 # Define folder path where JSON files are stored
-folder_path = "/ccmri/similarity_metrics/data/experiment_type/runs_v1"
+folder_path = "/ccmri/similarity_metrics/data/taxonomic/experiment_type/runs_v1"
 
 # Prepare list to store extracted data
 extracted_data = []
@@ -40,7 +40,7 @@ for filename in os.listdir(folder_path):
                 extracted_data.append({"run_id":run_id, "pipeline_id":pipeline_id})
                 
 # Define output TSV file 
-output_file_path = "/ccmri/similarity_metrics/data/experiment_type/extracted_runs_data.tsv"
+output_file_path = "/ccmri/similarity_metrics/data/taxonomic/experiment_type/extracted_runs_data.tsv"
 
 # Write extracted data to tsv file 
 with open(output_file_path, "w") as tsvfile:

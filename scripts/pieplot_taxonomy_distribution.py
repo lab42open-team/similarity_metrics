@@ -71,8 +71,8 @@ def create_pie_plot(unique_counts, plot_title, output_file_path):
     plt.close()
 
 def main():
-    parent_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/no_filtered"
-    output_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/no_filtered/plots"   
+    parent_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/no_filtered"
+    output_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/no_filtered/plots"   
     # Initialize directory to store taxonomic level accross all files
     total_counts = {"k__" : set(), "p__" : set(), "c__" : set(), 
                     "o__" : set(), "f__": set(), "g__" : set(), "s__" : set()}

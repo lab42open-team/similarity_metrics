@@ -73,8 +73,8 @@ def calculate_similarity_scores(df, output_dir, file_name, metric):
     return similarity_df
 
 def main():
-    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/down_filtered_data/filtered_v5.0_LSU_ge_filtered.tsv"
-    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/"
+    input_file = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/down_filtered_data/filtered_v5.0_LSU_ge_filtered.tsv"
+    output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/"
     df = load_data(input_file)
     calculate_similarity_scores(df, output_dir, input_file,  metric="euclidean")
     logging.info("Euclidean similarity scores calculated successfully.")

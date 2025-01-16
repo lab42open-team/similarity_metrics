@@ -20,8 +20,8 @@ import markov_clustering as mcl
 import networkx as nx 
 import matplotlib.pyplot as plt
 
-parent_directory = "/ccmri/similarity_metrics/data/lf_super_table/phylum_filtered/" # filtered data according to taxonomic depth of choice directory 
-output_directory = "/ccmri/similarity_metrics/data/lf_super_table/phylum_filtered/MCL_results/"
+parent_directory = "/ccmri/similarity_metrics/data/taxonomic/lf_super_table/phylum_filtered/" # filtered data according to taxonomic depth of choice directory 
+output_directory = "/ccmri/similarity_metrics/data/taxonomic/lf_super_table/phylum_filtered/MCL_results/"
 
 def read_file(filename):
     file_path = os.path.join(parent_directory, filename)

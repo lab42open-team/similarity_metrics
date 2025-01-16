@@ -3,8 +3,8 @@ import csv
 
 # Define files
 extracted_runs_file = "/ccmri/similarity_metrics/data/experiment_type/extracted_runs_data.tsv"
-distances_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/c_distances_filtered_v5.0_LSU_ge_filtered.tsv"
-output_path = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/metagenomics/"
+distances_file = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/c_distances_filtered_v5.0_LSU_ge_filtered.tsv"
+output_path = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/metagenomics/"
 output_filename = "mtgn_{}".format(os.path.basename(distances_file))
 output_file = os.path.join(output_path, output_filename)
 

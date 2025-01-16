@@ -7,8 +7,8 @@
 # framework: CCMRI
 # last update: 17/10/2024
 
-study_sample_file = "/ccmri/similarity_metrics/data/raw_data/studies_samples/studies_samples_v5.0_SSU.tsv"
-study_biome_file = "/ccmri/similarity_metrics/data/raw_data/studies_samples/study_biome_info.tsv"
+study_sample_file = "/ccmri/similarity_metrics/data/taxonomic/raw_data/studies_samples/studies_samples_v5.0_SSU.tsv"
+study_biome_file = "/ccmri/similarity_metrics/data/taxonomic/raw_data/studies_samples/study_biome_info.tsv"
 
 import pandas as pd
 import os
@@ -33,7 +33,7 @@ merged_df = merged_df.loc[:, ~merged_df.columns.duplicated()]
 merged_df.drop_duplicates(subset=["study_id", "sample_id", "biome_info"], inplace=True)
 
 # Set up the output directory and filename
-output_dir = "/ccmri/similarity_metrics/data/raw_data/studies_samples/biome_info"
+output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/studies_samples/biome_info"
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 

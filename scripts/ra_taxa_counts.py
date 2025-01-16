@@ -18,10 +18,10 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 # Set global variables to control script execution upon development (initialize parameters to default)
-input_directory = "/ccmri/similarity_metrics/data/normalized_raw_data" 
-#input_directory = "/ccmri/similarity_metrics/data/test_dataset/raw_data/test_ra" # only for testing
-output_directory = "/ccmri/similarity_metrics/data/taxa_counts/ra_taxa_counts_output"
-#output_directory = "/ccmri/similarity_metrics/data/test_dataset/raw_data/aggregated_ra" # only for testing
+input_directory = "/ccmri/similarity_metrics/data/taxonomic/normalized_raw_data" 
+#input_directory = "/ccmri/similarity_metrics/data/taxonomic/test_dataset/raw_data/test_ra" # only for testing
+output_directory = "/ccmri/similarity_metrics/data/taxonomic/taxa_counts/ra_taxa_counts_output"
+#output_directory = "/ccmri/similarity_metrics/data/taxonomic/test_dataset/raw_data/aggregated_ra" # only for testing
 ignore_prefix = False 
 
 def count_taxa_occurrences(file_path, ignore_prefix):

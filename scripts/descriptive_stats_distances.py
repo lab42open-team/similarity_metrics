@@ -12,7 +12,7 @@ import os
 import pandas as pd
 
 # Define files
-parent_directory = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics"
+parent_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics"
 input_file = "c_distances_filtered_v4.1_LSU_ge_filtered.tsv" # TBA
 file_path = os.path.join(parent_directory, input_file)
 

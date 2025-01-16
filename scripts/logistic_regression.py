@@ -159,13 +159,13 @@ def cross_validate_model(x, y, label_mapping, output_file, cv=3):
         raise
 
 def main():
-    data_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/"
-    biome_dir = "/ccmri/similarity_metrics/data/raw_data/studies_samples/biome_info/3b"
+    data_dir = "/ccmri/similarity_metrics/data/taxonomic/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/"
+    biome_dir = "/ccmri/similarity_metrics/data/taxonomic/taxonomic/raw_data/studies_samples/biome_info/3b"
     data_file = os.path.join(data_dir, "c_distances_filtered_v5.0_LSU_ge_filtered.tsv")
     biome_file = os.path.join(biome_dir, "study_sample_3biome_v5.0_LSU.tsv")
-    model_path = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/logistic_regression/test_model_v5.0_LSU.pkl"
-    scaler_path = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/logistic_regression/test_scaler_v5.0_LSU.pkl"
-    evaluation_output_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/logistic_regression/evaluation_output.txt"
+    model_path = "/ccmri/similarity_metrics/data/taxonomic/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/logistic_regression/test_model_v5.0_LSU.pkl"
+    scaler_path = "/ccmri/similarity_metrics/data/taxonomic/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/logistic_regression/test_scaler_v5.0_LSU.pkl"
+    evaluation_output_file = "/ccmri/similarity_metrics/data/taxonomic/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/logistic_regression/evaluation_output.txt"
     # Load data
     distance_matrix = load_data(data_file, biome_file)
     # Preprocess data to separate features x, y

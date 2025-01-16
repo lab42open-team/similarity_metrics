@@ -87,9 +87,9 @@ def plot_results(original_df, noisy_df, ratio, input_file, base_output_dir):
     plt.close()
      
 def main():
-    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/d_1000_data/d_v5.0_LSU_ge_filtered.tsv"
-    original_plot_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/d_1000_data/normalized/ra_d_v5.0_LSU_ge_filtered.tsv"
-    base_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/downsampled_noisy_version"
+    input_file = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/d_1000_data/d_v5.0_LSU_ge_filtered.tsv"
+    original_plot_file = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/d_1000_data/normalized/ra_d_v5.0_LSU_ge_filtered.tsv"
+    base_output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/downsampled_noisy_version"
     # Define downsampling ratios - fraction of reducing total abundance - level of noise
     downsample_ratios = [0.1, 0.25, 0.5, 0.75, 0.9]
     downsample_counts_noise_injection(input_file, original_plot_file, downsample_ratios, base_output_dir)
@@ -227,11 +227,11 @@ def impulse_noise_injection(input_file, original_plot_file, output_dir, impulse_
     logging.info("Plot saved to: {}".format(img_plot_path))
     
 def main():
-    input_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/downsampled_data/1000_samples/d_v4.1_SSU_ge_filtered.tsv"
-    original_plot_file = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/downsampled_data/1000_samples/normalized/ra_d_v4.1_SSU_ge_filtered.tsv"
+    input_file = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/downsampled_data/1000_samples/d_v4.1_SSU_ge_filtered.tsv"
+    original_plot_file = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/downsampled_data/1000_samples/normalized/ra_d_v4.1_SSU_ge_filtered.tsv"
     # output to be defined according to std_noise_level picked
-    gaussian_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/gaussian_noisy_data/d_1000/0.2_stdDev"
-    impulse_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/impulse_noisy_data/d_1000/0.03_noiseLevel"
+    gaussian_output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/gaussian_noisy_data/d_1000/0.2_stdDev"
+    impulse_output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/impulse_noisy_data/d_1000/0.03_noiseLevel"
     # Define Noise Level per noise injection
     # To change the intensity of noise, adjust the standard deviation. - Noise Level
     # Higher std_dev_noise leads to noisier dataset, while lower std_dev_noise leads to a dataset closer to the original. 

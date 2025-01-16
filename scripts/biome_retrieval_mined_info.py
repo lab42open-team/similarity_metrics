@@ -56,7 +56,7 @@ def process_multiple_files(input_folder, output_file):
             file.write("{}\t{}\n".format(study_id, biome_info))
 
 input_directory = "/ccmri/data/mgnify/frozen_february_2024/2024_1_17/harvested_mgnify_studies"
-output_directory = "/ccmri/similarity_metrics/data/raw_data/studies_samples/"
+output_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/studies_samples/"
 output_filename = "study_biome_info.tsv"
 output_file = os.path.join(output_directory, output_filename)
 process_multiple_files(input_directory, output_file)        

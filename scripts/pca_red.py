@@ -112,11 +112,11 @@ def visualize_clusters_2d(reduced_features, labels, abundance_matrix, input_file
         raise
 
 def main():
-    parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/"
+    parent_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/"
     input_file = os.path.join(parent_dir, "v4.1_LSU_ge_filtered.tsv")
-    biome_dir = "/ccmri/similarity_metrics/data/raw_data/studies_samples/biome_info" 
+    biome_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/studies_samples/biome_info" 
     biome_file = os.path.join(biome_dir, "study-sample-biome_v4.1_LSU.tsv")
-    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/dimensionality_reduction/PCA/3b"
+    output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/dimensionality_reduction/PCA/3b"
     
     # STEP 1: LOAD AND PROCESS DATA (with biome info)
     abundance_matrix = load_and_process_data(input_file, biome_file)

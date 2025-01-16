@@ -14,7 +14,7 @@
 import pandas as pd
 
 # Load the dataset
-file_path = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/cc_related/cc_ge_filtered_data.tsv"  
+file_path = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/cc_related/cc_ge_filtered_data.tsv"  
 data = pd.read_csv(file_path, sep="\t")
 
 # Step 1: Filter taxa with more than 30 reads
@@ -41,7 +41,7 @@ data["Count"] = data.groupby("Sample")["Count"].transform(lambda x: x / x.sum())
 data = data.drop(columns=["Genus"])
 
 # Save the processed data to a new file
-output_path = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/cc_related/downsampled_filtered_data.tsv"
+output_path = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/cc_related/downsampled_filtered_data.tsv"
 data.to_csv(output_path, sep="\t", index=False)
 
 print(f"Processed data saved to {output_path}")

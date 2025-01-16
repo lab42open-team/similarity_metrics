@@ -169,9 +169,9 @@ def plot_pca_clusters(df, labels, output_dir, input_file):
 
 # Modify your main function to include the DBSCAN step
 def main():
-    input_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics"
-    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering"
-    biome_dir = "/ccmri/similarity_metrics/data/raw_data/studies_samples/biome_info"
+    input_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics"
+    output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering"
+    biome_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/studies_samples/biome_info"
     input_file = os.path.join(input_dir, "c_distances_filtered_v5.0_LSU_ge_filtered.tsv")
     biome_file = os.path.join(biome_dir, "study-sample-biome_v5.0_LSU.tsv")
     

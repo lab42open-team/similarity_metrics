@@ -16,9 +16,9 @@ logging.basicConfig(level=logging.INFO)
 
 # Set global variables to control script execution upon development (initialize parameters to default)
 input_directory = "/ccmri/data/mgnify/frozen_february_2024/2024_1_17/harvested_mgnify_studies"
-#input_directory = "/ccmri/similarity_metrics/data/test_dataset/raw_data/MGYS" # test 
-#output_directory = "/ccmri/similarity_metrics/data/test_dataset/raw_data" # test
-output_directory = "/ccmri/similarity_metrics/data/raw_data"
+#input_directory = "/ccmri/similarity_metrics/data/taxonomic/test_dataset/raw_data/MGYS" # test 
+#output_directory = "/ccmri/similarity_metrics/data/taxonomic/test_dataset/raw_data" # test
+output_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data"
 
 # Define target folders
 target_folders = [folder for folder in os.listdir(input_directory) if os.path.isdir(os.path.join(input_directory, folder))]

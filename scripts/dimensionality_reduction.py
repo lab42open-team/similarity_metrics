@@ -146,11 +146,11 @@ def visualize_clusters_2d(reduced_features, labels, abundance_matrix, input_file
         raise
 
 def main():
-    parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/"
+    parent_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/"
     input_file = os.path.join(parent_dir, "v5.0_LSU_ge_filtered.tsv")
-    biome_dir = "/ccmri/similarity_metrics/data/raw_data/studies_samples/biome_info" 
+    biome_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/studies_samples/biome_info" 
     biome_file = os.path.join(biome_dir, "study-sample-biome_v5.0_LSU.tsv")
-    output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/dimensionality_reduction/3b"
+    output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/dimensionality_reduction/3b"
     
     # Set desired latent space dimensions to explore
     latent_dims = [4, 8, 16, 32, 64]

@@ -12,8 +12,8 @@ import pandas as pd
 from tempfile import NamedTemporaryFile
 
 """
-parent_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/normalized_counts"
-runs_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/normalized_counts/runs_files"
+parent_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/normalized_counts"
+runs_output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/normalized_counts/runs_files"
 
 ### PART 1: Separate runs from assemblies
 # Process each .tsv file in the parent directory
@@ -31,8 +31,8 @@ for filename in os.listdir(parent_dir):
 
 ### PART 2: Retrieve only metagenomic experiment type
 # Define files
-extracted_runs_file = "/ccmri/similarity_metrics/data/experiment_type/extracted_runs_data.tsv"
-metagenomics_runs_output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/normalized_counts/runs_files/metagenomics"
+extracted_runs_file = "/ccmri/similarity_metrics/data/taxonomic/experiment_type/extracted_runs_data.tsv"
+metagenomics_runs_output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/normalized_counts/runs_files/metagenomics"
 
 # Load metagenomics runs ids
 metagenomic_ids = pd.read_csv(extracted_runs_file, sep="\t", usecols=["run_id"])
@@ -54,9 +54,9 @@ for filename in os.listdir(runs_output_dir):
 ### Part 3: SEPARATE RUNS & KEEP METAGENOMIC DATA IN SIMILARITY METRICS FILES ###
 
 # Define directories
-similarity_distances_path = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/c_distances_filtered_v4.1_LSU_ge_filtered.tsv"
-output_dir = "/ccmri/similarity_metrics/data/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/runs_metagenomics"
-extracted_runs_file = "/ccmri/similarity_metrics/data/experiment_type/extracted_runs_data.tsv"
+similarity_distances_path = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/c_distances_filtered_v4.1_LSU_ge_filtered.tsv"
+output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/runs_metagenomics"
+extracted_runs_file = "/ccmri/similarity_metrics/data/taxonomic/experiment_type/extracted_runs_data.tsv"
 
 # Load metagenomics runs IDs
 metagenomic_ids = pd.read_csv(extracted_runs_file, sep="\t", usecols=["run_id"])

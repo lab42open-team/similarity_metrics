@@ -13,9 +13,9 @@ find . -type f -name "*ERP*" | wc -l
 # Iterate over each file of specific version in parent directory (please adjust version to the one of interest) + create TOTAL sample counts files
 #!/bin/bash
 # Set the input directory
-directory="/ccmri/similarity_metrics/data/taxa_counts_output/v5.0/SSU_v5.0" # adjust v No
+directory="/ccmri/similarity_metrics/data/taxonomic/taxa_counts_output/v5.0/SSU_v5.0" # adjust v No
 # Set the output file
-output_file="/ccmri/similarity_metrics/data/SampleCounts/v5.0_SSU_sample_counts.tsv" # adjust v No
+output_file="/ccmri/similarity_metrics/data/taxonomic/SampleCounts/v5.0_SSU_sample_counts.tsv" # adjust v No
 # Initialize variable to get total sum of samples 
 total_samples=0
 # Iterate over each file in the directory
@@ -30,7 +30,7 @@ for file in "$directory"/*.tsv; do
     echo -e "$filename\t$column_count" >> "$output_file"
 done
 # Set final output
-f_output="/ccmri/similarity_metrics/data/SampleCounts/total_sample_counts.tsv"
+f_output="/ccmri/similarity_metrics/data/taxonomic/SampleCounts/total_sample_counts.tsv"
 # Append total sum of samples to final output
 echo -e "v5.0_SSU_samples\t$total_samples" >> "$f_output" # adjust v No
 
@@ -38,8 +38,8 @@ echo -e "v5.0_SSU_samples\t$total_samples" >> "$f_output" # adjust v No
 #!/bin/bash
 
 # Set input directory 
-directory="/ccmri/similarity_metrics/data/SampleCounts"
-output_file="/ccmri/similarity_metrics/data/SampleCounts/total_sample_counts.tsv"
+directory="/ccmri/similarity_metrics/data/taxonomic/SampleCounts"
+output_file="/ccmri/similarity_metrics/data/taxonomic/SampleCounts/total_sample_counts.tsv"
 
 # Initialize an associative array to store total counts for each version 
 declare -A total_counts 
@@ -73,9 +73,9 @@ done
 ### Use the following commands to count total samples in each version
 #! bin/bash
 # Set input directory
-directory="/ccmri/similarity_metrics/data/SampleCounts"
+directory="/ccmri/similarity_metrics/data/taxonomic/SampleCounts"
 # Set temporary file
-temp_file="/ccmri/similarity_metrics/data/temp.tsv"
+temp_file="/ccmri/similarity_metrics/data/taxonomic/temp.tsv"
 # Iterate over each file contained in parent directory
 for file in "$directory"/*.tsv; do
     # Extract version from filename 
@@ -90,9 +90,9 @@ for file in "$directory"/*.tsv; do
     echo -e "$version\t$total_sample_count" >> "$temp_file"
 done
 # Create header for .tsv file
-echo -e "Version\tSamples" > /ccmri/similarity_metrics/data/sample_counts.tsv
+echo -e "Version\tSamples" > /ccmri/similarity_metrics/data/taxonomic/sample_counts.tsv
 # Append version and sample counts
-cat "$temp_file" >> /ccmri/similarity_metrics/data/sample_counts.tsv
+cat "$temp_file" >> /ccmri/similarity_metrics/data/taxonomic/sample_counts.tsv
 # Remove temporary file  
 rm "$temp_file"
 
@@ -101,9 +101,9 @@ rm "$temp_file"
 ### Use the following commands to count total files per version (taxonomy abundances files) 
 #! bin/bash
 # Set input directory
-directory="/ccmri/similarity_metrics/data/SampleCounts"
+directory="/ccmri/similarity_metrics/data/taxonomic/SampleCounts"
 # Set output directory
-temp_file="/ccmri/similarity_metrics/data/temp.tsv"
+temp_file="/ccmri/similarity_metrics/data/taxonomic/temp.tsv"
 # Iterate over each file contained in parent directory
 for file in "$directory"/*.tsv; do
     # Extract version from filename 
@@ -116,9 +116,9 @@ for file in "$directory"/*.tsv; do
     echo -e "$version\t$line_count" >> "$temp_file"
 done 
 # Create header for .tsv file 
-echo -e "Version\tCount" > /ccmri/similarity_metrics/data/version_counts.tsv
+echo -e "Version\tCount" > /ccmri/similarity_metrics/data/taxonomic/version_counts.tsv
 # Append counts from temporary to result file
-cat "$temp_file" >> /ccmri/similarity_metrics/data/version_counts.tsv
+cat "$temp_file" >> /ccmri/similarity_metrics/data/taxonomic/version_counts.tsv
 # Remove temporary file 
 rm "$temp_file"
 
@@ -127,9 +127,9 @@ rm "$temp_file"
 ### Use the following comands to calculate total number of studies per version
 #!/bin/bash
 # Set input directory 
-directory="/ccmri/similarity_metrics/data/taxa_counts_output"
+directory="/ccmri/similarity_metrics/data/taxonomic/taxa_counts_output"
 # Set output directory
-output_file="/ccmri/similarity_metrics/data/studies_per_version_counts.tsv"
+output_file="/ccmri/similarity_metrics/data/taxonomic/studies_per_version_counts.tsv"
 echo -e "Version\tStudies" >> "$output_file"
 # Iterate over each subdirectory
 for subdir in "$directory"/*; do

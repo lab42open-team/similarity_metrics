@@ -77,9 +77,9 @@ def main():
             key, value = arg[:sep], arg[sep + 1:]
             arguments_dict[key] = value
     # Set default input - output directories
-    input_file = "/ccmri/similarity_metrics/data/test_dataset/test_folder/output/wf_input_super_table.tsv" 
-    #input_dir = "/ccmri/similarity_metrics/data/SuperTable/"
-    output_dir = "/ccmri/similarity_metrics/data/test_dataset/test_folder/output"
+    input_file = "/ccmri/similarity_metrics/data/taxonomic//test_dataset/test_folder/output/wf_input_super_table.tsv" 
+    #input_dir = "/ccmri/similarity_metrics/data/taxonomic//SuperTable/"
+    output_dir = "/ccmri/similarity_metrics/data/taxonomic//test_dataset/test_folder/output"
     """       
     # Update parameters based on the values passed by the command line 
     input_file = arguments_dict.get("--input_file")
