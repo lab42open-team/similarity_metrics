@@ -14,11 +14,11 @@
 import sys, os, re
 import pandas as pd
 
-#parent_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/no_filtered"
-#output_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/"
+parent_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/no_filtered"
+output_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/"
 
-parent_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/cc_related"
-output_directory = parent_directory
+#parent_directory = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/cc_related"
+#output_directory = parent_directory
 
 def read_file(filename):
     file_path = os.path.join(parent_directory, filename)
@@ -71,7 +71,6 @@ def main():
     #save_filtered_data(unique_phlya_data, unique_filtered_filename)
     filtered_sumed_data_filename = re.sub(r"^lf_", "", filename)[:-16] + "_ge_filtered.tsv"
     save_filtered_data(filtered_sumed_data, filtered_sumed_data_filename)
-    
-    
+
 if __name__ == "__main__":
     main()   

@@ -14,7 +14,7 @@
 import pandas as pd
 
 # Load the dataset
-file_path = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/cc_related/cc_ge_filtered_data.tsv"  
+file_path = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/no_filtered/lf_v1.0_super_table.tsv"  
 data = pd.read_csv(file_path, sep="\t")
 
 # Step 1: Filter taxa with more than 30 reads
@@ -24,10 +24,10 @@ data = data[data["Count"] > 30]
 
 # Step 2: Filter samples with more than 10 genera
 # Extract genus level from the "Taxa" column (assuming genus is the last part of the taxonomy split by `;`)
-data["Genus"] = data["Taxa"].str.split(";").str[-1]
+data["Depth"] = data["Taxa"].str.split(";").str[-1]
 
 # Count unique genera per sample
-genera_per_sample = data.groupby("Sample")["Genus"].nunique()
+genera_per_sample = data.groupby("Sample")["Depth"].nunique()
 samples_to_keep = genera_per_sample[genera_per_sample > 10].index
 
 # Keep only rows from samples with more than 10 genera
@@ -38,10 +38,10 @@ data = data[data["Sample"].isin(samples_to_keep)]
 data["Count"] = data.groupby("Sample")["Count"].transform(lambda x: x / x.sum())
 
 # Drop the intermediate "Genus" column if not needed
-data = data.drop(columns=["Genus"])
+data = data.drop(columns=["Depth"])
 
 # Save the processed data to a new file
-output_path = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/cc_related/downsampled_filtered_data.tsv"
+output_path = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/downsampled_lf_v1.0.tsv"
 data.to_csv(output_path, sep="\t", index=False)
 
 print(f"Processed data saved to {output_path}")
