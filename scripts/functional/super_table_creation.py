@@ -11,7 +11,7 @@
     # eg. "v1.0", "v2.0", "v3.0", "v4.0", "v4.1", "v5.0")
     # For now these lines are disabled (commented). Please uncomment them if you wish to use parameters via cmd. 
 # framework: CCMRI
-# last update: 22/01/2025
+# last update: 13/02/2025
 
 import os, sys
 import time
@@ -80,10 +80,18 @@ def write_output(f_counts, input_folder, output_dir):
             file.write("{}\t{}\t{}\n".format(go, run, count))
 
 def main():
-    parent_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO-slim_abundances/raw_data"
-    input_folder_name = "v4.0" # To be adjusted  
+    """
+    parent_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/raw_data"
+    input_folder_name = "v5.0" # To be adjusted  
     input_folder = os.path.join(parent_dir, input_folder_name)
-    output_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO-slim_abundances/super_table"
+    output_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/super_table"
+    skipped_input_files = os.path.join(output_dir, "skipped_files_log.txt")
+    """
+    """CC-related studies directories"""
+    parent_dir = "/ccmri/similarity_metrics/data/cc_related_only/filtered_go_files/GO_abund"
+    input_folder_name = "raw_data" # To be adjusted  
+    input_folder = os.path.join(parent_dir, input_folder_name)
+    output_dir = "/ccmri/similarity_metrics/data/cc_related_only/filtered_go_files/GO_abund/super_table"
     skipped_input_files = os.path.join(output_dir, "skipped_files_log.txt")
     # Merge data 
     merge_data, f_counts = merge_functional_data(input_folder, skipped_input_files)

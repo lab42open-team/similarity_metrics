@@ -285,18 +285,18 @@ def silhouette_analysis(df, output_dir, input_file, metric):
 """
 
 def main():
-    #input_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics"
-    #output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering/3b_ward"
-    #ass_plot_output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering/assessment"
-    #input_file = os.path.join(input_dir, "c_distances_filtered_v5.0_LSU_ge_filtered.tsv")
+    input_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics"
+    output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering"
+    ass_plot_output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering/assessment"
+    input_file = os.path.join(input_dir, "c_distances_filtered_v5.0_SSU_ge_filtered.tsv")
     biome_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/studies_samples/biome_info"
-    biome_file = os.path.join(biome_dir, "study-sample-biome_v4.1_LSU.tsv")
-    
-     ### METAGENOMICS - RUNS ###
+    biome_file = os.path.join(biome_dir, "study-sample-biome_v5.0_SSU.tsv")
+    """
+    ### METAGENOMICS - RUNS ###
     input_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/runs_metagenomics"
     output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering/runs_metagenomics/3b"
     input_file = os.path.join(input_dir, "runs_metagenomics_c_distances_filtered_v4.1_LSU_ge_filtered.tsv") # metagenomics input file
-
+    """
     try:
         # Step 1: Load and preprocess the data
         df = load_data(input_file, biome_file)
@@ -312,21 +312,21 @@ def main():
         # Step 4: Perform hierarchical clustering on the downsampled matrix
         k_values = range(5, 41, 5) # k values from 5 to 40 with step 5
         Z = perform_hierarchical_clustering(downsampled_matrix, output_dir, input_file, k_values)
-        """
+        
         # Step 5: Compute cluster centroid
-        centroids = compute_cluster_centroids(downsampled_matrix.values, labels, n_clusters)
+        #centroids = compute_cluster_centroids(downsampled_matrix.values, labels, n_clusters)
         
         # Step 6: Load new samples 
-        remaining_samples_matrix = load_remaining_samples(df, downsampled_matrix)
+        #remaining_samples_matrix = load_remaining_samples(df, downsampled_matrix)
         
         # Step 7: Assign new samples to the nearest cluster centroid using pairwise distances
-        cluster_assignments = assign_samples_to_clusters(remaining_samples_matrix, centroids, metric="cosine")
+        #cluster_assignments = assign_samples_to_clusters(remaining_samples_matrix, centroids, metric="cosine")
         
         # Save the cluster assignments
-        output_path = os.path.join(output_dir, "new_sample_cluster_assignments.tsv")
-        pd.DataFrame({"Sample": remaining_samples_matrix.index, "Cluster": cluster_assignments}).to_csv(output_path, sep='\t', index=False)
-        logging.info("Cluster assignments for remaining samples saved to: {}".format(output_path))
-        """
+        #output_path = os.path.join(output_dir, "new_sample_cluster_assignments.tsv")
+        #pd.DataFrame({"Sample": remaining_samples_matrix.index, "Cluster": cluster_assignments}).to_csv(output_path, sep='\t', index=False)
+        #logging.info("Cluster assignments for remaining samples saved to: {}".format(output_path))
+        
     except Exception as e:
         logging.error("Error in main: {}".format(e))
         raise

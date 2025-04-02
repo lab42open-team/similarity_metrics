@@ -96,11 +96,11 @@ def plot_results(original_df, noisy_df, ratio, input_file, base_output_dir):
     plt.close()
 
 def main():
-    parent_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO-slim_abundances/d_filtered/r_1000"
-    input_file = os.path.join(parent_dir, "r_1000_filtered_data_v5.0.tsv") # non-RA file -1000 Randomly selected Runs
+    parent_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/noise_injection/r_1000"
+    input_file = os.path.join(parent_dir, "r_1000_f_aggregated_0.75_0.01_lf_v5.0_super_table.tsv") # non-RA file -1000 Randomly selected Runs
     original_plot_filePath = os.path.join(parent_dir, "normalized_data")  
-    original_plot_file = os.path.join(original_plot_filePath, "normalized_r_1000_filtered_data_v5.0.tsv") # RA file
-    base_output_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO-slim_abundances/noise_injection"
+    original_plot_file = os.path.join(original_plot_filePath, "normalized_r_1000_f_aggregated_0.75_0.01_lf_v5.0_super_table.tsv") # RA file
+    base_output_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/noise_injection/downsampling_noise"
     # Define downsampling ratios - fraction of reducing total abundance - level of noise
     downsample_ratios = [0.1, 0.25, 0.5, 0.75, 0.9]
     downsample_Counts_noise_injection(input_file, original_plot_file, downsample_ratios, base_output_dir)

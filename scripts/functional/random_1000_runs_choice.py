@@ -24,8 +24,8 @@ def random_1000_runs(input_file, output_dir):
     logging.info(f"Downsampled version saved to {output_file}")
 
 if __name__ == "__main__":
-    input_file = "/ccmri/similarity_metrics/data/functional/raw_data/GO-slim_abundances/d_filtered/filtered_data_v4.1.tsv"
-    output_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO-slim_abundances/d_filtered/r_1000"
+    input_file = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/aggregated_data/final_CCMRI_GO-slim/f_aggregated_0.75_0.01_lf_v5.0_super_table.tsv"
+    output_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/noise_injection/r_1000"
     random_1000_runs(input_file, output_dir)
     
     

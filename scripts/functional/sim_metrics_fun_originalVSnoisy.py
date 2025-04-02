@@ -94,18 +94,18 @@ def calculate_similarity_scores(df_initial, df_noisy, output_dir, noisy_file_nam
     
 def main():
     # Define parent directory of intial data [downsampled]
-    initial_parent_directory = "/ccmri/similarity_metrics/data/functional/raw_data/GO-slim_abundances/d_filtered/r_1000/normalized_data"   
+    initial_parent_directory = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/noise_injection/r_1000/normalized_data"   
     # Define noisy directory
-    downsampled_noisy_parent_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO-slim_abundances/noise_injection"
+    downsampled_noisy_parent_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/noise_injection/downsampling_noise"
     
     ### TO BE ADJUSTED ###
     # Initial files
-    initial_file_name = "normalized_r_1000_filtered_data_v5.0.tsv"
+    initial_file_name = "normalized_r_1000_f_aggregated_0.75_0.01_lf_v4.1_super_table.tsv"
     initial_file = os.path.join(initial_parent_directory, initial_file_name)   
     # Noisy files
     
     downsampled_noise_version_directory = os.path.join(downsampled_noisy_parent_dir, "0.1_ratio")
-    downsampled_file_name = "downsampled_0.1_ratio_r_1000_filtered_data_v5.0.tsv"  
+    downsampled_file_name = "downsampled_0.1_ratio_r_1000_f_aggregated_0.75_0.01_lf_v4.1_super_table.tsv"  
     ### --- ###
     
     # Load noisy data 
@@ -113,9 +113,9 @@ def main():
     downsampled_df1, downsampled_df2 = load_data(initial_file, downsampled_noisy_file)
 
     # Define downsampled Output dir
-    downsampled_euclidean_output_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO-slim_abundances/noise_injection/similarity_metrics/euclidean_output/"
-    downsampled_cosine_output_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO-slim_abundances/noise_injection/similarity_metrics/cosine_output"
-    downsampled_jensen_shannon_output_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO-slim_abundances/noise_injection/similarity_metrics/jensen_shannon_output"
+    downsampled_euclidean_output_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/noise_injection/similarity_metrics/euclidean_output/"
+    downsampled_cosine_output_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/noise_injection/similarity_metrics/cosine_output"
+    downsampled_jensen_shannon_output_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/noise_injection/similarity_metrics/jensen_shannon_output"
     
     # Calculate and Save similarities 
     calculate_similarity_scores(downsampled_df1, downsampled_df2, downsampled_euclidean_output_dir, downsampled_noisy_file, metric="euclidean")

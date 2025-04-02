@@ -90,7 +90,7 @@ def calculate_distances(input_file, output_dir, metric):
     logging.info(f"Distances saved to: {output_path}")
 
 def main():
-    input_file = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/down_filtered_data/filtered_v4.1_SSU_ge_filtered.tsv"
+    input_file = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/down_filtered_data/filtered_v4.1_LSU_ge_filtered.tsv"
     output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics"
     start_time = time.time()
     #calculate_distances(input_file, output_dir, metric="euclidean")

@@ -41,6 +41,7 @@ def load_and_process_data(input_file, biome_file):
     except Exception as e:
         logging.error("Error in loading and preprocessing data: {}".format(e))
         raise
+
 def normalize_data(abundance_matrix):
     try:
         # Scale the abundance matrix
@@ -50,6 +51,7 @@ def normalize_data(abundance_matrix):
     except Exception as e:
         logging.error("Error in normalizing data: {}".format(e))
         raise
+
 def build_autoencoder(input_shape, latent_dim):
     try:
         input_layer = Input(shape=(input_shape,))

@@ -58,7 +58,7 @@ def calculate_similarity_scores(df, output_dir, file_name, metric):
     pairs = [(sample1, sample2, df) 
              for sample1 in df["Sample"].unique()
              for sample2 in df["Sample"].unique()
-             if sample1 < sample2] # ensure no sample will be compared to itself and no duplicates will be created TODO
+             if sample1 < sample2] # ensure no sample will be compared to itself and no duplicates will be created 
     logging.info("Number of pairs generated: {}".format(len(pairs)))
     similarity_scores = [compute_similarity(pair, metric) for pair in pairs] 
     # convert list of similarity scores to DataFrame
