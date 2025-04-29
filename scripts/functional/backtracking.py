@@ -77,8 +77,8 @@ def save_output(output_file, aggregated):
 
 def main():
     gene_ontology_file = "/ccmri/similarity_metrics/data/functional/gene_ontology_groups.tsv"
-    input_file = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/raw_data/super_table/lf_v4.1_super_table.tsv"
-    output_file = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/aggregated_data/aggregated_lf_v4.1_super_table.tsv"
+    input_file = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/raw_data/super_table/lf_v5.0_super_table.tsv"
+    output_file = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/aggregated_data/aggregated_lf_v5.0_super_table.tsv"
     start_time = time.time()
     go_dict = load_gene_ontology_data(gene_ontology_file)
     data = load_input_data(input_file)

@@ -1,0 +1,7 @@
+### HTTP Request ###
+https://www.ebi.ac.uk/ena/browser/advanced-search?result=sample&fields=sample_accession%2Csecondary_sample_accession%2Cstudy_accession
+
+### Curl Request ###
+curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d 'result=sample&fields=sample_accession%2Csecondary_sample_accession%2Cstudy_accession&format=tsv' "https://www.ebi.ac.uk/ena/portal/api/search"
+
+# (Check page:https://www.ebi.ac.uk/ena/browser/advanced-search)

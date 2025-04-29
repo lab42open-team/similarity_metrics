@@ -1,5 +1,19 @@
+#!/usr/bin/python3.5
+
+# script name: filter_fun_data.py
+# developed by: Nefeli Venetsianou
+# description: 
+    # Filter data according to Local and Global Frequency.
+        # Local Frequency is defined as reads for GO terms divided by the sum of reads per sample. (Within Sample)
+        # Global Frequency is defined as sum of times a term appears accross all samples divided by the number of samples. (Within DataSet)
+# input parameters from cmd:
+    # upper threshold (e.g. 0.75): terms that are more frequent than 75% (based on Global FR) will be removed.
+    # lower threshold (eg. 0.01): terms that are lower than 1% within a sample (based on Local FR) will be removed. 
+# framework: CCMRI
+
 import os
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt  # For plotting
 
 def calculate_statistics(dataframe, output_txt_file):
@@ -57,10 +71,10 @@ def save_filtered_data(raw_data_df, upper_threshold, lower_threshold, upper_log_
     """
     Filter data dynamically based on user-defined thresholds and save the filtered data.
     """
-    local_lower_threshold = raw_data_df.groupby("Run")["Count"].transform(lambda x: x.quantile(lower_threshold))
+    local_lower_threshold = raw_data_df.groupby("Run")["Count"].transform(lambda x: x.quantile(lower_threshold)) # filter data within a sample
     go_frequencies = raw_data_df.groupby("GO")["Run"].nunique() / raw_data_df["Run"].nunique()
     
-    high_frequency_terms = go_frequencies[go_frequencies > upper_threshold].index.tolist()
+    high_frequency_terms = go_frequencies[go_frequencies > upper_threshold].index.tolist() # filter overly ubiquitous GO terms
     below_lower = raw_data_df[raw_data_df["Count"] < local_lower_threshold]
     
     # Identify GO terms to remove
@@ -95,15 +109,32 @@ def save_filtered_data(raw_data_df, upper_threshold, lower_threshold, upper_log_
     print(f"Total unique GO terms remaining after filtering: {unique_remaining}")
     print(f"Filtered data saved to {filtered_output_file}")
 
+def compute_tfidf_score(dataframe):
+    """
+    Compute TF-IDF-like ranking for GO terms across samples.
+    Adds a new column 'Ranking (TF-IDF)' to the dataframe.
+    """
+    # Step 1: Compute Local Frequency (TF)
+    dataframe["Local_FR"] = dataframe.groupby("Run")["Count"].transform(lambda x: x / x.sum())
+    # Step 2: Compute Inverse Document Frequency (IDF)
+    total_samples = dataframe["Run"].nunique()
+    go_presence = dataframe.groupby("GO")["Run"].nunique()  # how many samples each GO term appears in
+    idf = np.log(total_samples / go_presence)
+    # Step 3: Merge IDF back into main dataframe
+    dataframe = dataframe.merge(idf.rename("IDF"), on="GO")
+    # Step 4: Compute TF-IDF
+    dataframe["Ranking (TF-IDF)"] = dataframe["Local_FR"] * dataframe["IDF"]
+    print("TF-IDF ranking added to dataframe.")
+    return dataframe
 
 def main():
-    input_file = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/aggregated_data/aggregated_lf_v4.1_super_table.tsv" 
-    output_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/aggregated_data/filtered_cutOff/0.75_GL_0.10_LO/v4.1"
+    input_file = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/aggregated_data/aggregated_lf_v5.0_super_table.tsv" 
+    output_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/aggregated_data/filtered_cutOff/0.75_GL_0.01_LO/v5.0"
     os.makedirs(output_dir, exist_ok=True)
     output_txt_file = os.path.join(output_dir, "stats.txt")
     upper_log_file = os.path.join(output_dir, "upper_log.txt")
     lower_log_file = os.path.join(output_dir, "lower_log.txt")
-    filtered_output = os.path.join(output_dir, "filtered_aggregated_lf_v4.1_super_table.tsv")
+    filtered_output = os.path.join(output_dir, "filtered_aggregated_lf_v5.0_super_table.tsv")
     
     # User-defined thresholds
     upper_threshold = float(input("Enter upper threshold (e.g., 0.75): "))
@@ -113,6 +144,12 @@ def main():
     calculate_statistics(raw_data_df, output_txt_file)
     go_frequencies = calculate_global_frequency(raw_data_df, output_txt_file)
     save_filtered_data(raw_data_df, upper_threshold, lower_threshold, upper_log_file, lower_log_file, filtered_output)
+    # Add TF-IDF style ranking
+    raw_data_df = compute_tfidf_score(raw_data_df)
+    # Save TF-IDF-enhanced data to separate output file
+    tfidf_output_file = os.path.join(output_dir, "aggregated_lf_v5.0_with_tfidf.tsv")
+    raw_data_df.to_csv(tfidf_output_file, sep="\t", index=False)
+    print(f"TF-IDF ranked data saved to {tfidf_output_file}")
     
 if __name__ == "__main__":
     main()

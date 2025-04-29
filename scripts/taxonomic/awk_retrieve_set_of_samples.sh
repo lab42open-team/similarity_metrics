@@ -1,0 +1,3 @@
+### AWK to retrieve a random set of samples and their distances fromother samples only if lower than 0.2 ###
+
+(head -n 1 c_distances_batches_filtered_v5.0_SSU_ge_filtered.tsv && awk 'NR > 1 {print $1}' c_distances_batches_filtered_v5.0_SSU_ge_filtered.tsv | sort -u | shuf -n 5 > tmp_random_samples.txt && awk 'NR==FNR {samples[$1]; next} ($1 in samples) && ($3 < 0.1)' tmp_random_samples.txt c_distances_batches_filtered_v5.0_SSU_ge_filtered.tsv) >> test_samples_5.0.tsv

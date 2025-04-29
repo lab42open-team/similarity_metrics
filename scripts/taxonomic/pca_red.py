@@ -2,8 +2,10 @@
 # developed by: Nefeli Venetsianou
 # description: 
 # Apply dimensionality reduction using PCA and incorporate biome information.
+# Clustering 2D, Dendrogram and Heatmap Composition matrix plots are included.
+# Principal Components can be skipped as well, be defining n_skip_components, to skip first or first few PC.
 # framework: CCMRI
-# last update: 03/12/2024
+# last update: 09/04/2024
 
 import os 
 import pandas as pd
@@ -54,22 +56,29 @@ def normalize_data(abundance_matrix):
 def perform_hierarchical_clustering(reduced_features, abundance_matrix, output_dir, input_file, latent_dim, max_distance=10):
     try:
         Z = linkage(reduced_features, method="ward")
-        dendrogram_labels = abundance_matrix.index  # Use actual sample IDs 
+        sample_ids = abundance_matrix.index.tolist()
         plt.figure(figsize=(10, 7))
-        dendrogram(Z, labels=dendrogram_labels)  # Ensure labels are set to sample names
-        plt.title("Dendrogram for Hierarchical Clustering")
-        plt.xlabel("Sample Index")
-        plt.ylabel("Distance")
-        # Color-coding by biome info
+        # Show dots as labels
+        dendro = dendrogram(Z, labels=['.'] * len(sample_ids))
+        # Map label index to sample ID
+        dendro_order = dendro['leaves']
+        ordered_sample_ids = [sample_ids[i] for i in dendro_order]
+        # Color labels (dots) based on biome
         unique_biomes = abundance_matrix["biome_info"].unique()
         colors = sns.color_palette("hsv", len(unique_biomes))
         biome_color_map = dict(zip(unique_biomes, colors))
         ax = plt.gca()
-        xlbls = ax.get_xmajorticklabels()
-        for lbl in xlbls:
-            lbl.set_color(biome_color_map[abundance_matrix.loc[lbl.get_text(), "biome_info"]])
-        handles = [plt.Line2D([0], [0], color=biome_color_map[biome], lw=4) for biome in unique_biomes] # create list of handles that represent each biome
+        xtick_labels = ax.get_xmajorticklabels()
+        for i, lbl in enumerate(xtick_labels):
+            sample_id = ordered_sample_ids[i]
+            biome = abundance_matrix.loc[sample_id, "biome_info"]
+            lbl.set_color(biome_color_map[biome])
+        # Add biome legend
+        handles = [Line2D([0], [0], color=biome_color_map[biome], lw=4) for biome in unique_biomes]
         plt.legend(handles, unique_biomes, title="Biomes", bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+        plt.title("Dendrogram for Hierarchical Clustering")
+        plt.xlabel("Samples")
+        plt.ylabel("Distance")
         plt.tight_layout()
         dendrogram_output = os.path.join(output_dir, "dendrogram_10_pca_biome_{}.png".format(os.path.basename(input_file)[:-4]))
         plt.savefig(dendrogram_output)
@@ -116,7 +125,7 @@ def main():
     input_file = os.path.join(parent_dir, "v4.1_LSU_ge_filtered.tsv")
     biome_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/studies_samples/biome_info" 
     biome_file = os.path.join(biome_dir, "study-sample-biome_v4.1_LSU.tsv")
-    output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/dimensionality_reduction/PCA/3b"
+    output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/dimensionality_reduction/PCA/3b/PC1_skipped"
     
     # STEP 1: LOAD AND PROCESS DATA (with biome info)
     abundance_matrix = load_and_process_data(input_file, biome_file)
@@ -124,12 +133,14 @@ def main():
     scaled_abundance = normalize_data(abundance_matrix)
 
     # STEP 3: APPLY PCA FOR DIMENSIONALITY REDUCTION
-    pca = PCA(n_components=10)  # Adjust the number of components
-    reduced_features = pca.fit_transform(scaled_abundance)
-    # Log the number of components chosen by PCA
-    #logging.info(f"Number of components to retain 90% of variance: {pca.n_components_}")
+    pca = PCA(n_components=10)
+    reduced_features_all = pca.fit_transform(scaled_abundance)
+    # Skip the first N components
+    n_skip_components = 1
+    reduced_features = reduced_features_all[:, n_skip_components:]
+    retained_variance = sum(pca.explained_variance_ratio_[n_skip_components:])
     logging.info(f"PCA explained variance ratio: {pca.explained_variance_ratio_}")
-
+    logging.info(f"Retained variance after skipping first {n_skip_components} components: {retained_variance:.4f}")
 
     # STEP 4: CLUSTERING (with biome info)
     hierarchical_labels = perform_hierarchical_clustering(reduced_features, abundance_matrix, output_dir, input_file, latent_dim=None)
@@ -142,7 +153,26 @@ def main():
     ari = adjusted_rand_score(true_labels_encoded, hierarchical_labels)
     logging.info("ARI for PCA dimensionality reduction: {}".format(ari))
 
-    # STEP 5: VISUALIZATION (with biome info)
+    # STEP 5: HEATMAP — Biome vs Cluster Counts
+    cluster_df = pd.DataFrame({"Cluster": hierarchical_labels}, index=abundance_matrix.index)
+    cluster_df["biome_info"] = abundance_matrix["biome_info"]
+
+    # Cross-tabulate: rows = biomes, columns = clusters
+    contingency_table = pd.crosstab(cluster_df["biome_info"], cluster_df["Cluster"])
+
+    # Plot heatmap
+    plt.figure(figsize=(10, 7))
+    sns.heatmap(contingency_table, annot=True, fmt="d", cmap="YlGnBu")
+    plt.xlabel("Cluster")
+    plt.ylabel("Biome")
+    plt.title("Sample Counts per Biome and Cluster (PCA)")
+    plt.tight_layout()
+    heatmap_output_path = os.path.join(output_dir, "biome_cluster_heatmap_pca_10_{}.png".format(os.path.basename(input_file)[:-4]))
+    plt.savefig(heatmap_output_path)
+    plt.close()
+    logging.info("Biome-cluster heatmap saved at {}".format(heatmap_output_path))
+
+    # STEP 6: VISUALIZATION (with biome info)
     visualize_clusters_2d(reduced_features, hierarchical_labels, abundance_matrix, input_file, output_dir)
 
 if __name__ == "__main__":

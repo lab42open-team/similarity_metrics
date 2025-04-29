@@ -288,9 +288,9 @@ def main():
     input_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics"
     output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering"
     ass_plot_output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/clustering/assessment"
-    input_file = os.path.join(input_dir, "c_distances_filtered_v5.0_SSU_ge_filtered.tsv")
+    input_file = os.path.join(input_dir, "c_distances_filtered_v5.0_LSU_ge_filtered.tsv")
     biome_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/studies_samples/biome_info"
-    biome_file = os.path.join(biome_dir, "study-sample-biome_v5.0_SSU.tsv")
+    biome_file = os.path.join(biome_dir, "study-sample-biome_v5.0_LSU.tsv")
     """
     ### METAGENOMICS - RUNS ###
     input_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/similarity_metrics/runs_metagenomics"
@@ -311,7 +311,7 @@ def main():
         
         # Step 4: Perform hierarchical clustering on the downsampled matrix
         k_values = range(5, 41, 5) # k values from 5 to 40 with step 5
-        Z = perform_hierarchical_clustering(downsampled_matrix, output_dir, input_file, k_values)
+        Z = perform_hierarchical_clustering(df, output_dir, input_file, k_values)
         
         # Step 5: Compute cluster centroid
         #centroids = compute_cluster_centroids(downsampled_matrix.values, labels, n_clusters)

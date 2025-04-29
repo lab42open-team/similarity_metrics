@@ -23,15 +23,15 @@ def load_data(input_file, biome_file):
         )
         biome_dict = dict(zip(biome_df["sample_id"], biome_df["biome_info"]))
 
-        samples = pd.concat([df["Run1"], df["Run2"]]).unique()
+        samples = pd.concat([df["Sample1"], df["Sample2"]]).unique()
         distance_matrix = pd.DataFrame(
             np.ones((len(samples), len(samples))), index=samples, columns=samples
         )
 
         for _, row in df.iterrows():
-            run1, run2, distance = row["Run1"], row["Run2"], row["Distance"]
-            distance_matrix.loc[run1, run2] = distance
-            distance_matrix.loc[run2, run1] = distance
+            sample1, sample2, distance = row["Sample1"], row["Sample2"], row["Distance"]
+            distance_matrix.loc[sample1, sample2] = distance
+            distance_matrix.loc[sample2, sample1] = distance
 
         distance_matrix["biome_info"] = distance_matrix.index.map(biome_dict).fillna("Unknown")
         
@@ -54,15 +54,15 @@ def load_data(input_file, biome_file):
         )
         biome_dict = dict(zip(biome_df["sample_id"], biome_df["biome_info"]))
 
-        samples = pd.concat([df["Run1"], df["Run2"]]).unique()
+        samples = pd.concat([df["Sample1"], df["Sample2"]]).unique()
         distance_matrix = pd.DataFrame(
             np.ones((len(samples), len(samples))), index=samples, columns=samples
         )
 
         for _, row in df.iterrows():
-            run1, run2, distance = row["Run1"], row["Run2"], row["Distance"]
-            distance_matrix.loc[run1, run2] = distance
-            distance_matrix.loc[run2, run1] = distance
+            sample1, sample2, distance = row["Sample1"], row["Sample2"], row["Distance"]
+            distance_matrix.loc[sample1, sample2] = distance
+            distance_matrix.loc[sample2, sample1] = distance
 
         distance_matrix["biome_info"] = distance_matrix.index.map(biome_dict).fillna("Unknown")
 
@@ -90,11 +90,8 @@ def downsample_data(df, sample_size=1000):
         logging.error("Error during downsampling: {}".format(e))
         raise
 
-def perform_hierarchical_clustering(df, output_dir, input_file, k_values, stage="downsampled"):
+def perform_hierarchical_clustering(df, output_dir, input_file, k_values):
     try:
-        # Ensure output directory exists
-        stage_output_dir = os.path.join(output_dir, stage)
-        os.makedirs(stage_output_dir, exist_ok=True)
 
         # Perform hierarchical clustering, excluding non-numeric columns
         numeric_df = df.drop(columns=["biome_info"], errors="ignore")
@@ -127,7 +124,7 @@ def perform_hierarchical_clustering(df, output_dir, input_file, k_values, stage=
         handles = [plt.Line2D([0], [0], color=biome_color_map[biome], lw=4) for biome in unique_biomes]
         plt.legend(handles, unique_biomes, title="Biomes", bbox_to_anchor=(1.05, 1), loc='upper left')
         plt.tight_layout()
-        dendrogram_path = os.path.join(stage_output_dir, f"dendrogram_{os.path.basename(input_file)[:-4]}.png")
+        dendrogram_path = os.path.join(output_dir, f"dendrogram_{os.path.basename(input_file)[:-4]}.png")
         plt.savefig(dendrogram_path)
         plt.close()
         logging.info(f"Dendrogram saved to: {dendrogram_path}")
@@ -145,7 +142,7 @@ def perform_hierarchical_clustering(df, output_dir, input_file, k_values, stage=
                 # Extract only terrestrial samples
                 terrestrial_samples = cluster_1_samples[cluster_1_samples["biome_info"].str.contains("Terrestrial", na=False)]
                 # Save the terrestrial samples in Cluster 1
-                output_terrestrial_file = os.path.join(stage_output_dir, "terrestrial_samples_cluster1_k2.tsv")
+                output_terrestrial_file = os.path.join(output_dir, "terrestrial_samples_cluster1_k2.tsv")
                 terrestrial_samples.reset_index()[["index", "biome_info", "cluster"]].rename(columns={"index": "Run"}).to_csv(output_terrestrial_file, sep="\t", index=False)
                 logging.info(f"Terrestrial samples in Cluster 1 (k=2) saved to: {output_terrestrial_file}")
 
@@ -159,7 +156,7 @@ def perform_hierarchical_clustering(df, output_dir, input_file, k_values, stage=
             plt.ylabel('Biome')
             plt.title(f'Run Counts per Biome and Cluster (k={k})')
             plt.tight_layout()
-            heatmap_path = os.path.join(stage_output_dir, f"heatmap_k{k}_{os.path.basename(input_file)[:-4]}.png")
+            heatmap_path = os.path.join(output_dir, f"heatmap_k{k}_{os.path.basename(input_file)[:-4]}.png")
             plt.savefig(heatmap_path)
             plt.close()
             logging.info(f"Heatmap saved to: {heatmap_path}")
@@ -176,7 +173,7 @@ def perform_hierarchical_clustering(df, output_dir, input_file, k_values, stage=
         raise
     return df
 
-
+"""
 def compute_cluster_centroids(df):
     try:
         # Drop non-numeric columns before calculatinf centroids
@@ -213,17 +210,14 @@ def load_remaining_samples(original_matrix, downsampled_matrix):
     except Exception as e:
         logging.error("Error loading remaining samples: {}".format(e))
         raise
+"""
 
 def main():
-    #input_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO-slim_abundances/similarity_metrics"
-    #output_dir = os.path.join(input_dir, "clustering")
-    #input_file = os.path.join(input_dir, "c_distances_batches_normalized_lf_v5.0_super_table.tsv")
-    #biome_file = "/ccmri/similarity_metrics/data/functional/raw_data/biome_info/merged_biome_v5.0.tsv"
-    
+
     """CC-related directories"""
-    input_dir = "/ccmri/similarity_metrics/data/cc_related_only/filtered_go_files/GO_abund/raw_data/ccVScc"
+    input_dir = "/ccmri/similarity_metrics/data/cc_related_only/taxonomic/ccVScc"
     output_dir = os.path.join(input_dir, "clustering")
-    input_file = os.path.join(input_dir, "ccVScc_similarity_distances.tsv")
+    input_file = os.path.join(input_dir, "cc_VS_cc_similarity_distances.tsv")
     biome_file = "/ccmri/similarity_metrics/data/cc_related_only/merged_biome_final.tsv"
     
     try:
@@ -232,7 +226,7 @@ def main():
         k_values = [2] + list(range(5, 41, 5))
         
         # Perform clustering on downsampled data
-        df_clustered = perform_hierarchical_clustering(df, output_dir, input_file, k_values, stage="downsampled")
+        df_clustered = perform_hierarchical_clustering(df, output_dir, input_file, k_values)
 
         """
         # After assigning remaining samples
@@ -250,6 +244,7 @@ def main():
 
         logging.info(f"Cluster assignments saved: {output_path}")
         """
+
     except Exception as e:
         logging.error("Error in main: {}".format(e))
         raise
