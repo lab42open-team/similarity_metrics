@@ -8,7 +8,7 @@ OUTPUT_FILE="/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_tabl
 echo -e "study_id\tSampleID"
 
 # Read biome file line-by-line
-awk -F'\t' '$2 == "root:Environmental:Terrestrial:Soil" {print $1}' "$BIOME_FILE" | while read study_id; do
+awk -F'\t' '$2 == "root:Environmental:Terrestrial" {print $1}' "$BIOME_FILE" | while read study_id; do
     study_dir="$BASE_DIR/$study_id"
 
     # Skip if study folder doesn't exist
