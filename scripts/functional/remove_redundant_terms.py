@@ -3,6 +3,7 @@
 # script name: remove_redundant_terms.py
 # developed by: Nefeli Venetsianou
 # description: remove redundant term based on TF-IDF calculated and according to child-parent relationships (based on gene_ontology_groups.tsv by Lars). 
+    # Aggregated data with TF-IDF produced via script "filter_fun_data.py".
 # framework: CCMRI
 # last update: 11/04/2025
 

@@ -118,6 +118,7 @@ def perform_hierarchical_clustering(df, output_dir, input_file, k_values):
                 sample_name = sample_names[idx]
                 # Set the color based on the biome information of the original sample
                 lbl.set_color(biome_color_map[df.loc[sample_name, "biome_info"]])
+                lbl.set_fontsize(20)
             plt.title("Hierarchical Clustering Dendrogram with Biome Color Coding (k={})".format(k))
             # Create a legend for biomes
             handles = [plt.Line2D([0], [0], color=biome_color_map[biome], lw=4) for biome in unique_biomes]

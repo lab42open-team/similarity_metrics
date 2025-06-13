@@ -97,8 +97,12 @@ def main():
     #output_dir = os.path.join(input_folder, "normalized_data")
     
     # Define CC-related directories
-    input_folder = "/ccmri/similarity_metrics/data/cc_related_only/filtered_go_files/GO_abund/super_table"
-    output_dir = "/ccmri/similarity_metrics/data/cc_related_only/filtered_go_files/GO_abund/super_table/normalized"
+    #input_folder = "/ccmri/similarity_metrics/data/cc_related_only/filtered_go_files/GO_abund/super_table"
+    #output_dir = "/ccmri/similarity_metrics/data/cc_related_only/filtered_go_files/GO_abund/super_table/normalized"
+
+    # Aggregated Files
+    input_folder = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/aggregated_data/filtered_cutOff/0.75_GL_0.01_LO/v4.1/tfidf_pruned"
+    output_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/aggregated_data/filtered_cutOff/0.75_GL_0.01_LO/v4.1/tfidf_pruned/normalized"
     
     # Record start time
     folder_start_time = time.time()

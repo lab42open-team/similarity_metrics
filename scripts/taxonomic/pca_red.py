@@ -80,7 +80,7 @@ def perform_hierarchical_clustering(reduced_features, abundance_matrix, output_d
         plt.xlabel("Samples")
         plt.ylabel("Distance")
         plt.tight_layout()
-        dendrogram_output = os.path.join(output_dir, "dendrogram_10_pca_biome_{}.png".format(os.path.basename(input_file)[:-4]))
+        dendrogram_output = os.path.join(output_dir, "dendrogram_5_pca_biome_{}.png".format(os.path.basename(input_file)[:-4]))
         plt.savefig(dendrogram_output)
         logging.info("Dendrogram saved at {}".format(dendrogram_output))
         # Assign cluster labels to each sample point
@@ -113,7 +113,7 @@ def visualize_clusters_2d(reduced_features, labels, abundance_matrix, input_file
         plt.legend(handles=legend_elements, title="Biomes", bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
         plt.title("2D Clustering with Biome Information (Shapes)")
         plt.tight_layout()
-        cluster_output = os.path.join(output_dir, "clusters2d_10_pca_biome_shapes_{}.png".format(os.path.basename(input_file)[:-4]))
+        cluster_output = os.path.join(output_dir, "clusters2d_5_pca_biome_shapes_{}.png".format(os.path.basename(input_file)[:-4]))
         plt.savefig(cluster_output)
         logging.info("2D cluster visualization saved at {}".format(cluster_output))
     except Exception as e:
@@ -122,10 +122,10 @@ def visualize_clusters_2d(reduced_features, labels, abundance_matrix, input_file
 
 def main():
     parent_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/"
-    input_file = os.path.join(parent_dir, "v4.1_LSU_ge_filtered.tsv")
+    input_file = os.path.join(parent_dir, "v5.0_LSU_ge_filtered.tsv")
     biome_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/studies_samples/biome_info" 
-    biome_file = os.path.join(biome_dir, "study-sample-biome_v4.1_LSU.tsv")
-    output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/dimensionality_reduction/PCA/3b/PC1_skipped"
+    biome_file = os.path.join(biome_dir, "study-sample-biome_v5.0_LSU.tsv")
+    output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/initial_data/dimensionality_reduction/PCA/3b/PC1_2_skipped"
     
     # STEP 1: LOAD AND PROCESS DATA (with biome info)
     abundance_matrix = load_and_process_data(input_file, biome_file)
@@ -133,10 +133,10 @@ def main():
     scaled_abundance = normalize_data(abundance_matrix)
 
     # STEP 3: APPLY PCA FOR DIMENSIONALITY REDUCTION
-    pca = PCA(n_components=10)
+    pca = PCA(n_components=5)
     reduced_features_all = pca.fit_transform(scaled_abundance)
     # Skip the first N components
-    n_skip_components = 1
+    n_skip_components = 2
     reduced_features = reduced_features_all[:, n_skip_components:]
     retained_variance = sum(pca.explained_variance_ratio_[n_skip_components:])
     logging.info(f"PCA explained variance ratio: {pca.explained_variance_ratio_}")
@@ -167,7 +167,7 @@ def main():
     plt.ylabel("Biome")
     plt.title("Sample Counts per Biome and Cluster (PCA)")
     plt.tight_layout()
-    heatmap_output_path = os.path.join(output_dir, "biome_cluster_heatmap_pca_10_{}.png".format(os.path.basename(input_file)[:-4]))
+    heatmap_output_path = os.path.join(output_dir, "biome_cluster_heatmap_pca_5_{}.png".format(os.path.basename(input_file)[:-4]))
     plt.savefig(heatmap_output_path)
     plt.close()
     logging.info("Biome-cluster heatmap saved at {}".format(heatmap_output_path))
