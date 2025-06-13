@@ -58,7 +58,7 @@ def load_data(input_file, biome_file):
         distance_matrix = pd.DataFrame(
             np.ones((len(samples), len(samples))), index=samples, columns=samples
         )
-
+        df["Distance"] = df["Distance"].astype(float)
         for _, row in df.iterrows():
             run1, run2, distance = row["Run1"], row["Run2"], row["Distance"]
             distance_matrix.loc[run1, run2] = distance
@@ -221,10 +221,16 @@ def main():
     #biome_file = "/ccmri/similarity_metrics/data/functional/raw_data/biome_info/merged_biome_v5.0.tsv"
     
     """CC-related directories"""
-    input_dir = "/ccmri/similarity_metrics/data/cc_related_only/filtered_go_files/GO_abund/raw_data/ccVScc"
+    #input_dir = "/ccmri/similarity_metrics/data/cc_related_only/filtered_go_files/GO_abund/raw_data/ccVScc"
+    #output_dir = os.path.join(input_dir, "clustering")
+    #input_file = os.path.join(input_dir, "ccVScc_similarity_distances.tsv")
+    #biome_file = "/ccmri/similarity_metrics/data/cc_related_only/merged_biome_final.tsv"
+    
+    """SPIRE x MGnify Matched Data"""
+    input_dir = "/ccmri/similarity_metrics/data/other/matched_mgnify_spire_data"
     output_dir = os.path.join(input_dir, "clustering")
-    input_file = os.path.join(input_dir, "ccVScc_similarity_distances.tsv")
-    biome_file = "/ccmri/similarity_metrics/data/cc_related_only/merged_biome_final.tsv"
+    input_file = os.path.join(input_dir, "merged_dataset_distances.tsv")
+    biome_file = "/ccmri/similarity_metrics/data/functional/raw_data/biome_info/merged_biome_output.tsv"
     
     try:
         df = load_data(input_file, biome_file)
