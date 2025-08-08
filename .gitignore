@@ -1,2 +1,14 @@
 # Ignore data of similarity metrics folder 
 data/
+scripts/functional/test_2_bcktr.py
+scripts/functional/test_backtr.py
+scripts/functional/test_cc_clustering.py
+scripts/functional/test_load_pkl.py
+scripts/functional/test_SK.py
+scripts/functional/test.py
+scripts/taxonomic/2_test.py
+scripts/taxonomic/u-test_LLM_cat.py
+scripts/taxonomic/test-1.py
+scripts/functional/test.py
+scripts/taxonomic/retrieve_LLM_relatedness.sh
+scripts/taxonomic/filtered_output.tsv
