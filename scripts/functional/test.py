@@ -85,15 +85,15 @@ def process_folder(input_folder, output_dir):
 
 def main():
    # Define input folder and output directory from RAW data
-    #input_folder = "/ccmri/similarity_metrics/data/functional/raw_data/GO-slim_abundances/super_table"
-    #output_dir = os.path.join(input_folder, "normalized_data")
+    #input_folder = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/aggregated_data/final_CCMRI_GO-slim"
+    #output_dir = os.path.join(input_folder, "normalized_aggr_data")
     
     # Define input - output directories from DOWN-FILTERED data
     #input_folder = "/ccmri/similarity_metrics/data/functional/raw_data/GO-slim_abundances/d_filtered"
     #output_dir = os.path.join(input_folder, "normalized_data")
     
     # Define input - output for 1000 Randomly selected Runs
-    input_folder = "/ccmri/similarity_metrics/data/functional/raw_data/GO-slim_abundances/d_filtered/r_1000"
+    input_folder = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/noise_injection/r_1000"
     output_dir = os.path.join(input_folder, "normalized_data")
     
     # Record start time
