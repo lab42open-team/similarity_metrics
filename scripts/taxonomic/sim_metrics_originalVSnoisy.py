@@ -99,7 +99,7 @@ def main():
     initial_file_name = "ra_d_v4.1_SSU_ge_filtered.tsv"
     initial_file = os.path.join(initial_parent_directory, initial_file_name)   
     # Noisy files
-    downsampled_noisy_parent_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/downsampled_noisy_version"
+    downsampled_noisy_parent_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/downsampled_noisy_version/run2"
     downsampled_noise_version_directory = os.path.join(downsampled_noisy_parent_dir, "0.25_ratio")
     downsampled_file_name = "downsampled_0.25_ratio_d_v4.1_SSU_ge_filtered.tsv"  
     ### --- ###
@@ -114,10 +114,10 @@ def main():
     downsampled_jensen_shannon_output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/jensen_shannon_output"
     
     # Calculate and Save similarities 
-    #calculate_similarity_scores(downsampled_df1, downsampled_df2, downsampled_euclidean_output_dir, downsampled_noisy_file, metric="euclidean")
-    #logging.info("Euclidean similarity scores for initial VS downsampled noisy files calculated successfully.")
-    #calculate_similarity_scores(downsampled_df1, downsampled_df2, downsampled_cosine_output_dir, downsampled_noisy_file, metric="cosine")
-    #logging.info("Cosine similarity scores for initial VS downsampled noisy files calculated successfully.")
+    calculate_similarity_scores(downsampled_df1, downsampled_df2, downsampled_euclidean_output_dir, downsampled_noisy_file, metric="euclidean")
+    logging.info("Euclidean similarity scores for initial VS downsampled noisy files calculated successfully.")
+    calculate_similarity_scores(downsampled_df1, downsampled_df2, downsampled_cosine_output_dir, downsampled_noisy_file, metric="cosine")
+    logging.info("Cosine similarity scores for initial VS downsampled noisy files calculated successfully.")
     calculate_similarity_scores(downsampled_df1, downsampled_df2, downsampled_jensen_shannon_output_dir, downsampled_noisy_file, metric="jsd")
     logging.info("Jensen-Shannon Divergence similarity scores for initial VS downsampled noisy files calculated successfully.")
 

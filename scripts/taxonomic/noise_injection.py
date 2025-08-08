@@ -27,6 +27,10 @@ def downsample_counts_noise_injection(input_file, original_plot_file, downsample
     # Iterate over each unique sample in df
     for ratio in downsample_ratios:
         ratio_dir = os.path.join(base_output_dir, "{}_ratio".format(ratio))
+        output_plot_dir = os.path.join(ratio_dir, "plots")
+        # Create necessary directories if they don't exist
+        os.makedirs(ratio_dir, exist_ok=True)
+        os.makedirs(output_plot_dir, exist_ok=True)
         # Create a copy of DataFrame 
         downsampled_df = df.copy()
         # Find unique samples
@@ -87,9 +91,9 @@ def plot_results(original_df, noisy_df, ratio, input_file, base_output_dir):
     plt.close()
      
 def main():
-    input_file = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/d_1000_data/d_v5.0_LSU_ge_filtered.tsv"
-    original_plot_file = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/d_1000_data/normalized/ra_d_v5.0_LSU_ge_filtered.tsv"
-    base_output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/downsampled_noisy_version"
+    input_file = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/d_1000_data/d_v4.1_SSU_ge_filtered.tsv"
+    original_plot_file = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/d_1000_data/normalized/ra_d_v4.1_SSU_ge_filtered.tsv"
+    base_output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/noisy_versions/downsampled_noisy_version/run3/"
     # Define downsampling ratios - fraction of reducing total abundance - level of noise
     downsample_ratios = [0.1, 0.25, 0.5, 0.75, 0.9]
     downsample_counts_noise_injection(input_file, original_plot_file, downsample_ratios, base_output_dir)
