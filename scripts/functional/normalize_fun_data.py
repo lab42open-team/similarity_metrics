@@ -84,22 +84,6 @@ def process_folder(input_folder, output_dir):
             logging.info("Execution time for {} is {} seconds.".format(file, file_end_time-file_start_time))
 
 def main():
-   # Define input folder and output directory from RAW data
-    #input_folder = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/aggregated_data/final_CCMRI_GO-slim"
-    #output_dir = os.path.join(input_folder, "normalized_aggr_data")
-    
-    # Define input - output directories from DOWN-FILTERED data
-    #input_folder = "/ccmri/similarity_metrics/data/functional/raw_data/GO-slim_abundances/d_filtered"
-    #output_dir = os.path.join(input_folder, "normalized_data")
-    
-    # Define input - output for 1000 Randomly selected Runs
-    #input_folder = "/ccmri/similarity_metrics/data/functional/raw_data/GO-slim_abundances/d_filtered/r_1000"
-    #output_dir = os.path.join(input_folder, "normalized_data")
-    
-    # Define CC-related directories
-    #input_folder = "/ccmri/similarity_metrics/data/cc_related_only/filtered_go_files/GO_abund/super_table"
-    #output_dir = "/ccmri/similarity_metrics/data/cc_related_only/filtered_go_files/GO_abund/super_table/normalized"
-
     # Aggregated Files
     input_folder = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/aggregated_data/filtered_cutOff/0.75_GL_0.01_LO/v4.1/tfidf_pruned"
     output_dir = "/ccmri/similarity_metrics/data/functional/raw_data/GO_abundances/aggregated_data/filtered_cutOff/0.75_GL_0.01_LO/v4.1/tfidf_pruned/normalized"

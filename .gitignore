@@ -1,5 +1,6 @@
 # Ignore data of similarity metrics folder 
 data/
+scripts/old_scripts
 scripts/functional/test_2_bcktr.py
 scripts/functional/test_backtr.py
 scripts/functional/test_cc_clustering.py
