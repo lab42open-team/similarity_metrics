@@ -12,11 +12,50 @@
 import pandas as pd
 from scipy.stats import mannwhitneyu
 from statsmodels.stats.multitest import multipletests
+from scipy.stats import kruskal
 
 # Load your data
 df = pd.read_csv("/ccmri/merged_total_studies_similarity_files/relatedness_with_distance_final_dedup.tsv", sep="\t")
 
-# Storage for results
+# Storage for Kruskal-Wallis results
+kw_results = []
+
+def kruskal_test(df, sim_category, run_col):
+    sub_df = df[df['SimCategory'] == sim_category]
+
+    groups = []
+    for cat in ['none', 'low', 'medium', 'high']:
+        g = sub_df[sub_df[run_col] == cat]['Distance']
+        if len(g) > 1:  # need at least 2 values
+            groups.append(g)
+    
+    if len(groups) > 1:
+        stat, p_val = kruskal(*groups)
+        kw_results.append({
+            'SimCategory': sim_category,
+            'Run': run_col,
+            'H_stat': stat,
+            'p_value': p_val
+        })
+    else:
+        kw_results.append({
+            'SimCategory': sim_category,
+            'Run': run_col,
+            'H_stat': None,
+            'p_value': None,
+            'Note': 'Not enough groups'
+        })
+
+# Run for all runs and categories
+for sim_cat in ['Taxonomic', 'Functional']:
+    for run in ['run1', 'run2', 'run3']:
+        kruskal_test(df, sim_cat, run)
+
+# Save Kruskal-Wallis results
+kw_results_df = pd.DataFrame(kw_results)
+kw_results_df.to_csv("/ccmri/merged_total_studies_similarity_files/kruskal_results.tsv", sep="\t", index=False)
+
+# Storage for Mann-Witney results
 results = []
 
 # Function to run U-tests: one category vs rest
