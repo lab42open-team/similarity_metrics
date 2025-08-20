@@ -32,6 +32,9 @@ df_melted = df_melted[df_melted["Distance"] != "NA"]
 df_melted["Distance"] = pd.to_numeric(df_melted["Distance"], errors="coerce")
 df_clean = df_melted.dropna(subset=["Distance", "Relatedness", "SimilarityType"])
 
+# Add similarity column
+df_clean["Similarity"] = 1 - df_clean["Distance"]
+
 # === Prepare output dir ===
 output_dir = os.path.join(file_dir, "plots")
 os.makedirs(output_dir, exist_ok=True)
@@ -70,21 +73,22 @@ for sim_type in ["Taxonomic", "Functional"]:
         else:
             color = functional_palette.get(rel, "gray")
 
-        sns.histplot(subset["Distance"], kde=True, bins=30, color=color, kde_kws={"clip": (0, 1)})
+        sns.histplot(subset["Similarity"], kde=True, bins=30, color=color, kde_kws={"clip": (0, 1)})
         plt.title(f"{dataset_name.capitalize()} - {sim_type} - {rel.capitalize()} LLM Relatedness")
         #plt.xlim(0, subset["Distance"].max())  # Explicitly clip x-axis
-        plt.xlabel("Distance")
-        plt.ylabel("# pairs of studies")
+        plt.xlabel("Similarity")
+        plt.ylabel("No of studies' pairs")
         # Force y-axis ticks to be integers
         plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
-        plt.ylim(bottom=0)
+        #plt.ylim(bottom=0)
+        plt.ylim(0, subset["Similarity"].value_counts().max() + 1)
         plt.xlim(left=0)
         # Clip max x to 1, but allow flexibility if your data max is smaller
-        max_x = min(subset["Distance"].max(), 1)
+        max_x = min(subset["Similarity"].max(), 1)
         plt.xlim(0, max_x)
         plt.tight_layout()
         
         out_path = os.path.join(output_dir, f"{dataset_name}_{sim_type.lower()}_similarity_{rel}.png")
         plt.savefig(out_path, dpi=300)
         plt.close()
-        print(f"✅ Saved: {out_path}")
+        print(f"Saved: {out_path}")
