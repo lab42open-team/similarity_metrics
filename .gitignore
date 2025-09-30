@@ -1,3 +1,4 @@
 # Ignore data of similarity metrics folder 
 data/
 scripts/old_scripts
+scripts/tests
