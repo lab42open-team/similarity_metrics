@@ -6,17 +6,13 @@
 #   Calculate top-X ranks for similarity metrics. 
 #   Calculate average ranking per noise level & type in already created ranking files (produced by: ranking_metrics_performance.py)
 # framework: CCMRI
-# last update: 25/11/2025
+# last update: 14/07/2025
 
 import os, re
 import logging
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-
-# Optional: Set backend for headless environments
-# import matplotlib
-# matplotlib.use('Agg')
 
 logging.basicConfig(level=logging.INFO)
 
@@ -46,19 +42,23 @@ def calculate_summary_statistics(files):
         cosine_ranks.extend(load_ranking_data(c_file))
         jsd_ranks.extend(load_ranking_data(j_file))
 
-    def calculate_counts(ranks):
+    total_ranks_e = len(euclidean_ranks)
+    total_ranks_c = len(cosine_ranks)
+    total_ranks_j = len(jsd_ranks)
+
+    def calculate_counts(ranks, total_ranks):
         return {
-            "top_1": sum(1 for r in ranks if r <= 1),
-            "top_3": sum(1 for r in ranks if r <= 3),
-            "top_5": sum(1 for r in ranks if r <= 5),
-            "top_10": sum(1 for r in ranks if r <= 10), 
-            "top_100": sum(1 for r in ranks if r <= 100)
+            "top_1": 100 * sum(1 for r in ranks if r <= 1) / total_ranks,
+            "top_3": 100 * sum(1 for r in ranks if r <= 3) / total_ranks,
+            "top_5": 100 * sum(1 for r in ranks if r <= 5) / total_ranks,
+            "top_10": 100 * sum(1 for r in ranks if r <= 10) / total_ranks, 
+            "top_100": 100 * sum(1 for r in ranks if r <= 100) / total_ranks
         }
 
     return (
-        calculate_counts(euclidean_ranks),
-        calculate_counts(cosine_ranks),
-        calculate_counts(jsd_ranks)
+        calculate_counts(euclidean_ranks, total_ranks_e),
+        calculate_counts(cosine_ranks, total_ranks_c),
+        calculate_counts(jsd_ranks, total_ranks_j)
     )
 
 def save_results(output_file, noise_level, euclidean_counts, cosine_counts, jsd_counts):
@@ -67,7 +67,7 @@ def save_results(output_file, noise_level, euclidean_counts, cosine_counts, jsd_
             f.write("Noise\tMetric\tTop-1\tTop-3\tTop-5\tTop-10\tTop-100\n")
 
     def write_counts(f, noise_level, metric, counts):
-        f.write(f"{noise_level}\t{metric}\t{counts['top_1']}\t{counts['top_3']}\t{counts['top_5']}\t{counts['top_10']}\t{counts['top_100']}\n")
+        f.write(f"{noise_level}\t{metric}\t{counts['top_1']:.2f}\t{counts['top_3']:.2f}\t{counts['top_5']:.2f}\t{counts['top_10']:.2f}\t{counts['top_100']:.2f}\n")
 
     with open(output_file, "a") as f:
         write_counts(f, noise_level, "Euclidean", euclidean_counts)
@@ -88,11 +88,10 @@ def plot_results(data, output_dir):
     # Ensure Noise_Ratio is ordered correctly for plotting
     noise_order = sorted(df["Noise_Ratio"].unique(), key=lambda x: float(re.findall(r"[\d.]+", x)[0]))
     df_melt["Noise_Ratio"] = pd.Categorical(df_melt["Noise_Ratio"], categories=noise_order, ordered=True)
-    df_melt = df_melt[df_melt["Top-k"] == "Top-1"]
+    df_melt = df_melt[df_melt["Top-k"] == "Top-3"]
 
     plt.figure(figsize=(14, 8))
     
-    # Barplot instead of lineplot
     sns.barplot(
         data=df_melt,
         x="Noise_Ratio",
@@ -101,30 +100,26 @@ def plot_results(data, output_dir):
         palette="Set2"
     )
     
-    plt.title("Performance vs Noise Level per Metric (Top-1 Scores)", fontsize=18)
+    plt.title("Performance vs Noise Level per Metric (Top-3 Scores)", fontsize=18)
     plt.suptitle("Functional", fontsize=14)
     plt.xlabel("Noise Ratio", fontsize=14)
-    plt.ylabel("Number of Times Rank ≤ Top-1", fontsize=14)
+    plt.ylabel("Percentage of Times Rank ≤ Top-3 (%)", fontsize=14)
     plt.xticks(rotation=45, fontsize=16)
     plt.yticks(fontsize=16)
-    plt.ylim(0, None)  # y-axis starts at 0 and extends automatically
+    plt.ylim(0, 100)  # percentage y-axis
     plt.legend(title="Metric", fontsize=12, title_fontsize=14)
-    plt.tight_layout(rect=[0, 0, 1, 0.95])  # make space for suptitle
+    plt.tight_layout(rect=[0, 0, 1, 0.95])
     
-    # Save plot
-    output_file = os.path.join(output_dir, "performance_vs_noise_plot_top-1_bar.png")
+    output_file = os.path.join(output_dir, "performance_vs_noise_plot_top-3_bar_percentage.png")
     plt.savefig(output_file)
     plt.close()
 
 
 def main():
-    # Directories
-    downsampled_parent_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/sim_initialVSdownsampled_noisy/run1/ranking_output"
-    output_dir = "/ccmri/similarity_metrics/data/taxonomic/raw_data/lf_raw_super_table/filtered_data/genus/noise_injection/similarity_metrics/testing"
-    output_file_name = "summary_downsampled_statistics.tsv"
-    output_file = os.path.join(output_dir, output_file_name)
+    downsampled_parent_dir = "/home1/nvenet/data/functional/GO_abundances/noise_injection/similarity_metrics/ranking_output"
+    output_dir = "/home1/nvenet/data/functional/GO_abundances/noise_injection/similarity_metrics"
+    output_file = os.path.join(output_dir, "summary_downsampled_statistics.tsv")
 
-    # Noise levels
     noise_levels = ["0.1_ratio", "0.25_ratio", "0.75_ratio", "0.9_ratio"]
     summary_data = []
 
@@ -138,13 +133,11 @@ def main():
 
         save_results(output_file, noise_level, euclidean_counts, cosine_counts, jsd_counts)
 
-        # Log
         logging.info(f"Summary for {noise_level}:")
         logging.info(f"  Euclidean      : {euclidean_counts}")
         logging.info(f"  Cosine         : {cosine_counts}")
         logging.info(f"  Jensen-Shannon : {jsd_counts}")
 
-        # Prepare for plotting
         summary_data.append({
             "Noise_Ratio": noise_level,
             "Metric": "Euclidean", 
@@ -173,7 +166,6 @@ def main():
             "Top-100": jsd_counts["top_100"]
         })
 
-    # Plot all results
     if summary_data:
         plot_results(summary_data, output_dir)
     else:
