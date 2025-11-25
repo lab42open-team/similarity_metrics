@@ -2,3 +2,10 @@
 data/
 scripts/old_scripts
 scripts/tests
+scripts/taxonomic/.plot_LLM_percentages.py.swp
+scripts/taxonomic/16b_plot_LLM_relatedness.py
+scripts/taxonomic/plot_per_cat_LLM_percentages.py
+scripts/taxonomic/plot_LLM_relatedness.py
+scripts/taxonomic/test_high_LLM_relate.py
+scripts/taxonomic/ /ccmri/merged_total_studies_similarity_files/plots/LLM_category_distribution_Taxonomic.png
+scripts/taxonomic/ /ccmri/merged_total_studies_similarity_files/plots/LLM_category_distribution_Functional.png
