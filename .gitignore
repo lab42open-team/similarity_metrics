@@ -9,3 +9,8 @@ scripts/taxonomic/plot_LLM_relatedness.py
 scripts/taxonomic/test_high_LLM_relate.py
 scripts/taxonomic/ /ccmri/merged_total_studies_similarity_files/plots/LLM_category_distribution_Taxonomic.png
 scripts/taxonomic/ /ccmri/merged_total_studies_similarity_files/plots/LLM_category_distribution_Functional.png
+scripts/taxonomic/16d_normalized_histograms_4in1plot_LLM.py
+scripts/taxonomic/16c_normalized_histograms_plot_LLM.py
+scripts/taxonomic/15b_plot_manual_vs_LLM_relatedness.py
+scripts/taxonomic/17b_U_test_Fisher_method_LLM.py
+scripts/taxonomic/test_spLevel_LLM_relate.py
