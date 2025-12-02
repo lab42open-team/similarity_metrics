@@ -4,6 +4,7 @@
 # developed by: Nefeli Venetsianou
 # description: 
     # Mann–Whitney U-tests to compare study distance distributions across relatedness categories ("none", "low", "medium", "high").
+        # This test compares high VS rest (medium, low, none), medium VS rest, etc. 
         # Applied for both Taxonomic and Functional similarity runs. 
         # It adjusts p-values using the Benjamini–Hochberg FDR method and outputs the results as a TSV file.
 # framework: CCMRI
