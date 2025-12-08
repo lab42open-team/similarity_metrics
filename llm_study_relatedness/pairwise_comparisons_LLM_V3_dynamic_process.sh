@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Get the current date and time in the desired format
-LOGFILE="../logfiles/output_$(date '+%Y-%m-%d_%H-%M-%S').log"
+LOGFILE="/_full_path_in_your_server_to_/output_$(date '+%Y-%m-%d_%H-%M-%S').log"
 
 # Redirect both stdout and stderr to the log file
 exec > >(tee -a "$LOGFILE") 2>&1
@@ -11,13 +11,12 @@ start_time=$(date +%s)
 
 # Define models array
 models=("phi4:14b-q8_0")
-#models=("qwen3:30b-a3b-q8_0")
-#"qwen3:30b-a3b-q8_0" "phi4:14b-q8_0" "llama3.1:8b-instruct-q8_0" "qwen2.5:14b-instruct-q8_0" "llama3.3:70b-instruct-q8_0" "qwen2.5:72b-instruct-q8_0" "qwen2.5:32b-instruct-q8_0" "mistral-small:22b-instruct-2409-q8_0" "mistral-nemo:12b-instruct-2407-q8_0"
+#models=("qwen3:30b-a3b-q8_0" "phi4:14b-q8_0")
+
 
 # Define dataset path
-#dataset="../datasets/all_mgnify_studies.tsv"
-dataset="../datasets/16.tsv"
-studypairs="../datasets/merged_total_studies_similarity.tsv"
+dataset="/_full_path_in_your_server_to_/all_mgnify_studies.tsv"
+studypairs="/_full_path_in_your_server_to_/merged_total_studies_similarity.tsv"
 
 # Count dataset lines (datasets have no header)
 total_lines=$(wc -l < "$dataset")
@@ -43,7 +42,7 @@ for model_choice in "${models[@]}"; do
     model_base=$(basename "$model_choice" | tr ':' '_')  # Replace ':' with '_'
 
     # Create output directory
-    output_dir="../results/16"
+    output_dir="/_full_path_in_your_server_to_/"
     mkdir -p "$output_dir"
 
     # Execute scripts
@@ -61,7 +60,7 @@ for model_choice in "${models[@]}"; do
     for ((process_index=0;process_index<process_size;process_index++)); do
         part_file="$output_dir/LLM_pairwise_output_${model_base}_part_${process_index}.json"
         if [ ! -s "$part_file" ]; then
-            echo "⚠️ Warning: Missing or empty output file: $part_file" >> "$LOGFILE"
+            echo "Warning: Missing or empty output file: $part_file" >> "$LOGFILE"
             missing_parts=true
         fi
     done
@@ -71,9 +70,9 @@ for model_choice in "${models[@]}"; do
         cat $output_dir/LLM_pairwise_output_${model_base}_part_*.json > \
             $output_dir/LLM_pairwise_output_${model_base}.json
         rm $output_dir/LLM_pairwise_output_${model_base}_part_*.json
-        echo "✅ Successfully merged output for $model_choice" >> "$LOGFILE"
+        echo "Successfully merged output for $model_choice" >> "$LOGFILE"
     else
-        echo "❌ Skipping merge due to missing part files for $model_choice" >> "$LOGFILE"
+        echo "Skipping merge due to missing part files for $model_choice" >> "$LOGFILE"
     fi
 
     # Capture runtime per run
