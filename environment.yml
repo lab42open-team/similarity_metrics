@@ -6,11 +6,11 @@ dependencies:
 - python=3.12
 
 # Data preprocessing & analysis
-- numpy
-- pandas
-- scipy
-- scikit-learn
+- numpy=2.2.0
+- pandas=2.2.2
+- scipy=1.14.1
+- scikit-learn=1.6.0
 
 # Visualization
-- matplotlib
-- seaborn
+- matplotlib=3.9.2
+- seaborn=0.13.2
