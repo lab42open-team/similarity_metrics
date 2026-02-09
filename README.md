@@ -22,7 +22,7 @@ This repository is separated into the following folders:
 - numpy
 - pandas
 - scipy
--scikit-learn
+- scikit-learn
 - matplotlib
 - seaborn
 
