@@ -10,9 +10,10 @@ This repository is separated into the following folders:
 - llm_study_relatedness: this directory includes its own Readme.md file for futher explanation.
 
 ## Hardware requirements 
-- Tested on Debian GNU/Linux 9.13 
-- CPU execution on taxonomic/functional similarities calculations 
+- Tested on Debian GNU/Linux 9.13 & Debian GNU/Linux 10 
+- CPU execution on taxonomic/functional similarities calculations
     - Intel(R) Xeon(R) Silver 4114 CPU (40 cores)
+    - Intel(R) Xeon(R) CPU E5-2660 (20 cores, 1.5TB RAM)
 - GPU execution on LLM-based relatedness assessment
 - Recommended RAM: >= 32GB
 - Disk space: ~ 230 GB
