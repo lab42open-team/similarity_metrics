@@ -8,19 +8,19 @@ Data were retrieved from MGnify using the API. Detailed information about the da
 Below is described the information on hardware and software used in this project. 
 
 ### Hardware requirements 
-- Most of the analyses were conducted on Debian GNU/Linux 9.13, CPU execution (only), Intel(R) Xeon(R) Silver 4114 CPU (40 threads, 64GB RAM).
-- Taxonomic and functional similarities calculations were conducted on Debian GNU/Linux 10, Intel(R) Xeon(R) CPU E5-2660 (20 cores, 1.5TB RAM).
-- LLM-based relatedness was performed on GPU server (4×NVIDIA A100 GPU node).
+- Most of the analyses were conducted on Debian GNU/Linux 9.13, CPU execution (only), Intel(R) Xeon(R) Silver 4114 CPU (40 threads, 64GB RAM). The computational resources were provided by the Institute of Marine Biology, Biotechnology and Aquaculture of the Hellenic Centre for Marine Research.
+- Taxonomic and functional similarities calculations were conducted on Debian GNU/Linux 10, Intel(R) Xeon(R) CPU E5-2660 (20 cores, 1.5TB RAM). The computational resources were provided by the Institute of Marine Biology, Biotechnology and Aquaculture of the Hellenic Centre for Marine Research.
+- LLM-based relatedness was performed on GPU server (4×NVIDIA A100 GPU node). Access to GPU server for the LLM execution was provided by LifeWatch ERIC (European Research Infrastructure Consortium).
 - Disk space: ~ 230 GB
 
 ### Software requirements
-- Python 3.5+
-- numpy
-- pandas
-- scipy
-- scikit-learn
-- matplotlib
-- seaborn
+- Python >= 3.5
+- numpy == 2.2.0
+- pandas == 2.2.2
+- scipy == 1.14.1
+- scikit-learn == 1.6.0
+- matplotlib == 3.9.2
+- seaborn == 0.13.2
 
 ## Setup
 This repository includes an `environment.yml` file containing all the required dependencies.
@@ -33,8 +33,13 @@ conda activate ccmri_env
 
 ## 3. Code
 This repository is separated into the following folders:
-- scripts:
-    - intro_general_scripts: contains python and bash scripts for data retrieval, preprocessing and exploratory analyses, supporting the main similarity computations. These scripts implement standard **ETL (Extract, Transform, Load)** workflows to assemble study metadata, retrieve sample and biome-level information from external resources, and generate summary statistics and visualizations. While not all scripts are required for reproducing the final similarity scores, they document the data preparation steps and support **Explanatory Data Analysis (EDA)**.
-    - functional: this directory contains scripts used to compute, evaluate, and benchmark similarity metrics based on **functional profiles**. The workflow includes data normalization, noise injection, similarity computation, ranking performance analysis, and visualization of results. Several scripts were used for robustness analyses and sensitivity testing. _The folder includes a README.md file with detailed description of each script._
-    - taxonomic: this directory contains scripts for computing and analyzing similarity metrics based on **taxonomic profiles**, as well as for integrating and evaluating **LLM-based relatedness assessments** (for both taxonomic & functional data). The scripts support data preprocessing, similarity computation, ranking analysis, statistical testing, and visualization of both taxonomic/functional and LLM-derived results. _The folder includes a README.md file with detailed description of each script._
-- llm_study_relatedness: this directory includes its own Readme.md file with detailed explanation for LLM-based study relatedness workflow.
+- **[`scripts/`](scripts/)**  
+  Main directory containing all analysis workflows.
+    - **[`intro_general_scripts/`](scripts/intro_general_scripts/)** 
+    This directory contains python and bash scripts for data retrieval, preprocessing and exploratory analyses, supporting the main similarity computations. These scripts implement standard **ETL (Extract, Transform, Load)** workflows to assemble study metadata, retrieve sample and biome-level information from external resources, and generate summary statistics and visualizations. While not all scripts are required for reproducing the final similarity scores, they document the data preparation steps and support **Explanatory Data Analysis (EDA)**.
+    - **[`functional/`](scripts/functional/)** 
+    This directory contains scripts used to compute, evaluate, and benchmark similarity metrics based on **functional profiles**. The workflow includes data normalization, noise injection, similarity computation, ranking performance analysis, and visualization of results. Several scripts were used for robustness analyses and sensitivity testing. See [`scripts/functional/README.md`](scripts/functional/README.md) for a detailed script-by-script description.
+    - **[`taxonomic/`](scripts/taxonomic/)**
+    This directory contains scripts for computing and analyzing similarity metrics based on **taxonomic profiles**, as well as for integrating and evaluating **LLM-based relatedness assessments** (for both taxonomic & functional data). The scripts support data preprocessing, similarity computation, ranking analysis, statistical testing, and visualization of both taxonomic/functional and LLM-derived results. See [`scripts/taxonomic/README.md`](scripts/taxonomic/README.md) for a detailed script-by-script description.
+- **[`llm_study_relatedness/`](llm_study_relatedness/)**  
+  This directory   Contains the complete workflow for **LLM-based study relatedness analysis**. See [`llm_study_relatedness/README.md`](llm_study_relatedness/README.md).
