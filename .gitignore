@@ -1,7 +1,7 @@
 # Ignore data of similarity metrics folder 
 data/
 scripts/old_scripts
-scripts/tests
+tests/
 scripts/taxonomic/.plot_LLM_percentages.py.swp
 scripts/taxonomic/16b_plot_LLM_relatedness.py
 scripts/taxonomic/plot_per_cat_LLM_percentages.py
