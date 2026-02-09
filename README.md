@@ -2,7 +2,7 @@
 This repository contains scripts and resources for computing, analyzing, and visualizing study similarity metrics within the CCMRI framework, including both taxonomic and functional profiles, as well as LLM-based relatedness assessments.
 
 ## 1. Data 
-Data were retrieved from MGnify using the API. Detailed information about the data download process and the analytical scripts used can be found in the repository  **[`ccmri_data_gathering/`](https://github.com/lab42open-team/ccmri_data_gathering)**.
+Data were retrieved from MGnify using the API. Detailed information about the data download process and the analytical scripts used can be found in the repository  **[`ccmri_data_gathering`](https://github.com/lab42open-team/ccmri_data_gathering)**.
 
 ## 2. Environment
 Below is described the information on hardware and software used in this project. 
