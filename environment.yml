@@ -1,0 +1,16 @@
+name: ccmri_env
+channels: 
+  - conda-forge
+  - defaults
+dependencies:
+- python=3.12
+
+# Data preprocessing & analysis
+- numpy
+- pandas
+- scipy
+- scikit-learn
+
+# Visualization
+- matplotlib
+- seaborn
