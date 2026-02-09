@@ -2,11 +2,12 @@
 This repository contains scripts and related files for computing and processing similarity metrics, for both taxonomic anf functional data within the **CCMRI** framework.
 
 ## Overview
-The scripts in this repository are used for:
-- Filtering taxonomic & functional tables to a desired depth (e.g., genus level, frequency thresholds).
-- Applying abundance and diversity thresholds to remove low-quality data.
-- Preparing cleaned tables for downstream similarity metric calculations.
-- Downsampling noise injection via multinomial distribution to check metrics robustness. 
+This repository is separated into the following folders:
+- scripts:
+    - intro_general_scripts: includes python and bash files to data preprocessing for data retrieval, preprocessing, and exploratory analyses that support the main similarity computations. These scripts were used to assemble study metadata, retrieve sample- and biome-level information from external resources, and generate summary statistics and visualizations. While not all scripts are required for reproducing the final similarity scores, they document the data preparation steps underlying the analysis. 
+    - functional: this directory contains scripts used to compute, evaluate, and benchmark similarity metrics based on **functional profiles**. The workflow includes data normalization, noise injection, similarity computation, ranking performance analysis, and visualization of results. Several scripts were used for robustness analyses and sensitivity testing. 
+    - taxonomic: This directory contains scripts for computing and analyzing similarity metrics based on **taxonomic profiles**, as well as for integrating and evaluating **LLM-based relatedness assessments** (for both taxonomic & functional data). The scripts support data preprocessing, similarity computation, ranking analysis, statistical testing, and visualization of both taxonomic/functional and LLM-derived results.
+- llm_study_relatedness: this directory includes its own Readme.md file for futher explanation.
 
 ## Hardware requirements 
 - Tested on Debian GNU/Linux 9.13 
