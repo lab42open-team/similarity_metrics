@@ -14,5 +14,3 @@ scripts/taxonomic/16c_normalized_histograms_plot_LLM.py
 scripts/taxonomic/15b_plot_manual_vs_LLM_relatedness.py
 scripts/taxonomic/17b_U_test_Fisher_method_LLM.py
 scripts/taxonomic/test_spLevel_LLM_relate.py
-scripts/taxonomic/
-
