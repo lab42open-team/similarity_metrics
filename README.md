@@ -21,6 +21,11 @@ Below is described the information on hardware and software used in this project
 - scikit-learn == 1.6.0
 - matplotlib == 3.9.2
 - seaborn == 0.13.2
+- Ollama == v0.6.8
+
+### Ollama Multi-Instance Configuration
+- The script pairwise_comparisons_LLM_invoker_V2.py requires four concurrent Ollama instances by default, each listening on a distinct port (e.g., 11434, 11435, 11436, 11437).
+- Users may modify the script to use different ports or fewer instances (e.g., a single instance), with a corresponding increase/decrease in execution time.
 
 ## Setup
 This repository includes an `environment.yml` file containing all the required dependencies.
