@@ -28,8 +28,8 @@ Below is described the information on hardware and software used in this project
 - Users may modify the script to use different ports or fewer instances (e.g., a single instance), with a corresponding increase/decrease in execution time.
 
 ## Setup
-This repository includes an `environment.yml` file containing all the required dependencie for the pipeline, except for running the LLMs, which was performed on a GPU-server (information for running the LLMs is provided within the respective folder as described below). 
-To create and activate the Conda environment, run:
+This repository includes an `environment.yml` file containing all the required dependencie for the pipeline, except for running the LLMs, which was performed on a GPU-server (information for running the LLMs is provided within the respective folder as described below).  
+  To create and activate the Conda environment, run:
 
 ```bash
 conda env create -f environment.yml
