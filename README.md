@@ -42,4 +42,4 @@ This repository is separated into the following folders:
     - **[`taxonomic/`](scripts/taxonomic/)**
     This directory contains scripts for computing and analyzing similarity metrics based on **taxonomic profiles**, as well as for integrating and evaluating **LLM-based relatedness assessments** (for both taxonomic & functional data). The scripts support data preprocessing, similarity computation, ranking analysis, statistical testing, and visualization of both taxonomic/functional and LLM-derived results. See [`scripts/taxonomic/README.md`](scripts/taxonomic/README.md) for a detailed script-by-script description.
 - **[`llm_study_relatedness/`](llm_study_relatedness/)**  
-  This directory   Contains the complete workflow for **LLM-based study relatedness analysis**. See [`llm_study_relatedness/Readme.md`](llm_study_relatedness/Readme.md).
+  This directory contains the complete workflow for **LLM-based study-relatedness analysis**. See [`llm_study_relatedness/Readme.md`](llm_study_relatedness/Readme.md).
