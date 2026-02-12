@@ -20,7 +20,6 @@ The workflow is organized around two main scripts:
 - System RAM: 16 GB to 32 GB (if running via GPU) or 32 GB+ (if running on CPU only).
 - Storage: At least 15–30 GB of free space (the model file itself is ~15-20GB+ for Q8_0, plus space for Ollama overhead).
 - Processor: Modern CPU (Intel Core i5/i7, AMD Ryzen 5/7) for CPU-only, but a dedicated GPU is strongly recommended for acceptable performance. 
-Recommended Setup
 
 ## Recommended Setup
 - GPU: 4 * NVIDIA A100 GPU nodes
