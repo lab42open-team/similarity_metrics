@@ -14,9 +14,19 @@ The workflow is organized around two main scripts:
 - The script `pairwise_comparisons_LLM_invoker_V2.py` requires four concurrent Ollama instances by default, each listening on a distinct port (e.g., 11434, 11435, 11436, 11437).
 - Users may modify the script to use different ports or fewer instances (e.g., a single instance), with a corresponding increase/decrease in execution time.
 
+## Minimum Hardware Requirements
+- Video Memory (VRAM): 12 GB to 16 GB+ (NVIDIA RTX 3060 12GB, 3080 Ti, 3090, 4070 Ti, 4080, 4090, or AMD equivalent).
+    - _Note: While 12GB might work for short contexts, 16GB is required to avoid swapping or offloading to RAM, particularly when using a large context window._
+- System RAM: 16 GB to 32 GB (if running via GPU) or 32 GB+ (if running on CPU only).
+- Storage: At least 15–30 GB of free space (the model file itself is ~15-20GB+ for Q8_0, plus space for Ollama overhead).
+- Processor: Modern CPU (Intel Core i5/i7, AMD Ryzen 5/7) for CPU-only, but a dedicated GPU is strongly recommended for acceptable performance. 
+Recommended Setup
+
+## Recommended Setup
+- GPU: 4 * NVIDIA A100 GPU nodes
 ---
 
-### Input files
+## Input files
 
 1. **A list of all MGnify study IDs and their corresponding text**  
   This input file (`all_mgnify_studies.tsv`) contains all the textual data coming from MGnify for each study ID.
