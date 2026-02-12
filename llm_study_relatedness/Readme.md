@@ -10,6 +10,10 @@ The workflow is organized around two main scripts:
 2. **`pairwise_comparisons_LLM_invoker_V2.py`**  
    This Python script is called by the Bash orchestrator. Each invocation processes a subset of study pairs for the specified LLM model and outputs a JSON file containing the similarity scores for those pairs. It receives as arguments the model to use, the dataset file, the study pairs file, the output filename, and process index information for parallel execution.
 
+## Ollama Multi-Instance Configuration
+- The script `pairwise_comparisons_LLM_invoker_V2.py` requires four concurrent Ollama instances by default, each listening on a distinct port (e.g., 11434, 11435, 11436, 11437).
+- Users may modify the script to use different ports or fewer instances (e.g., a single instance), with a corresponding increase/decrease in execution time.
+
 ---
 
 ### Input files
