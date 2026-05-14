@@ -46,7 +46,7 @@ This repository is separated into the following folders:
   This directory contains the complete workflow for **LLM-based study-relatedness analysis**. See [`llm_study_relatedness/Readme.md`](llm_study_relatedness/Readme.md).
 
 ## Citation
-Venetsianou, N. K., Paragkamian, S., Kalaentzis, K., Loukas, A., Damianou, C., Lagani, V., Jensen, L. J., & Pafilis, E. (2026). _LLM-assessed relatedness of microbiome study descriptions aligns more strongly with functional than with taxonomic profile similarity_. (publication pending)
+Venetsianou, N.K., Paragkamian, S., Kalaentzis, K. et al. LLM-Assessed Relatedness of Microbiome Study Descriptions Aligns more Strongly with Functional than with Taxonomic Profile Similarity. Microb Ecol 89, 104 (2026). https://doi.org/10.1007/s00248-026-02730-5
 
 ## License
 BSD 2-Clause License
